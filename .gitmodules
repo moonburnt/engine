@@ -1,0 +1,12 @@
+[submodule "dependencies/raylib"]
+	path = dependencies/raylib
+	url = https://github.com/raysan5/raylib.git
+[submodule "dependencies/fmt"]
+	path = dependencies/fmt
+	url = https://github.com/fmtlib/fmt.git
+[submodule "dependencies/spdlog"]
+	path = dependencies/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "dependencies/tomlplusplus"]
+	path = dependencies/tomlplusplus
+	url = https://github.com/marzer/tomlplusplus.git
