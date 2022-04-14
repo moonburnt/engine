@@ -1,7 +1,16 @@
 cmake_minimum_required(VERSION 3.10)
 
-#set(CMAKE_CXX_COMPILER clang++)
-#set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+    message("Engine is a main project - some additional flags will be available")
+    set(ENGINE_IS_MAIN TRUE)
+else()
+    set(ENGINE_IS_MAIN FALSE)
+endif()
+
+if (ENGINE_IS_MAIN)
+    set(CMAKE_CXX_COMPILER clang++)
+    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+endif()
 
 # set project name and version
 project(engine
@@ -63,3 +72,16 @@ target_include_directories(engine PUBLIC ${spdlog_INCLUDE_DIRS})
 # Setup tomlplusplus
 # Jk. Not setting it up, coz its CMakeLists is GARBAGE and does not work properly.
 # Instead, we will just include the header where necessary and thats it.
+
+if (ENGINE_IS_MAIN)
+    add_custom_target(compile_commands
+        WORKING_DIRECTORY ${CMAKE_BUILD_DIR}
+        BYPRODUCTS ${CMAKE_SOURCE_DIR}/compile_commands.json
+        COMMAND cp -f ./compile_commands.json ${CMAKE_SOURCE_DIR}/compile_commands.json
+        VERBATIM)
+
+    add_custom_target(format
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMAND find engine \( -name '*.cpp' -o -name '*.hpp' \) -exec clang-format -style=file -i {} \;
+        VERBATIM)
+endif()
