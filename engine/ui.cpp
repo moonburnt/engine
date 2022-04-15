@@ -374,7 +374,12 @@ void ButtonStorage::update() {
     }
     else {
         for (auto button : storage) {
-            button->update();
+            // This may be a bad idea in long run, but for now it should protect
+            // from segfaults caused by attempting to update something if callback
+            // attached to button's update has told storage's instance to die.
+            if (button->update() == ButtonStates::clicked) {
+                return;
+            };
         }
     }
 }
