@@ -306,6 +306,10 @@ ButtonBase* ButtonStorage::operator[](int i) {
     return storage[i];
 }
 
+ButtonBase* ButtonStorage::at(int i) {
+    return storage.at(i);
+}
+
 void ButtonStorage::add_button(ButtonBase* button) {
     storage.push_back(button);
     if (manual_update_mode) button->set_manual_update_mode(true);

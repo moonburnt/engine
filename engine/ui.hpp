@@ -211,6 +211,7 @@ public:
     // For now, doesn't have safety checks - requiesting out of bounds value will
     // probably lead to segfault.
     ButtonBase* operator[](int i);
+    ButtonBase* at(int i);
 };
 
 class VerticalContainer : public ButtonStorage {
