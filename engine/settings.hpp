@@ -1,6 +1,6 @@
 #pragma once
 
-#include "dependencies/tomlplusplus/toml.hpp"
+#include "toml++/toml.h"
 #include <string>
 
 class SettingsManager {

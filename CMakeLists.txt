@@ -51,7 +51,8 @@ target_compile_options(engine
 
 target_include_directories(engine
     PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
+    "$<INSTALL_INTERFACE:${PROJECT_SOURCE_DIR}/engine>"
 )
 
 # Setup raylib
@@ -70,8 +71,9 @@ target_link_libraries(engine spdlog)
 target_include_directories(engine PUBLIC ${spdlog_INCLUDE_DIRS})
 
 # Setup tomlplusplus
-# Jk. Not setting it up, coz its CMakeLists is GARBAGE and does not work properly.
-# Instead, we will just include the header where necessary and thats it.
+add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/tomlplusplus")
+target_link_libraries(engine tomlplusplus::tomlplusplus)
+target_include_directories(engine PUBLIC ${tomlplusplus_INCLUDE_DIRS})
 
 if (ENGINE_IS_MAIN)
     add_custom_target(compile_commands
