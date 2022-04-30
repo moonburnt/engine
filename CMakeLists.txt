@@ -44,10 +44,17 @@ add_library(engine STATIC
     engine/storage.hpp
 )
 
-target_compile_options(engine
-    PUBLIC
-    -Wall -Wextra -Wpedantic -Werror -Wextra-semi -Wsuggest-override -Wno-missing-field-initializers
-)
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    target_compile_options(engine
+        PRIVATE
+        /Wall /w34263 /w34266
+    )
+else()
+    target_compile_options(engine
+        PRIVATE
+        -Wall -Wextra -Wpedantic -Werror -Wextra-semi -Wsuggest-override -Wno-missing-field-initializers
+    )
+endif()
 
 target_include_directories(engine
     PUBLIC
