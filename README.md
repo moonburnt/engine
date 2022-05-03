@@ -1,5 +1,10 @@
 # Yet Another Game Engine Thingy
 
+## Status
+
+[![Linux Build](https://github.com/moonburnt/engine/actions/workflows/build_linux.yml/badge.svg)](https://github.com/moonburnt/engine/actions/workflows/build_linux.yml)
+[![Windows Build](https://github.com/moonburnt/engine/actions/workflows/build_windows.yml/badge.svg)](https://github.com/moonburnt/engine/actions/workflows/build_windows.yml)
+
 ## Description
 
 An unnamed WIP raylib-powered engine / extension library to power 2D games.
