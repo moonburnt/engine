@@ -12,5 +12,17 @@ template is ok, TileMap with game-specific data is not).
 
 ## Pre-requirements
 
-- CMake 3.10+
-- clang++ 13.0.1
+- CMake 3.21+
+- clang++ 13.0.1 (mac and linux only)
+
+## Installation
+
+```
+git submodule update --init
+mkdir ./build
+# On mac/linux
+CXX=clang++ cmake . -B ./build
+# On windows, use this instead
+# cmake . -B ./build
+cmake --build ./build
+```

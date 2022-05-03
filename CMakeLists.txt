@@ -1,15 +1,7 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.21)
 
-if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+if(PROJECT_IS_TOP_LEVEL)
     message("Engine is a main project - some additional flags will be available")
-    set(ENGINE_IS_MAIN TRUE)
-else()
-    set(ENGINE_IS_MAIN FALSE)
-endif()
-
-if (ENGINE_IS_MAIN)
-    set(CMAKE_CXX_COMPILER clang++)
-    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 endif()
 
 # set project name and version
@@ -44,23 +36,40 @@ add_library(engine STATIC
     engine/storage.hpp
 )
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    target_compile_options(engine
-        PRIVATE
-        /Wall /w34263 /w34266
-    )
-else()
-    target_compile_options(engine
-        PRIVATE
-        -Wall -Wextra -Wpedantic -Werror -Wextra-semi -Wsuggest-override -Wno-missing-field-initializers
-    )
-endif()
-
 target_include_directories(engine
     PUBLIC
     "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
     "$<INSTALL_INTERFACE:${PROJECT_SOURCE_DIR}/engine>"
 )
+
+if(PROJECT_IS_TOP_LEVEL)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        list(APPEND COMPILER_FLAGS
+            "-Wall"
+            "-Wextra"
+            "-Wpedantic"
+            "-Werror"
+            "-Wextra-semi"
+            "-Wsuggest-override"
+            "-Wno-missing-field-initializers"
+        )
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        list(APPEND COMPILER_FLAGS
+            "/Wall"
+            "/w34263"
+            "/w34266"
+        )
+    else()
+        message(FATAL_ERROR "Attempting to use an unsupported compiler!")
+    endif()
+
+    target_compile_options(engine
+        PRIVATE
+        ${COMPILER_FLAGS}
+    )
+
+    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+endif()
 
 # Setup raylib
 add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/raylib")
@@ -82,7 +91,7 @@ add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/tomlplusplus")
 target_link_libraries(engine tomlplusplus::tomlplusplus)
 target_include_directories(engine PUBLIC ${tomlplusplus_INCLUDE_DIRS})
 
-if (ENGINE_IS_MAIN)
+if(PROJECT_IS_TOP_LEVEL)
     add_custom_target(compile_commands
         WORKING_DIRECTORY ${CMAKE_BUILD_DIR}
         BYPRODUCTS ${CMAKE_SOURCE_DIR}/compile_commands.json
