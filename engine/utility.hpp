@@ -112,14 +112,21 @@ bool has_mouse_moved();
 // is outside of borders.
 bool is_rect_inside_rect(Rectangle first, Rectangle second);
 
-// TODO: store format and make it possible to configure it
-// TODO: store position, font and other things, make it possible to configure them
-// on object creation
+// TODO: customizable font
 class FrameCounter : public Node {
 private:
     int fps_value;
 
+protected:
+    Vector2 pos;
+    const char* format;
+    int size;
+    Color color;
+
 public:
+    FrameCounter(Vector2 pos, const char* format, int size, Color color);
+    FrameCounter(Vector2 pos, int size);
+    FrameCounter(Vector2 pos);
     FrameCounter();
 
     void update() override;

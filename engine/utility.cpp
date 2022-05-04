@@ -83,9 +83,24 @@ bool is_rect_inside_rect(Rectangle first, Rectangle second) {
 }
 
 // FPS counter
-// Maybe I should store it somewhere?
+FrameCounter::FrameCounter(Vector2 _pos, const char* _format, int _size, Color _color)
+    : fps_value(0)
+    , pos(_pos)
+    , format(_format)
+    , size(_size)
+    , color(_color) {
+}
+
+FrameCounter::FrameCounter(Vector2 _pos)
+    : FrameCounter(_pos, "FPS: %02i", 20, BLACK) {
+}
+
+FrameCounter::FrameCounter(Vector2 _pos, int _size)
+    : FrameCounter(_pos, "FPS: %02i", _size, BLACK) {
+}
+
 FrameCounter::FrameCounter()
-    : fps_value(0) {
+    : FrameCounter({0, 0}, "FPS: %02i", 20, BLACK) {
 }
 
 void FrameCounter::update() {
@@ -93,5 +108,5 @@ void FrameCounter::update() {
 }
 
 void FrameCounter::draw() {
-    DrawText(TextFormat("FPS: %02i", fps_value), 1200, 4, 20, BLACK);
+    DrawText(TextFormat(format, fps_value), pos.x, pos.y, size, color);
 }
