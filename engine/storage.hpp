@@ -34,3 +34,9 @@ class SoundStorage : public Storage<Sound> {
 public:
     void load(std::string path, std::string extension) override;
 };
+
+class MusicStorage : public Storage<Music> {
+public:
+    void load(std::string path, std::string extension) override;
+    ~MusicStorage();
+};
