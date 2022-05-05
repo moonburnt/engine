@@ -30,34 +30,29 @@ void SceneManager::set_current_scene(Scene* scene) {
 }
 
 bool SceneManager::is_active() {
-    return !WindowShouldClose() && active;
+    return active;
 }
 
-void SceneManager::run_update_loop() {
-    while (is_active()) {
-        // Because we don't really need double precision there
-        float dt = static_cast<float>(GetFrameTime());
-        current_scene->update(dt);
-
-        for (const auto& [_, i] : nodes) {
-            i->update();
-        }
-
-        music_mgr.update();
-
-        BeginDrawing();
-        ClearBackground(current_scene->bg_color);
-        current_scene->draw();
-
-        for (const auto& [_, i] : nodes) {
-            i->draw();
-        }
-
-        EndDrawing();
+void SceneManager::update(float dt) {
+    if (!active) {
+        return;
     }
 
-    spdlog::info("Attempting to shutdown the game.");
-    CloseWindow();
+    current_scene->update(dt);
+
+    for (const auto& [_, i] : nodes) {
+        i->update();
+    }
+
+    BeginDrawing();
+    ClearBackground(current_scene->bg_color);
+    current_scene->draw();
+
+    for (const auto& [_, i] : nodes) {
+        i->draw();
+    }
+
+    EndDrawing();
 }
 
 // Default SceneManager's constructor is all way down, coz TitleScreen is in its
@@ -102,13 +97,18 @@ void TraceLog(int logLevel, const char* text, va_list args) {
 }
 
 // GameWindow stuff
-GameWindow::GameWindow() {
+GameWindow::GameWindow(SceneManager sc_mgr, MusicManager music_mgr)
+    : sc_mgr(sc_mgr)
+    , music_mgr(music_mgr) {
     // Overriding raylib's default logger to pipe messages to spdlog.
     // Doing this to provide unified look and management for both engine and
     // custom messages.
     SetTraceLogCallback(TraceLog);
     spdlog::set_pattern("[%H:%M:%S][%l] %v");
-    initialized = false;
+}
+
+GameWindow::GameWindow()
+    : GameWindow(SceneManager(), MusicManager()) {
 }
 
 void GameWindow::init(int x, int y, std::string title, int fps) {
@@ -138,6 +138,10 @@ void GameWindow::init() {
     init(1280, 720);
 }
 
+bool GameWindow::is_active() {
+    return active && !WindowShouldClose();
+}
+
 void GameWindow::run() {
     if (!initialized) {
         spdlog::critical("Attempting to run unitialized GameWindow.\n"
@@ -145,5 +149,18 @@ void GameWindow::run() {
         abort();
     };
 
-    sc_mgr.run_update_loop();
+    active = true;
+
+    while (is_active()) {
+        // Because we don't really need double precision there
+        sc_mgr.update(static_cast<float>(GetFrameTime()));
+        music_mgr.update();
+    }
+
+    spdlog::info("Attempting to shutdown the game.");
+    CloseWindow();
+}
+
+void GameWindow::quit() {
+    active = false;
 }

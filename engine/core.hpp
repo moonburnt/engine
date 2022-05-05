@@ -41,10 +41,6 @@ private:
     Scene* current_scene = nullptr;
 
 public:
-    // I don't think it should be there, but will do for now
-    // TODO: move it from scene manager's update cycle to GameWindow's run()
-    // (and into separate thread)
-    MusicManager music_mgr;
     // Node storage.
     std::unordered_map<std::string, Node*> nodes;
 
@@ -52,18 +48,21 @@ public:
     ~SceneManager();
 
     void set_current_scene(Scene* scene);
-    void run_update_loop();
+    void update(float dt);
     bool active;
     bool is_active();
 };
 
 class GameWindow {
 protected:
-    bool initialized;
+    bool initialized = false;
+    bool active = false;
 
 public:
     SceneManager sc_mgr;
+    MusicManager music_mgr;
 
+    GameWindow(SceneManager sc_mgr, MusicManager music_mgr);
     GameWindow();
 
     // Initialize game window
@@ -72,6 +71,8 @@ public:
     void init(int x, int y);
     void init();
 
+    bool is_active();
     // Run scene manager and other stuff
     void run();
+    void quit();
 };
