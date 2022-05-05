@@ -28,7 +28,7 @@ std::vector<Sprite> make_sprites(const Texture2D* spritesheet, Vector2 sprite_si
 
 // TODO: maybe make it possible for animation to be both based on spritesheet
 // and separate textures? Thus this whole thing will become pointless
-template<typename T> class AnimationBase {
+template <typename T> class AnimationBase {
 protected:
     Timer timer;
     std::vector<T> frames;

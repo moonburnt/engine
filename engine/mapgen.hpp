@@ -1,10 +1,10 @@
 #pragma once
 
-#include <raylib.h>
+#include <functional>
 #include <optional>
+#include <raylib.h>
 #include <unordered_map>
 #include <vector>
-#include <functional>
 
 // Tiled map generator
 
@@ -19,7 +19,7 @@ struct Point {
 // delete objects, just these are stored directly on grid). And probably a
 // container to store few maps inside and process their content at once.
 
-template<typename T> class TiledMap {
+template <typename T> class TiledMap {
 private:
     Point map_size;
     Point tile_size;
@@ -40,13 +40,14 @@ private:
     std::function<void(T, Vector2)> draw_callback;
 
 public:
-    TiledMap(Point _map_size, Point _tile_size, std::function<void(T, Vector2)> _draw_callback)
+    TiledMap(
+        Point _map_size, Point _tile_size, std::function<void(T, Vector2)> _draw_callback)
         : map_size(_map_size)
         , tile_size(_tile_size)
         , grid_size(map_size.x * map_size.y)
         , map_real_size(
-            {static_cast<float>(map_size.x * tile_size.x),
-            static_cast<float>(map_size.y * tile_size.y)})
+              {static_cast<float>(map_size.x * tile_size.x),
+               static_cast<float>(map_size.y * tile_size.y)})
         , map_objects_amount(0)
         , placeholder_id(-1)
         , return_placeholder(false)
@@ -65,7 +66,7 @@ public:
         map_objects[map_objects_amount] = object;
         map_objects_amount++;
 
-        return map_objects_amount-1;
+        return map_objects_amount - 1;
     }
 
     // Replace object id in grid[grid_index] with placeholder id.
@@ -157,7 +158,8 @@ public:
 
     bool is_tile_on_map(Point tile) {
         return (
-            (0 <= tile.x) && (tile.x < map_size.x) && (0 <= tile.y) && (tile.y < map_size.y));
+            (0 <= tile.x) && (tile.x < map_size.x) && (0 <= tile.y) &&
+            (tile.y < map_size.y));
     }
 
     // Attempting to use out-of-bounds values on these will cause issues.
@@ -223,14 +225,15 @@ public:
 // Well, kinda. You have to bring initialized map of T type to generate().
 // Because generator does not know which arguments your T may need to initialize.
 // I planned to hardcode it to TiledMap's api, but then found it to be sadge.
-template<typename T> class ColorGen {
+template <typename T> class ColorGen {
 protected:
     std::unordered_map<int, std::function<void(T&, size_t)>> callbacks;
     std::vector<int> grid;
     Point map_size;
 
 public:
-    ColorGen() {}
+    ColorGen() {
+    }
 
     ColorGen(Image map_file) {
         prepare(map_file);
@@ -272,11 +275,10 @@ public:
             }
         }
     }
-
 };
 
 // Deep tiled map from Fortune Crawler
-template<typename T> class TiledMapDeep {
+template <typename T> class TiledMapDeep {
 private:
     Point map_size;
     Point tile_size;
@@ -293,13 +295,14 @@ private:
     std::function<void(T, Vector2)> draw_callback;
 
 public:
-    TiledMapDeep(Point _map_size, Point _tile_size, std::function<void(T, Vector2)> _draw_callback)
+    TiledMapDeep(
+        Point _map_size, Point _tile_size, std::function<void(T, Vector2)> _draw_callback)
         : map_size(_map_size)
         , tile_size(_tile_size)
         , grid_size(map_size.x * map_size.y)
         , map_real_size(
-            {static_cast<float>(map_size.x * tile_size.x),
-            static_cast<float>(map_size.y * tile_size.y)})
+              {static_cast<float>(map_size.x * tile_size.x),
+               static_cast<float>(map_size.y * tile_size.y)})
         , map_objects_amount(0)
         , grid(grid_size) // I hope this will work, coz grid(grid_size, {}) didn't
         , draw_callback(_draw_callback) {
@@ -310,14 +313,14 @@ public:
         map_objects[map_objects_amount] = object;
         map_objects_amount++;
 
-        return map_objects_amount-1;
+        return map_objects_amount - 1;
     }
 
     // Clear provided tile from everything. If bool set to true - also purge objects
     void clear_tile(int grid_index, bool delete_from_storage) {
         if (delete_from_storage) {
             // I hope this will work
-            for (auto item: grid[grid_index]) {
+            for (auto item : grid[grid_index]) {
                 map_objects.erase(item);
             }
         }
@@ -392,7 +395,8 @@ public:
 
     bool is_tile_on_map(Point tile) {
         return (
-            (0 <= tile.x) && (tile.x < map_size.x) && (0 <= tile.y) && (tile.y < map_size.y));
+            (0 <= tile.x) && (tile.x < map_size.x) && (0 <= tile.y) &&
+            (tile.y < map_size.y));
     }
 
     // Attempting to use out-of-bounds values on these will cause issues.

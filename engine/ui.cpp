@@ -1,11 +1,11 @@
 #include "ui.hpp"
 #include "utility.hpp"
 
+#include <algorithm>
 #include <optional>
 #include <raylib.h>
 #include <string>
 #include <tuple>
-#include <algorithm>
 
 // Label
 Label::Label(const std::string& txt, Vector2 position)
@@ -57,11 +57,11 @@ Button::Button(
     const Sound* sfx_hover,
     const Sound* sfx_click,
     Rectangle rectangle)
-        : pos({0.0f, 0.0f})
-        , state(ButtonStates::idle)
-        , manual_update_mode(false)
-        , rect(rectangle)
-        , last_state(ButtonStates::idle) {
+    : pos({0.0f, 0.0f})
+    , state(ButtonStates::idle)
+    , manual_update_mode(false)
+    , rect(rectangle)
+    , last_state(ButtonStates::idle) {
     textures[ButtonStates::idle] = texture_default;
     textures[ButtonStates::hover] = texture_hover;
     textures[ButtonStates::pressed] = texture_pressed;
@@ -78,18 +78,17 @@ Button::Button(
     const Texture2D* texture_pressed,
     const Sound* sfx_hover,
     const Sound* sfx_click,
-    Rectangle rectangle) : Button(
-        texture_default,
-        texture_hover,
-        texture_pressed,
-        sfx_hover,
-        sfx_click,
-        rectangle) {
+    Rectangle rectangle)
+    : Button(
+          texture_default,
+          texture_hover,
+          texture_pressed,
+          sfx_hover,
+          sfx_click,
+          rectangle) {
     // I'm not sure if this should be based on center of rect or on center of
     // texture. For now it's done like that, may change in future.
-    text = new Label(
-        txt,
-        center_text(txt, {rect.width / 2.0f, rect.height / 2.0f}));
+    text = new Label(txt, center_text(txt, {rect.width / 2.0f, rect.height / 2.0f}));
 }
 
 Button::~Button() {
@@ -98,15 +97,13 @@ Button::~Button() {
     }
 }
 
-void Button::set_callback(std::function<void ()> _on_click_callback) {
+void Button::set_callback(std::function<void()> _on_click_callback) {
     on_click_callback = _on_click_callback;
 }
 
-void Button::set_text(const std::string & txt) {
+void Button::set_text(const std::string& txt) {
     if (text == nullptr) {
-        text = new Label(
-            txt,
-            center_text(txt,{rect.width / 2.0f, rect.height / 2.0f}));
+        text = new Label(txt, center_text(txt, {rect.width / 2.0f, rect.height / 2.0f}));
     }
     else {
         text->set_text(txt);
@@ -183,7 +180,7 @@ void Button::set_pos(Vector2 position) {
 
     if (text != nullptr) {
         text->set_pos(
-            {position.x + (rect.width / 2.0f),position.y + (rect.height / 2.0f)});
+            {position.x + (rect.width / 2.0f), position.y + (rect.height / 2.0f)});
         text->center();
     }
 }
@@ -410,10 +407,11 @@ void ButtonStorage::draw() {
     }
 }
 
-
 // Vertical Container
 
-VerticalContainer::VerticalContainer(float _gap) : gap(_gap) {}
+VerticalContainer::VerticalContainer(float _gap)
+    : gap(_gap) {
+}
 
 void VerticalContainer::set_pos(Vector2 position) {
     float x_diff = rect.x - pos.x;

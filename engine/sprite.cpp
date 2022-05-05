@@ -42,11 +42,11 @@ std::vector<Rectangle> make_rects(const Texture2D* spritesheet, Vector2 sprite_s
     // I think this will do? May need to flip these around.
     for (auto current_y = 0; current_y < vertical_amount; current_y++) {
         for (auto current_x = 0; current_x < horizontal_amount; current_x++) {
-            rects.push_back({
-                static_cast<float>(sprite_size.x * current_x),
-                static_cast<float>(sprite_size.y * current_y),
-                sprite_size.x,
-                sprite_size.y});
+            rects.push_back(
+                {static_cast<float>(sprite_size.x * current_x),
+                 static_cast<float>(sprite_size.y * current_y),
+                 sprite_size.x,
+                 sprite_size.y});
         }
     }
 

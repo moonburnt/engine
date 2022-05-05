@@ -1,7 +1,7 @@
 #pragma once
 
-#include <deque>
 #include <algorithm>
+#include <deque>
 #include <raylib.h>
 
 // Idea is to group specific sounds together, allowing to adjust their volume,
@@ -130,17 +130,19 @@ class SoundManager : public SimpleAudioManager<Sound> {
 public:
     SoundManager(int slimit, float vol)
         : SimpleAudioManager(
-            SetSoundVolume,
-            PlaySound,
-            PauseSound,
-            StopSound,
-            ResumeSound,
-            IsSoundPlaying,
-            slimit,
-            vol) {}
+              SetSoundVolume,
+              PlaySound,
+              PauseSound,
+              StopSound,
+              ResumeSound,
+              IsSoundPlaying,
+              slimit,
+              vol) {
+    }
 
     SoundManager()
-        : SoundManager(5, 1.0f) {}
+        : SoundManager(5, 1.0f) {
+    }
 };
 
 // TODO: music manager may also have additional effects, such as tracks crossfading.
@@ -149,20 +151,22 @@ class MusicManager : public SimpleAudioManager<Music> {
 public:
     MusicManager(int slimit, float vol)
         : SimpleAudioManager(
-            SetMusicVolume,
-            PlayMusicStream,
-            PauseMusicStream,
-            StopMusicStream,
-            ResumeMusicStream,
-            IsMusicStreamPlaying,
-            slimit,
-            vol) {}
+              SetMusicVolume,
+              PlayMusicStream,
+              PauseMusicStream,
+              StopMusicStream,
+              ResumeMusicStream,
+              IsMusicStreamPlaying,
+              slimit,
+              vol) {
+    }
 
     MusicManager()
-        : MusicManager(2, 1.0f) {}
+        : MusicManager(2, 1.0f) {
+    }
 
     void update() {
-        for (auto sound: currently_playing) {
+        for (auto sound : currently_playing) {
             UpdateMusicStream(sound);
         }
         SimpleAudioManager<Music>::update();

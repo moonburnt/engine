@@ -63,12 +63,8 @@ void SceneManager::run_update_loop() {
 // Default SceneManager's constructor is all way down, coz TitleScreen is in its
 // body. But don't worry - even if instantiation is declared above, nothing bad
 // will happen - this one will get triggered correctly
-SceneManager::SceneManager() {
-    // Setting current_scene to null, to avoid segfault below.
-    current_scene = nullptr;
-
-    // active = false;
-    active = true;
+SceneManager::SceneManager()
+    : active(true) {
 }
 
 SceneManager::~SceneManager() {

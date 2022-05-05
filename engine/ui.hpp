@@ -2,12 +2,12 @@
 
 #include <raylib.h>
 
+#include <functional>
 #include <optional>
 #include <string>
 #include <tuple>
 #include <unordered_map>
 #include <vector>
-#include <functional>
 
 // UI primitives.
 enum class ButtonStates {

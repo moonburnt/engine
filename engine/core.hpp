@@ -1,9 +1,9 @@
 #pragma once
 
 #include "raylib.h"
+#include "sound.hpp"
 #include <string>
 #include <unordered_map>
-#include "sound.hpp"
 
 // Node is an abstract thing that can be attached to Scene or SceneManager
 class Node {
@@ -36,8 +36,9 @@ public:
 
 class SceneManager {
 private:
-    // We are using pointer to Scene, to make it work with Scene's children
-    Scene* current_scene;
+    // We are using pointer to Scene, to make it work with Scene's children.
+    // By default its set to nullptr, to verify if children has been configured.
+    Scene* current_scene = nullptr;
 
 public:
     // I don't think it should be there, but will do for now
