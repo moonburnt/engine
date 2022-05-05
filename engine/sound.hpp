@@ -19,6 +19,7 @@ protected:
     std::function<void(T, float)> set_audio_volume;
     std::function<void(T)> play_audio;
     std::function<void(T)> pause_audio;
+    std::function<void(T)> stop_audio;
     std::function<void(T)> resume_audio;
     std::function<bool(T)> is_audio_playing;
 
@@ -27,6 +28,7 @@ public:
         std::function<void(T, float)> _set_audio_volume,
         std::function<void(T)> _play_audio,
         std::function<void(T)> _pause_audio,
+        std::function<void(T)> _stop_audio,
         std::function<void(T)> _resume_audio,
         std::function<bool(T)> _is_audio_playing,
         int slimit,
@@ -38,14 +40,28 @@ public:
         set_audio_volume = _set_audio_volume;
         play_audio = _play_audio;
         pause_audio = _pause_audio;
+        stop_audio = _stop_audio;
         resume_audio = _resume_audio;
         is_audio_playing = _is_audio_playing;
+    }
+
+    void set_volume(float vol) {
+        volume = std::clamp(vol, 0.0f, 1.0f);
     }
 
     void play(T sound) {
         if (currently_playing.size() < concurrent_sounds_limit) {
             set_audio_volume(sound, volume);
             currently_playing.push_back(sound);
+            play_audio(sound);
+        }
+    }
+
+    void play_all() {
+        if (is_playing) return;
+
+        is_playing = true;
+        for (auto sound : currently_playing) {
             play_audio(sound);
         }
     }
@@ -57,6 +73,20 @@ public:
         for (auto sound : currently_playing) {
             pause_audio(sound);
         }
+    }
+
+    void stop_all() {
+        if (!is_playing) return;
+
+        is_playing = false;
+        for (auto sound : currently_playing) {
+            stop_audio(sound);
+        }
+    }
+
+    void reset() {
+        stop_all();
+        currently_playing.clear();
     }
 
     void resume_all() {
@@ -87,6 +117,7 @@ public:
             SetSoundVolume,
             PlaySound,
             PauseSound,
+            StopSound,
             ResumeSound,
             IsSoundPlaying,
             slimit,
@@ -105,6 +136,7 @@ public:
             SetMusicVolume,
             PlayMusicStream,
             PauseMusicStream,
+            StopMusicStream,
             ResumeMusicStream,
             IsMusicStreamPlaying,
             slimit,
@@ -117,5 +149,6 @@ public:
         for (auto sound: currently_playing) {
             UpdateMusicStream(sound);
         }
+        SimpleAudioManager<Music>::update();
     }
 };
