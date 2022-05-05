@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <deque>
 #include <algorithm>
 #include <raylib.h>
 
@@ -12,7 +12,7 @@
 
 template <typename T> class SimpleAudioManager {
 protected:
-    std::vector<T> currently_playing;
+    std::deque<T> currently_playing;
     bool is_playing;
     unsigned long int concurrent_sounds_limit;
     float volume;
@@ -36,7 +36,8 @@ public:
         : is_playing(true)
         , concurrent_sounds_limit(std::max(slimit, 1))
         , volume(std::clamp(vol, 0.0f, 1.0f)) {
-        currently_playing.reserve(concurrent_sounds_limit);
+        // There is no reserve() for deque, since it would bring no benefits
+        // currently_playing.reserve(concurrent_sounds_limit);
         set_audio_volume = _set_audio_volume;
         play_audio = _play_audio;
         pause_audio = _pause_audio;
@@ -49,12 +50,27 @@ public:
         volume = std::clamp(vol, 0.0f, 1.0f);
     }
 
-    void play(T sound) {
-        if (currently_playing.size() < concurrent_sounds_limit) {
-            set_audio_volume(sound, volume);
-            currently_playing.push_back(sound);
-            play_audio(sound);
+    void play(T sound, bool replace_old) {
+        if (currently_playing.size() >= concurrent_sounds_limit) {
+            if (replace_old) {
+                // Hopefully this wont cause trouble in threads...
+                stop_audio(currently_playing.back());
+                // Hopefully this wont be casted on an empty container...
+                currently_playing.pop_back();
+            }
+            else {
+                return;
+            }
         }
+
+        is_playing = true;
+        set_audio_volume(sound, volume);
+        currently_playing.push_front(sound);
+        play_audio(sound);
+    }
+
+    void play(T sound) {
+        play(sound, false);
     }
 
     void play_all() {
