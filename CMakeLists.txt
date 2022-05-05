@@ -24,7 +24,6 @@ add_library(engine STATIC
     engine/quadtree.hpp
     engine/settings.cpp
     engine/settings.hpp
-    engine/sound.cpp
     engine/sound.hpp
     engine/sprite.cpp
     engine/sprite.hpp
