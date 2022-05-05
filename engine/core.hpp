@@ -3,6 +3,7 @@
 #include "raylib.h"
 #include <string>
 #include <unordered_map>
+#include "sound.hpp"
 
 // Node is an abstract thing that can be attached to Scene or SceneManager
 class Node {
@@ -39,6 +40,10 @@ private:
     Scene* current_scene;
 
 public:
+    // I don't think it should be there, but will do for now
+    // TODO: move it from scene manager's update cycle to GameWindow's run()
+    // (and into separate thread)
+    MusicManager music_mgr;
     // Node storage.
     std::unordered_map<std::string, Node*> nodes;
 

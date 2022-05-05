@@ -43,6 +43,8 @@ void SceneManager::run_update_loop() {
             i->update();
         }
 
+        music_mgr.update();
+
         BeginDrawing();
         ClearBackground(current_scene->bg_color);
         current_scene->draw();
