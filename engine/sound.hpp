@@ -2,7 +2,8 @@
 
 #include <algorithm>
 #include <deque>
-#include <raylib.h>
+#include <functional>
+#include "raylib.h"
 
 // Idea is to group specific sounds together, allowing to adjust their volume,
 // limit amount of concurrent sounds and so on.
