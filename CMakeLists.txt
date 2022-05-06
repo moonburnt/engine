@@ -35,36 +35,15 @@ add_library(engine STATIC
     engine/storage.hpp
 )
 
-target_include_directories(engine
-    PUBLIC
+target_include_directories(engine PUBLIC
     "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
     "$<INSTALL_INTERFACE:${PROJECT_SOURCE_DIR}/engine>"
 )
 
 if(PROJECT_IS_TOP_LEVEL)
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        list(APPEND COMPILER_FLAGS
-            "-Wall"
-            "-Wextra"
-            "-Wpedantic"
-            "-Werror"
-            "-Wextra-semi"
-            "-Wsuggest-override"
-            "-Wno-missing-field-initializers"
-        )
-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-        list(APPEND COMPILER_FLAGS
-            "/Wall"
-            "/w34263"
-            "/w34266"
-        )
-    else()
-        message(FATAL_ERROR "Attempting to use an unsupported compiler!")
-    endif()
-
-    target_compile_options(engine
-        PRIVATE
-        ${COMPILER_FLAGS}
+    target_compile_options(engine PRIVATE
+        $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-Wall -Wextra -Wpedantic -Werror -Wextra-semi -Wsuggest-override -Wno-missing-field-initializers>
+        $<$<CXX_COMPILER_ID:MSVC>:/Wall /w34263 /w34266>
     )
 
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
