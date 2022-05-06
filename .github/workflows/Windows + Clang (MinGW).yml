@@ -1,0 +1,37 @@
+name: "Windows + Clang x86_64"
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  windows:
+    name: "Windows + Clang x86_64"
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Install Dependencies
+      uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: >-
+          mingw-w64-x86_64-cmake mingw-w64-x86_64-clang mingw-w64-x86_64-freetype
+          make
+        path-type: inherit
+
+    - name: Checkout Submodules
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+        lfs: true
+
+    - name: Checkout LFS objects
+      shell: msys2 {0}
+      run: git lfs checkout
+
+    - name: Build
+      shell: msys2 {0}
+      run: |
+        cmake . -B ./build -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Unix\ Makefiles
+        cmake --build ./build
+

@@ -1,15 +1,18 @@
-name: build_linux
+name: "Linux + Clang/GCC"
 
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
   linux:
-    name: ${{ matrix.config }} Linux ${{ matrix.arch }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        arch: [x86_64]
+        config:
+          - { name: "Linux + Clang x86_64", c_compiler: "clang", cpp_compiler: "clang++"}
+          - { name: "Linux + gcc x86_64", c_compiler: "gcc", cpp_compiler: "g++"}
+
+    name: ${{ matrix.config.name }}
 
     steps:
     - name: Install Dependencies
@@ -29,5 +32,5 @@ jobs:
     - name: Build
       run: |
         mkdir ./build
-        cmake . -B ./build -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Unix\ Makefiles
+        cmake . -B ./build -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.config.c_compiler }} -DCMAKE_CXX_COMPILER=${{ matrix.config.cpp_compiler }} -G Unix\ Makefiles
         cmake --build ./build

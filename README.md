@@ -2,8 +2,9 @@
 
 ## Status
 
-[![Linux Build](https://github.com/moonburnt/engine/actions/workflows/build_linux.yml/badge.svg)](https://github.com/moonburnt/engine/actions/workflows/build_linux.yml)
-[![Windows Build](https://github.com/moonburnt/engine/actions/workflows/build_windows.yml/badge.svg)](https://github.com/moonburnt/engine/actions/workflows/build_windows.yml)
+[![Linux + Clang/GCC](https://github.com/moonburnt/engine/actions/workflows/Linux.yml/badge.svg)](https://github.com/moonburnt/engine/actions/workflows/Linux.yml)
+[![Windows + MSVC](https://github.com/moonburnt/engine/actions/workflows/Windows%20+%20MSVC.yml/badge.svg)](https://github.com/moonburnt/engine/actions/workflows/Windows%20+%20MSVC.yml)
+[![Windows + Clang (MinGW)](https://github.com/moonburnt/engine/actions/workflows/Windows%20+%20Clang%20(MinGW).yml/badge.svg)](https://github.com/moonburnt/engine/actions/workflows/Windows%20+%20Clang%20(MinGW).yml)
 
 ## Description
 
@@ -18,16 +19,12 @@ template is ok, TileMap with game-specific data is not).
 ## Pre-requirements
 
 - CMake 3.21+
-- clang++ 13.0.1 (mac and linux only)
 
 ## Installation
 
 ```
 git submodule update --init
 mkdir ./build
-# On mac/linux
-CXX=clang++ cmake . -B ./build
-# On windows, use this instead
-# cmake . -B ./build
+cmake . -B ./build
 cmake --build ./build
 ```

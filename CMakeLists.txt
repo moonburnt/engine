@@ -40,6 +40,13 @@ target_include_directories(engine PUBLIC
     "$<INSTALL_INTERFACE:${PROJECT_SOURCE_DIR}/engine>"
 )
 
+# Disable warnings about vsprintf being deprecated on windows
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR MINGW)
+    target_compile_definitions(engine PRIVATE
+        _CRT_SECURE_NO_WARNINGS
+    )
+endif()
+
 if(PROJECT_IS_TOP_LEVEL)
     target_compile_options(engine PRIVATE
         $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-Wall -Wextra -Wpedantic -Werror -Wextra-semi -Wsuggest-override -Wno-missing-field-initializers>
