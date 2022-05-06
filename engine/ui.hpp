@@ -183,7 +183,9 @@ protected:
     // a vector. May rework into map if there will be need to remove elements.
     std::vector<ButtonBase*> storage;
     // Number of selected button in storage
-    size_t selected_button;
+    // It may be an overkill to use optional there, but otherwise there would be
+    // issues with setting unsettable default that will compile.
+    std::optional<size_t> selected_button;
     bool manual_update_mode;
 
 public:

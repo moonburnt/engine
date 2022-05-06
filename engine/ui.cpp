@@ -287,10 +287,7 @@ void Checkbox::reset_state() {
 }
 
 // Button Storage
-ButtonStorage::ButtonStorage() {
-    selected_button = -1;
-    manual_update_mode = false;
-}
+ButtonStorage::ButtonStorage() : manual_update_mode(false) {}
 
 ButtonStorage::~ButtonStorage() {
     // This may be not the right way to do things, idk
@@ -332,23 +329,23 @@ void ButtonStorage::set_manual_update_mode(bool mode) {
 }
 
 void ButtonStorage::select_button(size_t button) {
-    if (!storage.empty() && button >= 0 && button < storage.size()) {
+    if (!storage.empty() && button < storage.size()) {
         set_manual_update_mode(true);
-        if (selected_button && selected_button != -1ul) {
-            storage[selected_button]->reset_state();
+        if (selected_button != std::nullopt) {
+            storage[selected_button.value()]->reset_state();
         }
         selected_button = button;
-        storage[selected_button]->set_state(ButtonStates::hover);
+        storage[selected_button.value()]->set_state(ButtonStates::hover);
     }
 }
 
 void ButtonStorage::select_next(bool cycle) {
     int button;
-    if (cycle && (selected_button + 1ul == storage.size())) {
+    if (cycle && (selected_button.value() + 1ul == storage.size())) {
         button = 0;
     }
     else {
-        button = selected_button + 1;
+        button = selected_button.value() + 1;
     }
 
     select_button(button);
@@ -356,12 +353,12 @@ void ButtonStorage::select_next(bool cycle) {
 
 void ButtonStorage::select_previous(bool cycle) {
     int button;
-    if (cycle && (selected_button - 1ul < 0)) {
+    if (cycle && (static_cast<int>(selected_button.value()) - 1 < 0)) {
         // TODO: may need to set it to size-1.
         button = storage.size();
     }
     else {
-        button = selected_button - 1;
+        button = selected_button.value() - 1;
     }
 
     select_button(button);
@@ -369,8 +366,8 @@ void ButtonStorage::select_previous(bool cycle) {
 
 void ButtonStorage::update() {
     if (manual_update_mode) {
-        if (selected_button >= 0) {
-            storage[selected_button]->update();
+        if (selected_button != std::nullopt) {
+            storage[selected_button.value()]->update();
         }
     }
     else {
@@ -386,17 +383,20 @@ void ButtonStorage::update() {
 }
 
 std::optional<std::tuple<int, ButtonStates>> ButtonStorage::get_selected_button_state() {
-    if (selected_button >= 0) {
-        return std::make_tuple(selected_button, storage[selected_button]->get_state());
+    if (selected_button != std::nullopt) {
+        return std::make_tuple(
+            selected_button.value(), storage[selected_button.value()]->get_state());
     }
 
     return std::nullopt;
 }
 
 bool ButtonStorage::set_selected_button_state(ButtonStates state) {
-    if (selected_button < 0) return false;
+    if (selected_button == std::nullopt) {
+        return false;
+    }
 
-    storage[selected_button]->set_state(state);
+    storage[selected_button.value()]->set_state(state);
 
     return true;
 }
