@@ -15,6 +15,8 @@ template <typename T> class SimpleAudioManager {
 protected:
     std::deque<T> currently_playing;
     bool is_playing;
+    // This should probably be less than the following:
+    // https://github.com/raysan5/raylib/blob/ed29b4eedf0a5cea5a7878658d50743088dba6a6/src/raudio.c#L268
     unsigned long int concurrent_sounds_limit;
     float volume;
     std::function<void(T, float)> set_audio_volume;
@@ -49,6 +51,26 @@ public:
 
     void set_volume(float vol) {
         volume = std::clamp(vol, 0.0f, 1.0f);
+    }
+
+    // Set concurrent sounds limit. If less than current amount of tracks -
+    // will forcibly stop and remove all older tracks from queue
+    void set_concurrent_sounds_limit(size_t limit) {
+        if (limit < 1) {
+            return;
+        }
+
+        if (currently_playing.size() > limit) {
+            int limit_diff = limit - currently_playing.size();
+
+            // I think this should work?
+            for (auto i = 0; i < limit_diff; i++) {
+                stop_audio(currently_playing.back());
+                currently_playing.pop_back();
+            }
+        }
+
+        concurrent_sounds_limit = limit;
     }
 
     void play(T sound, bool replace_old) {
