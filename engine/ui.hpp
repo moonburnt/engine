@@ -14,7 +14,8 @@ enum class ButtonStates {
     idle,
     hover,
     pressed,
-    clicked
+    clicked,
+    disabled
 };
 
 class ButtonBase {
@@ -75,7 +76,7 @@ protected:
     Label* text = nullptr;
 
 private:
-    std::unordered_map<int, const Sound*> sounds;
+    std::unordered_map<ButtonStates, const Sound*> sounds;
     // Button's hitbox. X and Y are offsets from texture's top left
     Rectangle rect;
     // Button state from previous screen
@@ -83,23 +84,21 @@ private:
 
 public:
     Button(
-        const Texture2D* texture_default,
-        const Texture2D* texture_hover,
-        const Texture2D* texture_pressed,
-        const Sound* sfx_hover,
-        const Sound* sfx_click,
+        std::unordered_map<ButtonStates, const Texture2D*> textures,
+        std::unordered_map<ButtonStates, const Sound*> sounds,
         Rectangle rectangle);
 
     Button(
         const std::string& text,
-        const Texture2D* texture_default,
-        const Texture2D* texture_hover,
-        const Texture2D* texture_pressed,
-        const Sound* sfx_hover,
-        const Sound* sfx_click,
+        std::unordered_map<ButtonStates, const Texture2D*> textures,
+        std::unordered_map<ButtonStates, const Sound*> sounds,
         Rectangle rectangle);
 
     ~Button();
+
+    void enable();
+    void disable();
+    bool is_enabled();
 
     // Set on_click_callback function
     void set_callback(std::function<void()> on_click_callback);
@@ -138,25 +137,15 @@ private:
 
 public:
     Checkbox(
-        const Texture2D* texture_on_default,
-        const Texture2D* texture_on_hover,
-        const Texture2D* texture_on_pressed,
-        const Texture2D* texture_off_default,
-        const Texture2D* texture_off_hover,
-        const Texture2D* texture_off_pressed,
-        const Sound* sfx_hover,
-        const Sound* sfx_click,
+        std::unordered_map<ButtonStates, const Texture2D*> textures_on,
+        std::unordered_map<ButtonStates, const Texture2D*> textures_off,
+        std::unordered_map<ButtonStates, const Sound*> sounds,
         Rectangle rectangle);
 
     Checkbox(
-        const Texture2D* texture_on_default,
-        const Texture2D* texture_on_hover,
-        const Texture2D* texture_on_pressed,
-        const Texture2D* texture_off_default,
-        const Texture2D* texture_off_hover,
-        const Texture2D* texture_off_pressed,
-        const Sound* sfx_hover,
-        const Sound* sfx_click,
+        std::unordered_map<ButtonStates, const Texture2D*> textures_on,
+        std::unordered_map<ButtonStates, const Texture2D*> textures_off,
+        std::unordered_map<ButtonStates, const Sound*> sounds,
         Rectangle rectangle,
         bool default_state);
 

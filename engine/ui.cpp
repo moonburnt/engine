@@ -5,6 +5,7 @@
 #include <optional>
 #include <raylib.h>
 #include <string>
+#include <stdexcept>
 #include <tuple>
 
 // Label
@@ -51,40 +52,27 @@ void Button::reset_state() {
 
 // Constructors don't need to specify return state
 Button::Button(
-    const Texture2D* texture_default,
-    const Texture2D* texture_hover,
-    const Texture2D* texture_pressed,
-    const Sound* sfx_hover,
-    const Sound* sfx_click,
+    std::unordered_map<ButtonStates, const Texture2D*> textures,
+    std::unordered_map<ButtonStates, const Sound*> sounds,
     Rectangle rectangle)
     : pos({0.0f, 0.0f})
     , state(ButtonStates::idle)
     , manual_update_mode(false)
+    , textures(textures)
+    , sounds(sounds)
     , rect(rectangle)
     , last_state(ButtonStates::idle) {
-    textures[ButtonStates::idle] = texture_default;
-    textures[ButtonStates::hover] = texture_hover;
-    textures[ButtonStates::pressed] = texture_pressed;
-    textures[ButtonStates::clicked] = texture_default;
-    sounds[0] = sfx_hover;
-    sounds[1] = sfx_click;
 }
 
 // TODO: constructor with option for text offset
 Button::Button(
     const std::string& txt,
-    const Texture2D* texture_default,
-    const Texture2D* texture_hover,
-    const Texture2D* texture_pressed,
-    const Sound* sfx_hover,
-    const Sound* sfx_click,
+    std::unordered_map<ButtonStates, const Texture2D*> textures,
+    std::unordered_map<ButtonStates, const Sound*> sounds,
     Rectangle rectangle)
     : Button(
-          texture_default,
-          texture_hover,
-          texture_pressed,
-          sfx_hover,
-          sfx_click,
+          textures,
+          sounds,
           rectangle) {
     // I'm not sure if this should be based on center of rect or on center of
     // texture. For now it's done like that, may change in future.
@@ -95,6 +83,28 @@ Button::~Button() {
     if (text != nullptr) {
         delete text;
     }
+}
+
+void Button::enable() {
+    if (state != ButtonStates::disabled) {
+        return;
+    }
+    else {
+        state = ButtonStates::idle;
+    }
+}
+
+void Button::disable() {
+    if (state == ButtonStates::disabled) {
+        return;
+    }
+    else {
+        state = ButtonStates::disabled;
+    }
+}
+
+bool Button::is_enabled() {
+    return state != ButtonStates::disabled;
 }
 
 void Button::set_callback(std::function<void()> _on_click_callback) {
@@ -112,16 +122,17 @@ void Button::set_text(const std::string& txt) {
 }
 
 enum ButtonStates Button::update() {
-    if (manual_update_mode) return state;
+    if (manual_update_mode | (state == ButtonStates::disabled)) {
+        return state;
+    }
 
     if (CheckCollisionPointRec(GetMousePosition(), rect)) {
         if (last_state == ButtonStates::pressed) {
             if (IsMouseButtonUp(MOUSE_BUTTON_LEFT)) {
                 state = ButtonStates::clicked;
-                PlaySound(*sounds[1]);
-                if (on_click_callback != nullptr) {
-                    on_click_callback();
-                }
+                // if (on_click_callback != nullptr) {
+                //     on_click_callback();
+                // }
             }
         }
         else if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
@@ -129,14 +140,20 @@ enum ButtonStates Button::update() {
         }
 
         else {
-            if (last_state != ButtonStates::hover) {
-                PlaySound(*sounds[0]);
-            }
             state = ButtonStates::hover;
         }
     }
     else {
         state = ButtonStates::idle;
+    }
+
+    if (state != last_state && sounds.count(state)) {
+        PlaySound(*sounds[state]);
+    }
+
+    // Moved this there to avoid heap-use-after-free errors
+    if (state == ButtonStates::clicked && on_click_callback != nullptr) {
+        on_click_callback();
     }
 
     last_state = state;
@@ -145,17 +162,23 @@ enum ButtonStates Button::update() {
 }
 
 void Button::draw() {
-    DrawTexture(*textures[state], pos.x, pos.y, WHITE);
+    if (textures.count(state)) {
+        DrawTexture(*textures[state], pos.x, pos.y, WHITE);
+    }
+
     if (text != nullptr) {
         text->draw();
     }
 }
 
 void Button::set_state(ButtonStates _state) {
-    if (_state == ButtonStates::clicked) PlaySound(*sounds[1]);
-    else if (_state == ButtonStates::hover) PlaySound(*sounds[0]);
+    // if (_state == ButtonStates::clicked) PlaySound(*sounds[1]);
+    // else if (_state == ButtonStates::hover) PlaySound(*sounds[0]);
 
     state = _state;
+    if (state != last_state && sounds.count(state)) {
+        PlaySound(*sounds[state]);
+    }
     last_state = state;
 }
 
@@ -201,53 +224,31 @@ bool Button::is_clicked() {
 
 // Checkbox shenanigans
 Checkbox::Checkbox(
-    const Texture2D* texture_on_default,
-    const Texture2D* texture_on_hover,
-    const Texture2D* texture_on_pressed,
-    const Texture2D* texture_off_default,
-    const Texture2D* texture_off_hover,
-    const Texture2D* texture_off_pressed,
-    const Sound* sfx_hover,
-    const Sound* sfx_click,
+    std::unordered_map<ButtonStates, const Texture2D*> textures_on,
+    std::unordered_map<ButtonStates, const Texture2D*> textures_off,
+    std::unordered_map<ButtonStates, const Sound*> sounds,
     Rectangle rectangle,
     bool default_state)
     : Button(
-          texture_on_default,
-          texture_on_hover,
-          texture_on_pressed,
-          sfx_hover,
-          sfx_click,
-          rectangle) {
-    textures_off[ButtonStates::idle] = texture_off_default,
-    textures_off[ButtonStates::hover] = texture_off_hover,
-    textures_off[ButtonStates::pressed] = texture_off_pressed,
-    textures_off[ButtonStates::clicked] = texture_off_default,
-    toggle_state = default_state;
-    state_switched = false;
+          textures_on,
+          sounds,
+          rectangle)
+    , textures_off(textures_off)
+    , toggle_state(default_state)
+    , state_switched(false) {
 }
 
 Checkbox::Checkbox(
-    const Texture2D* texture_on_default,
-    const Texture2D* texture_on_hover,
-    const Texture2D* texture_on_pressed,
-    const Texture2D* texture_off_default,
-    const Texture2D* texture_off_hover,
-    const Texture2D* texture_off_pressed,
-    const Sound* sfx_hover,
-    const Sound* sfx_click,
+    std::unordered_map<ButtonStates, const Texture2D*> textures_on,
+    std::unordered_map<ButtonStates, const Texture2D*> textures_off,
+    std::unordered_map<ButtonStates, const Sound*> sounds,
     Rectangle rectangle)
     : Checkbox(
-          texture_on_default,
-          texture_on_hover,
-          texture_on_pressed,
-          texture_off_default,
-          texture_off_hover,
-          texture_off_pressed,
-          sfx_hover,
-          sfx_click,
-          rectangle,
-          true) {
-}
+        textures_on,
+        textures_off,
+        sounds,
+        rectangle,
+        true) {}
 
 bool Checkbox::get_toggle() {
     return toggle_state;
@@ -260,20 +261,36 @@ void Checkbox::toggle(bool _toggle_state) {
 }
 
 void Checkbox::toggle() {
-    if (toggle_state) toggle(false);
-    else toggle(true);
-    if (state_switched) state_switched = false;
-    else state_switched = true;
+    if (toggle_state) {
+        toggle(false);
+    }
+    else {
+        toggle(true);
+    }
+
+    if (state_switched) {
+        state_switched = false;
+    }
+    else {
+        state_switched = true;
+    }
 }
 
 void Checkbox::draw() {
-    if (toggle_state) Button::draw();
-    else DrawTexture(*textures_off[state], pos.x, pos.y, WHITE);
+    if (toggle_state) {
+        Button::draw();
+    }
+
+    else if (textures_off.count(state)) {
+        DrawTexture(*textures_off[state], pos.x, pos.y, WHITE);
+    }
 }
 
 ButtonStates Checkbox::update() {
     Button::update();
-    if (Button::is_clicked()) toggle();
+    if (Button::is_clicked()) {
+        toggle();
+    }
     return state;
 }
 
@@ -306,11 +323,15 @@ ButtonBase* ButtonStorage::at(int i) {
 
 void ButtonStorage::add_button(ButtonBase* button) {
     storage.push_back(button);
-    if (manual_update_mode) button->set_manual_update_mode(true);
+    if (manual_update_mode) {
+        button->set_manual_update_mode(true);
+    }
 }
 
 void ButtonStorage::set_manual_update_mode(bool mode) {
-    if (mode == manual_update_mode) return;
+    if (mode == manual_update_mode) {
+        return;
+    }
 
     if (mode) {
         for (auto i : storage) {
