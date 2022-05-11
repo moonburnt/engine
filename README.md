@@ -9,7 +9,7 @@
 ## Description
 
 An unnamed WIP raylib-powered engine / extension library to power 2D games.
-This is a logical continuation of WGF.
+This is a logical continuation of [WGF](https://github.com/moonburnt/WGF).
 
 Core ideas:
 - Implement basic game-independant functionality (for example: TileMap
@@ -28,3 +28,7 @@ mkdir ./build
 cmake . -B ./build
 cmake --build ./build
 ```
+
+## License
+
+[MIT](https://github.com/moonburnt/engine/blob/master/LICENSE)
