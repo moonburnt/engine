@@ -10,7 +10,7 @@ private:
     toml::table default_settings;
 
 public:
-    SettingsManager(toml::table default_settings, std::string settings_path);
+    SettingsManager(toml::table default_settings, const std::string &settings_path);
 
     toml::table settings;
 

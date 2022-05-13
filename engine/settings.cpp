@@ -6,7 +6,7 @@
 #include <fmt/ostream.h>
 #include <fstream>
 
-SettingsManager::SettingsManager(toml::table _default_settings, std::string path)
+SettingsManager::SettingsManager(toml::table _default_settings, const std::string &path)
     : settings_path(path) {
     // Keep in mind that toml table does not keep order of items.
     // It may be annoying to manually edit tomls on disk due to that.

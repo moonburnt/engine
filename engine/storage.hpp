@@ -13,7 +13,7 @@ protected:
 public:
     virtual ~Storage() = default;
 
-    virtual void load(std::string path, std::string extension) = 0;
+    virtual void load(const std::string &path, const std::string &extension) = 0;
 
     // Returns not actual content, but constant pointer to it, to refrain from
     // copying large data chunks around
@@ -27,18 +27,18 @@ public:
 
 class SpriteStorage : public Storage<Texture2D> {
 public:
-    void load(std::string path, std::string extension) override;
+    void load(const std::string &path, const std::string &extension) override;
     ~SpriteStorage();
 };
 
 class SoundStorage : public Storage<Sound> {
 public:
-    void load(std::string path, std::string extension) override;
+    void load(const std::string &path, const std::string &extension) override;
     ~SoundStorage();
 };
 
 class MusicStorage : public Storage<Music> {
 public:
-    void load(std::string path, std::string extension) override;
+    void load(const std::string &path, const std::string &extension) override;
     ~MusicStorage();
 };

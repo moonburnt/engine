@@ -2,7 +2,7 @@
 #include "raylib.h"
 #include <string>
 
-void SpriteStorage::load(std::string path, std::string extension) {
+void SpriteStorage::load(const std::string &path, const std::string &extension) {
     int amount;
 
     char** dir_files = GetDirectoryFiles(path.c_str(), &amount);
@@ -23,7 +23,7 @@ SpriteStorage::~SpriteStorage() {
     }
 }
 
-void SoundStorage::load(std::string path, std::string extension) {
+void SoundStorage::load(const std::string &path, const std::string &extension) {
     int amount;
 
     char** dir_files = GetDirectoryFiles(path.c_str(), &amount);
@@ -45,7 +45,7 @@ SoundStorage::~SoundStorage() {
 }
 
 // Idk if its good idea to keep all streams in memory. But will do for now. #TODO
-void MusicStorage::load(std::string path, std::string extension) {
+void MusicStorage::load(const std::string &path, const std::string &extension) {
     int amount;
 
     char** dir_files = GetDirectoryFiles(path.c_str(), &amount);

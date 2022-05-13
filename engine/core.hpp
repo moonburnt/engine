@@ -66,8 +66,8 @@ public:
     GameWindow();
 
     // Initialize game window
-    void init(int x, int y, std::string title, int fps);
-    void init(int x, int y, std::string title);
+    void init(int x, int y, const std::string &title, int fps);
+    void init(int x, int y, const std::string &title);
     void init(int x, int y);
     void init();
 

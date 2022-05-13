@@ -111,7 +111,7 @@ GameWindow::GameWindow()
     : GameWindow(SceneManager(), MusicManager()) {
 }
 
-void GameWindow::init(int x, int y, std::string title, int fps) {
+void GameWindow::init(int x, int y, const std::string &title, int fps) {
     spdlog::info("Initializing GameWindow.");
 
     InitWindow(x, y, title.c_str());
@@ -126,7 +126,7 @@ void GameWindow::init(int x, int y, std::string title, int fps) {
     initialized = true;
 }
 
-void GameWindow::init(int x, int y, std::string title) {
+void GameWindow::init(int x, int y, const std::string &title) {
     init(x, y, title, 60);
 }
 
