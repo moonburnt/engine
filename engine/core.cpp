@@ -63,7 +63,9 @@ SceneManager::SceneManager()
 }
 
 SceneManager::~SceneManager() {
-    // TODO: stub. Maybe should delete all nodes there
+    if (current_scene != nullptr) {
+        delete current_scene;
+    }
 }
 
 void TraceLog(int logLevel, const char* text, va_list args) {
