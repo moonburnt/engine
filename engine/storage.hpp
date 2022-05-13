@@ -28,11 +28,13 @@ public:
 class SpriteStorage : public Storage<Texture2D> {
 public:
     void load(std::string path, std::string extension) override;
+    ~SpriteStorage();
 };
 
 class SoundStorage : public Storage<Sound> {
 public:
     void load(std::string path, std::string extension) override;
+    ~SoundStorage();
 };
 
 class MusicStorage : public Storage<Music> {

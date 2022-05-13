@@ -17,6 +17,12 @@ void SpriteStorage::load(std::string path, std::string extension) {
     ClearDirectoryFiles();
 }
 
+SpriteStorage::~SpriteStorage() {
+    for (const auto &kv: items) {
+        UnloadTexture(kv.second);
+    }
+}
+
 void SoundStorage::load(std::string path, std::string extension) {
     int amount;
 
@@ -30,6 +36,12 @@ void SoundStorage::load(std::string path, std::string extension) {
     }
 
     ClearDirectoryFiles();
+}
+
+SoundStorage::~SoundStorage() {
+    for (const auto &kv: items) {
+        UnloadSound(kv.second);
+    }
 }
 
 // Idk if its good idea to keep all streams in memory. But will do for now. #TODO
