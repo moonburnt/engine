@@ -66,6 +66,12 @@ SceneManager::~SceneManager() {
     if (current_scene != nullptr) {
         delete current_scene;
     }
+
+    for (const auto &kv: nodes) {
+        if (kv.second != nullptr) {
+            delete kv.second;
+        }
+    }
 }
 
 void TraceLog(int logLevel, const char* text, va_list args) {
