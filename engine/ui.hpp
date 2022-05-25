@@ -8,6 +8,7 @@
 #include <tuple>
 #include <unordered_map>
 #include <vector>
+#include "utility.hpp"
 
 // UI primitives.
 enum class ButtonStates {
@@ -38,6 +39,8 @@ public:
 class Label {
 protected:
     std::string text;
+    int text_size = DEFAULT_TEXT_SIZE;
+    Color text_color = DEFAULT_TEXT_COLOR;
 
     // Pos set by set_pos and on init
     Vector2 pos;
@@ -57,6 +60,46 @@ public:
     // Set label's text. May need to re-center message after that.
     void set_text(const std::string& txt);
 
+    void draw();
+};
+
+// Simple text input field, for basic text editing.
+class TextInputField : public Label {
+protected:
+    // Text shown on background if no input has been received
+    std::string bg_text;
+    Vector2 bg_text_pos;
+    int bg_text_size = DEFAULT_TEXT_SIZE;
+    Color bg_text_color = LIGHTGRAY;
+    // Max amount of characters in text box. 0 means "unlimited".
+    // This only affects text received from input, not bg_text.
+    size_t max_size = 0;
+
+    std::string blink_char;
+    Vector2 blink_pos;
+    bool draw_blink = false;
+    Timer blink_timer;
+
+    void update_blink_pos();
+
+public:
+    // default_text is text that will be set as bg_text
+    TextInputField(
+        const std::string& default_text,
+        Vector2 pos,
+        size_t max_size,
+        const char blink_char,
+        float blink_frequency);
+    TextInputField(const std::string& default_text, Vector2 pos, size_t max_size);
+    TextInputField(const std::string& default_text, Vector2 pos);
+
+    void set_text(const std::string& txt);
+    void set_pos(Vector2 pos, bool center);
+    void set_pos(Vector2 pos);
+
+    // Default input field update method.
+    // TODO: add support for gamepad's virtual keyboard
+    void update(float dt);
     void draw();
 };
 
