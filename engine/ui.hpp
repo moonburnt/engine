@@ -79,6 +79,7 @@ protected:
     Vector2 blink_pos;
     bool draw_blink = false;
     Timer blink_timer;
+    bool is_enabled = true;
 
     void update_blink_pos();
 
@@ -96,6 +97,16 @@ public:
     void set_text(const std::string& txt);
     void set_pos(Vector2 pos, bool center);
     void set_pos(Vector2 pos);
+
+    // Toggles to enable/disable auto updater.
+    void enable();
+    void disable();
+
+    // Check if text length is 0.
+    bool is_empty();
+    // Check if text length is equal to max_size.
+    // If max_size is set to 0 - will always return false.
+    bool is_full();
 
     // Default input field update method.
     // TODO: add support for gamepad's virtual keyboard

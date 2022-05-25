@@ -101,7 +101,37 @@ void TextInputField::set_pos(Vector2 pos) {
     update_blink_pos();
 }
 
+void TextInputField::enable() {
+    if (is_enabled) {
+        return;
+    }
+
+    is_enabled = true;
+    blink_timer.start();
+}
+
+void TextInputField::disable() {
+    if (!is_enabled) {
+        return;
+    }
+
+    is_enabled = false;
+    draw_blink = false;
+}
+
+bool TextInputField::is_empty() {
+    return (text.length() == 0);
+}
+
+bool TextInputField::is_full() {
+    return (max_size != 0 && text.length() == max_size);
+}
+
 void TextInputField::update(float dt) {
+    if (!is_enabled) {
+        return;
+    }
+
     int key = GetCharPressed();
 
     bool text_changed = false;
@@ -154,8 +184,6 @@ void TextInputField::draw() {
             bg_text_color);
     }
 
-    // TODO. This is a bare copypaste from my clicker game and by now I forgor
-    // what half of these values mean.
     if (draw_blink) {
         DrawText(
             blink_char.c_str(),
