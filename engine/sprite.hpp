@@ -1,7 +1,7 @@
 #pragma once
 
 #include "utility.hpp"
-#include <raylib.h>
+#include "raylib.h"
 #include <vector>
 
 class Sprite {

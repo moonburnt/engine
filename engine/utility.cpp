@@ -1,6 +1,6 @@
 #include "utility.hpp"
 #include "spdlog/spdlog.h"
-#include <raylib.h>
+#include "raylib.h"
 
 void handle_assert(const char* file, int line, const char* fun, const char* expr) {
     spdlog::critical("Assertion failed at {} in {}:{} '{}'", fun, file, line, expr);

@@ -1,7 +1,7 @@
 #include "sprite.hpp"
 #include "utility.hpp"
 
-#include <raylib.h>
+#include "raylib.h"
 
 Sprite::Sprite(const Texture2D* _spritesheet, Rectangle _rect)
     : spritesheet(_spritesheet)
