@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
-// Tiled map generator
+// Tile map generator
 
 // TODO: maybe rename point to something else?
 struct Point {
@@ -14,7 +14,7 @@ struct Point {
     int y;
 };
 
-template <typename T> class TiledMapBase {
+template <typename T> class TileMapBase {
 protected:
     Point map_size;
     Point tile_size;
@@ -25,7 +25,7 @@ protected:
     size_t map_objects_amount;
 
 public:
-    TiledMapBase(Point _map_size, Point _tile_size)
+    TileMapBase(Point _map_size, Point _tile_size)
         : map_size(_map_size)
         , tile_size(_tile_size)
         , grid_size(map_size.x * map_size.y)
@@ -34,7 +34,7 @@ public:
                static_cast<float>(map_size.y * tile_size.y)})
         , map_objects_amount(0) {}
 
-    virtual ~TiledMapBase() = default;
+    virtual ~TileMapBase() = default;
 
     // Add new object to map_objects storage. Returns object id
     int add_object(T object) {
@@ -123,7 +123,7 @@ public:
     }
 };
 
-template <typename T> class TiledMap : public TiledMapBase<T> {
+template <typename T> class TileMap : public TileMapBase<T> {
 protected:
     // ID of item used as failsafe when tile is empty. Default = -1.
     int placeholder_id;
@@ -133,11 +133,11 @@ protected:
     std::vector<int> grid;
 
 public:
-    TiledMap(Point _map_size, Point _tile_size)
-        : TiledMapBase<T>(_map_size, _tile_size)
+    TileMap(Point _map_size, Point _tile_size)
+        : TileMapBase<T>(_map_size, _tile_size)
         , placeholder_id(-1)
         , return_placeholder(false)
-        , grid(TiledMapBase<T>::grid_size, placeholder_id) {
+        , grid(TileMapBase<T>::grid_size, placeholder_id) {
     }
 
     // Set placeholder tile an its return policy.
@@ -152,7 +152,7 @@ public:
     void clear_tile(int grid_index, bool delete_from_storage) override {
         // TODO: maybe add safety checks to ensure requested object exists in storage?
         if (delete_from_storage) {
-            TiledMapBase<T>::map_objects.erase(grid[grid_index]);
+            TileMapBase<T>::map_objects.erase(grid[grid_index]);
         }
         grid[grid_index] = placeholder_id;
     }
@@ -202,14 +202,14 @@ public:
             return nullptr;
         }
 
-        return TiledMapBase<T>::get_object_by_id(object_id);
+        return TileMapBase<T>::get_object_by_id(object_id);
     }
 
     // Get first tile that contains object with specified id, or std::nullopt
     std::optional<Point> find_object_tile(int object_id) override {
-        for (auto index = 0u; index < TiledMapBase<T>::grid_size; index++) {
+        for (auto index = 0u; index < TileMapBase<T>::grid_size; index++) {
             if (grid[index] == object_id) {
-                return TiledMapBase<T>::index_to_tile(index);
+                return TileMapBase<T>::index_to_tile(index);
             }
         }
 
@@ -220,7 +220,7 @@ public:
 // Class that generates tiled map based on provided color-action pair.
 // Well, kinda. You have to bring initialized map of T type to generate().
 // Because generator does not know which arguments your T may need to initialize.
-// I planned to hardcode it to TiledMap's api, but then found it to be sadge.
+// I planned to hardcode it to TileMap's api, but then found it to be sadge.
 template <typename T> class ColorGen {
 protected:
     std::unordered_map<int, std::function<void(T&, size_t)>> callbacks;
@@ -275,17 +275,17 @@ public:
     }
 };
 
-// Deep tiled map from Fortune Crawler
-template <typename T> class TiledMapDeep : public TiledMapBase<T> {
+// Deep tile map from Fortune Crawler
+template <typename T> class TileMapDeep : public TileMapBase<T> {
 protected:
     std::vector<std::vector<int>> grid;
 
 public:
-    TiledMapDeep(Point _map_size, Point _tile_size)
-        : TiledMapBase<T>(_map_size, _tile_size) {
+    TileMapDeep(Point _map_size, Point _tile_size)
+        : TileMapBase<T>(_map_size, _tile_size) {
         // There may be a better way to do that
         grid = {};
-        for (size_t i = 0; i < TiledMapBase<T>::grid_size; i++) {
+        for (size_t i = 0; i < TileMapBase<T>::grid_size; i++) {
             grid.push_back({});
         };
     }
@@ -295,7 +295,7 @@ public:
         if (delete_from_storage) {
             // I hope this will work
             for (auto item : grid[grid_index]) {
-                TiledMapBase<T>::map_objects.erase(item);
+                TileMapBase<T>::map_objects.erase(item);
             }
         }
         grid[grid_index].clear();
@@ -304,7 +304,7 @@ public:
     // Delete specified object from provided tile
     void delete_object(int grid_index, int tile_index, bool delete_from_storage) {
         if (delete_from_storage) {
-            TiledMapBase<T>::map_objects.erase(grid[grid_index][tile_index]);
+            TileMapBase<T>::map_objects.erase(grid[grid_index][tile_index]);
         }
         grid[grid_index].erase(grid[grid_index].begin() + tile_index);
     }
@@ -326,10 +326,10 @@ public:
 
     // Get first tile that contains object with specified id, or std::nullopt
     std::optional<Point> find_object_tile(int object_id) override {
-        for (auto index = 0u; index < TiledMapBase<T>::grid_size; index++) {
+        for (auto index = 0u; index < TileMapBase<T>::grid_size; index++) {
             for (auto tile_i = 0u; tile_i < grid[index].size(); tile_i++) {
                 if (grid[index][tile_i] == object_id) {
-                    return TiledMapBase<T>::index_to_tile(index);
+                    return TileMapBase<T>::index_to_tile(index);
                 }
             }
         }
@@ -357,11 +357,11 @@ public:
     std::vector<std::vector<int>> get_map_layout() {
         std::vector<std::vector<int>> layout = {};
 
-        for (size_t grid_id = 0; grid_id < TiledMapBase<T>::grid_size; grid_id++) {
+        for (size_t grid_id = 0; grid_id < TileMapBase<T>::grid_size; grid_id++) {
             std::vector<int> tile_layout = {};
             for (size_t tile_id = 0; tile_id < grid[grid_id].size(); tile_id++) {
                 tile_layout.push_back(
-                    TiledMapBase<T>::map_objects[grid[grid_id][tile_id]]->get_entity_id());
+                    TileMapBase<T>::map_objects[grid[grid_id][tile_id]]->get_entity_id());
             }
             layout.push_back(tile_layout);
         }
