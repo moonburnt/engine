@@ -110,16 +110,3 @@ void FrameCounter::update() {
 void FrameCounter::draw() {
     DrawText(TextFormat(format, fps_value), pos.x, pos.y, size, color);
 }
-
-// Operator overloads
-bool operator==(const Color& c1, const Color& c2) {
-    return c1.r == c2.r && c1.g == c2.g && c1.b == c2.b && c1.a == c2.a;
-}
-
-bool operator==(const Vector2& v1, const Vector2& v2) {
-    return v1.x == v2.x && v1.y == v2.y;
-}
-
-bool operator==(const Rectangle& r1, const Rectangle& r2) {
-    return r1.x == r2.x && r1.y == r2.y && r1.width == r2.width && r1.height == r2.height;
-}

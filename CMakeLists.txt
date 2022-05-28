@@ -33,6 +33,7 @@ add_library(engine STATIC
     engine/utility.hpp
     engine/storage.cpp
     engine/storage.hpp
+    engine/raybuff.hpp
 )
 
 target_include_directories(engine PUBLIC

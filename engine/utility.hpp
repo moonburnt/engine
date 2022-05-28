@@ -132,9 +132,3 @@ public:
     void update() override;
     void draw() override;
 };
-
-// Various overloads to default raylib's structs.
-// Idk where else to put these.
-bool operator==(const Color& c1, const Color& c2);
-bool operator==(const Vector2& v1, const Vector2& v2);
-bool operator==(const Rectangle& r1, const Rectangle& r2);
