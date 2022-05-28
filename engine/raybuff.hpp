@@ -45,3 +45,29 @@ Color operator-(const Color& c1, const Color& c2) {
 Vector2 operator-(const Vector2& v1, const Vector2& v2) {
     return {v1.x - v2.x, v1.y - v2.y};
 }
+
+// Add in place. Not sure if these should work like that, but I guess?
+void operator+=(const Color& c1, const Color& c2) {
+    c1.r = std::clamp((c1.r + c2.r), 0, 255);
+    c1.g = std::clamp((c1.g + c2.g), 0, 255);
+    c1.b = std::clamp((c1.b + c2.b), 0, 255);
+    c1.a = std::clamp((c1.a + c2.a), 0, 255);
+}
+
+void operator+=(const Vector2& v1, const Vector2& v2) {
+    v1.x = v1.x + v2.x;
+    v1.y = v1.y + v2.y;
+}
+
+// Subtract in place.
+void operator-=(const Color& c1, const Color& c2) {
+    c1.r = std::clamp((c1.r - c2.r), 0, 255);
+    c1.g = std::clamp((c1.g - c2.g), 0, 255);
+    c1.b = std::clamp((c1.b - c2.b), 0, 255);
+    c1.a = std::clamp((c1.a - c2.a), 0, 255);
+}
+
+void operator-=(const Vector2& v1, const Vector2& v2) {
+    v1.x = v1.x - v2.x;
+    v1.y = v1.y - v2.y;
+}
