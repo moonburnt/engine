@@ -129,6 +129,6 @@ public:
     FrameCounter(Vector2 pos);
     FrameCounter();
 
-    void update() override;
+    void update(float) override;
     void draw() override;
 };

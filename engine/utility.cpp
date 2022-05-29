@@ -103,7 +103,7 @@ FrameCounter::FrameCounter()
     : FrameCounter({0, 0}, "FPS: %02i", 20, BLACK) {
 }
 
-void FrameCounter::update() {
+void FrameCounter::update(float) {
     fps_value = GetFPS();
 }
 

@@ -1,78 +1,8 @@
 #include "core.hpp"
-#include "raylib.h"
 // For logging
 #include "spdlog/spdlog.h"
 // For vsprintf
 #include <cstdio>
-
-// Scene stuff
-Scene::Scene(Color _bg_color)
-    : bg_color(_bg_color) {
-}
-
-Scene::Scene()
-    : bg_color(Color{245, 245, 245, 255}) {
-}
-
-// Scene manager
-
-// There are two ways to work with scenes: to add scene manually each time,
-// initializing it from zero and clearing up other scenes from memory.
-// Or to keep all scenes initialized in some storage. For now, we are going for
-// the first one, but this behavior may change in future.
-void SceneManager::set_current_scene(Scene* scene) {
-    if (current_scene != nullptr) {
-        delete current_scene;
-    };
-
-    current_scene = scene;
-    // active = true;
-}
-
-bool SceneManager::is_active() {
-    return active;
-}
-
-void SceneManager::update(float dt) {
-    if (!active) {
-        return;
-    }
-
-    current_scene->update(dt);
-
-    for (const auto& [_, i] : nodes) {
-        i->update();
-    }
-
-    BeginDrawing();
-    ClearBackground(current_scene->bg_color);
-    current_scene->draw();
-
-    for (const auto& [_, i] : nodes) {
-        i->draw();
-    }
-
-    EndDrawing();
-}
-
-// Default SceneManager's constructor is all way down, coz TitleScreen is in its
-// body. But don't worry - even if instantiation is declared above, nothing bad
-// will happen - this one will get triggered correctly
-SceneManager::SceneManager()
-    : active(true) {
-}
-
-SceneManager::~SceneManager() {
-    if (current_scene != nullptr) {
-        delete current_scene;
-    }
-
-    for (const auto &kv: nodes) {
-        if (kv.second != nullptr) {
-            delete kv.second;
-        }
-    }
-}
 
 void TraceLog(int logLevel, const char* text, va_list args) {
     static char log_text[2048] = {0}; // I think 2048 would be enough?
