@@ -23,10 +23,10 @@ bool operator==(const Rectangle& r1, const Rectangle& r2) {
 // Addition operator. Iirc these should always return new objects.
 Color operator+(const Color& c1, const Color& c2) {
     return {
-        std::clamp((c1.r + c2.r), 0, 255),
-        std::clamp((c1.g + c2.g), 0, 255),
-        std::clamp((c1.b + c2.b), 0, 255),
-        std::clamp((c1.a + c2.a), 0, 255)};
+        static_cast<unsigned char>(std::clamp((c1.r + c2.r), 0, 255)),
+        static_cast<unsigned char>(std::clamp((c1.g + c2.g), 0, 255)),
+        static_cast<unsigned char>(std::clamp((c1.b + c2.b), 0, 255)),
+        static_cast<unsigned char>(std::clamp((c1.a + c2.a), 0, 255))};
 }
 
 Vector2 operator+(const Vector2& v1, const Vector2& v2) {
@@ -36,38 +36,46 @@ Vector2 operator+(const Vector2& v1, const Vector2& v2) {
 // Subtraction operator.
 Color operator-(const Color& c1, const Color& c2) {
     return {
-        std::clamp((c1.r - c2.r), 0, 255),
-        std::clamp((c1.g - c2.g), 0, 255),
-        std::clamp((c1.b - c2.b), 0, 255),
-        std::clamp((c1.a - c2.a), 0, 255)};
+        static_cast<unsigned char>(std::clamp((c1.r - c2.r), 0, 255)),
+        static_cast<unsigned char>(std::clamp((c1.g - c2.g), 0, 255)),
+        static_cast<unsigned char>(std::clamp((c1.b - c2.b), 0, 255)),
+        static_cast<unsigned char>(std::clamp((c1.a - c2.a), 0, 255))};
 }
 
 Vector2 operator-(const Vector2& v1, const Vector2& v2) {
     return {v1.x - v2.x, v1.y - v2.y};
 }
 
-// Add in place. Not sure if these should work like that, but I guess?
-void operator+=(const Color& c1, const Color& c2) {
+// Add in place.
+Color& operator+=(Color& c1, const Color& c2) {
     c1.r = std::clamp((c1.r + c2.r), 0, 255);
     c1.g = std::clamp((c1.g + c2.g), 0, 255);
     c1.b = std::clamp((c1.b + c2.b), 0, 255);
     c1.a = std::clamp((c1.a + c2.a), 0, 255);
+
+    return c1;
 }
 
-void operator+=(const Vector2& v1, const Vector2& v2) {
+Vector2& operator+=(Vector2& v1, const Vector2& v2) {
     v1.x = v1.x + v2.x;
     v1.y = v1.y + v2.y;
+
+    return v1;
 }
 
 // Subtract in place.
-void operator-=(const Color& c1, const Color& c2) {
+Color& operator-=(Color& c1, const Color& c2) {
     c1.r = std::clamp((c1.r - c2.r), 0, 255);
     c1.g = std::clamp((c1.g - c2.g), 0, 255);
     c1.b = std::clamp((c1.b - c2.b), 0, 255);
     c1.a = std::clamp((c1.a - c2.a), 0, 255);
+
+    return c1;
 }
 
-void operator-=(const Vector2& v1, const Vector2& v2) {
+Vector2& operator-=(Vector2& v1, const Vector2& v2) {
     v1.x = v1.x - v2.x;
     v1.y = v1.y - v2.y;
+
+    return v1;
 }
