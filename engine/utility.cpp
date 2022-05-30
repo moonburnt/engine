@@ -61,6 +61,12 @@ int center_text_h(const std::string& text, int center) {
     return center - msg_width / 2;
 }
 
+Vector2 get_rect_center(const Rectangle& rect) {
+    return {
+        rect.x + rect.width / 2,
+        rect.y + rect.height / 2};
+}
+
 void center_rect_ip(Rectangle* rect, Vector2 center) {
     rect->x = center.x - rect->x / 2;
     rect->y = center.y - rect->y / 2;

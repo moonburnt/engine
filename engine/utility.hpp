@@ -98,6 +98,9 @@ Vector2 center_text(const std::string& text, Vector2 center);
 // Get position that will be perfect text's horizontal center.
 int center_text_h(const std::string& text, int center);
 
+// Get center of rect's center
+Vector2 get_rect_center(const Rectangle& rect);
+
 // Center rectangle in place, overriding its existing position.
 void center_rect_ip(Rectangle* rect, Vector2 center);
 

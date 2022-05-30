@@ -281,3 +281,43 @@ public:
 
     void add_button(ButtonBase* button) override;
 };
+
+class ProgressBar {
+protected:
+    const Texture2D* bg_texture = nullptr;
+    Color color = GREEN;
+    const Texture2D* fg_texture = nullptr;
+    Label* text = nullptr;
+    Rectangle rect;
+    Vector2 pos = {0.0f, 0.0f};
+    // Progress limits. 0.0f for 0% and 1.0f for 100%
+    float min_progress = 0.0f;
+    float max_progress = 1.0f;
+    // Current progress. Must be between limits above
+    float progress = 1.0f;
+    // 1% of rect width, used to set its new width.
+    float width_percent;
+
+public:
+    // TODO: add rect pos offset coz rn its calculated weirdly
+    ProgressBar(
+        Rectangle _rect,
+        Vector2 _pos,
+        const Texture2D* _bg_texture,
+        const Texture2D* _fg_texture);
+    ProgressBar(Rectangle _rect, Vector2 _pos);
+    ~ProgressBar();
+
+    // void set_bg_texture(const Texture2D* texture);
+    // void set_fg_texture(const Texture2D* texture);
+    void set_color(Color _color);
+    void set_pos(Vector2 _pos);
+    // void set_size(Rectangle rect);
+    void set_min_progress(float _min_progress);
+    void set_max_progress(float _max_progress);
+    float get_progress();
+    void set_progress(float _progress);
+    void set_text(const std::string& _text);
+
+    void draw();
+};

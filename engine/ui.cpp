@@ -637,3 +637,95 @@ void VerticalContainer::add_button(ButtonBase* button) {
 
     ButtonStorage::add_button(button);
 }
+
+// Progress bar
+ProgressBar::ProgressBar(
+    Rectangle _rect,
+    Vector2 _pos,
+    const Texture2D* _bg_texture,
+    const Texture2D* _fg_texture)
+    : bg_texture(_bg_texture)
+    , fg_texture(_fg_texture)
+    , rect(_rect)
+    , width_percent(rect.width / (progress * 100.0f)) {
+    // Doing it like that, coz for right now default rect's pos is used with
+    // default-initialized pb's pos to calculate rect's offset
+    set_pos(_pos);
+}
+
+ProgressBar::ProgressBar(Rectangle _rect, Vector2 _pos)
+    : ProgressBar(_rect, _pos, nullptr, nullptr) {}
+
+ProgressBar::~ProgressBar() {
+    if (text != nullptr) {
+        delete text;
+    }
+}
+
+// void ProgressBar::set_bg_texture(const Texture2D* texture) {
+//     bg_texture = texture;
+// }
+
+// void ProgressBar::set_fg_texture(const Texture2D* texture) {
+//     fg_texture = texture;
+// }
+
+void ProgressBar::set_color(Color _color) {
+    color = _color;
+}
+
+void ProgressBar::set_pos(Vector2 _pos) {
+    rect.x = _pos.x + (rect.x - pos.x);
+    rect.y = _pos.y + (rect.y - pos.y);
+
+    pos = _pos;
+
+    if (text != nullptr) {
+        text->set_pos({pos.x + width_percent * 50, pos.y + rect.height / 2.0f});
+        text->center();
+    }
+}
+
+void ProgressBar::set_min_progress(float _min_progress) {
+    min_progress = _min_progress;
+}
+
+void ProgressBar::set_max_progress(float _max_progress) {
+    max_progress = _max_progress;
+}
+
+float ProgressBar::get_progress() {
+    return progress;
+}
+
+void ProgressBar::set_progress(float _progress) {
+    progress = std::clamp(_progress, min_progress, max_progress);
+    rect.width = width_percent * (progress * 100);
+}
+
+void ProgressBar::set_text(const std::string& _text) {
+    if (text != nullptr) {
+        text->set_text(_text);
+    }
+    else {
+        text = new Label(_text, get_rect_center(rect));
+    }
+    text->center();
+}
+
+void ProgressBar::draw() {
+    if (bg_texture != nullptr) {
+        DrawTexture(*bg_texture, pos.x, pos.y, WHITE);
+    }
+
+    DrawRectangle(
+        rect.x, rect.y, rect.width, rect.height, color);
+
+    if (fg_texture != nullptr) {
+        DrawTexture(*fg_texture, pos.x, pos.y, WHITE);
+    }
+
+    if (text != nullptr) {
+        text->draw();
+    }
+}
