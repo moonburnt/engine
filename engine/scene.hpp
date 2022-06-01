@@ -33,10 +33,10 @@ public:
     // some, then detach it and move to new one, with all its ancestors
     void set_parent(Node* node);
 
-    void set_pos(Vector2 pos);
+    virtual void set_pos(Vector2 pos);
 
     // Get current node position in relevance to its parent
-    Vector2 get_pos();
+    virtual Vector2 get_pos();
     // Get absolute node position in the world.
     Vector2 get_abs_pos();
 

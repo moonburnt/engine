@@ -55,10 +55,11 @@ Vector2 Node::get_pos() {
 
 Vector2 Node::get_abs_pos() {
     if (parent != nullptr) {
-        return parent->get_abs_pos() + pos;
+        // This may need some optimisations, too much Vector copying. TODO
+        return parent->get_abs_pos() + get_pos();
     }
     else {
-        return pos;
+        return get_pos();
     }
 }
 
