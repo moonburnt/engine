@@ -342,6 +342,7 @@ void Button::set_manual_update_mode(bool mode) {
 
 void Button::set_pos(Vector2 position) {
     // Hitbox should always retain initial position diff
+    // TODO: maybe save diff as class-wide variable?
 
     int x_diff = rect.x - pos.x;
     int y_diff = rect.y - pos.y;
@@ -356,6 +357,13 @@ void Button::set_pos(Vector2 position) {
             {position.x + (rect.width / 2.0f), position.y + (rect.height / 2.0f)});
         text->center();
     }
+}
+
+void Button::center() {
+    // It works a bit differently than Label's, coz I did not need real_pos yet
+    // It uses pos and not rect's values coz rect's x, y are used as offsets
+    // set_pos(get_rect_center({pos.x, pos.y, rect.width, rect.height}));
+    set_pos({pos.x - rect.width/2.0f, pos.y - rect.height / 2.0f});
 }
 
 Vector2 Button::get_pos() {

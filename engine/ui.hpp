@@ -171,6 +171,9 @@ public:
     // Reset button state and last_state to ButtonStates::idle.
     void reset_state() override;
     void set_pos(Vector2 position) override;
+
+    void center();
+
     bool is_clicked() override;
     // This getter is necessary to use pos from outside without being able
     // to overwrite its value directly (coz its meant to be done together
