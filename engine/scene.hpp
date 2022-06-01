@@ -22,8 +22,16 @@ public:
     // Get node's parent. If does not exist - returns nullptr.
     Node* get_parent();
 
-    // Add child to this node
+    // Attach existing node as a child to this node
     void add_child(Node* node);
+
+    // Create node of specified type and return pointer to it.
+    // T must convert to Node*, else there will be dragons.
+    template <typename T, typename... Args>
+    T* create_child(Args&&... args) {
+        children.push_back(new T(std::forward(args)...));
+        return static_cast<T*>(children.back());
+    }
 
     // Detach provided child from node.
     // If has not been attached - does nothing (for now)
