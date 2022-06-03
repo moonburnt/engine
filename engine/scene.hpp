@@ -16,10 +16,10 @@ protected:
     Vector2 pos = {0.0f, 0.0f};
 
 public:
-    Node() = default;
     virtual ~Node();
 
     // Get node's parent. If does not exist - returns nullptr.
+    // TODO: maybe remove it, coz it messes with Scene
     Node* get_parent();
 
     // Attach existing node as a child to this node
@@ -57,24 +57,29 @@ public:
     virtual void draw();
 };
 
-// Scene is an abstract class that can't be instantiated directly, but can be
-// subclassed. This is how we do ABC interfaces in c++
-// In this case its located in header, coz SceneManager needs it
+// Scene is a base for everything
 class Scene {
-public:
-    std::unordered_map<std::string, Node*> nodes;
-
-    // Thats how we define abstract functions
-    virtual void update(float dt) = 0;
-    virtual void draw() = 0;
-
-    // This is a scene's destructor. Which can be overriden, but not necessary.
-    virtual ~Scene() = default;
-
+private:
+    Node root;
     Color bg_color;
 
-    Scene();
+public:
     Scene(Color bg_color);
+    Scene();
+
+    virtual ~Scene() = default;
+
+    void add_child(Node* node);
+
+    template <typename T, typename... Args>
+    T* create_child(Args&&... args) {
+        return root.create_child<T>(std::forward(args)...);
+    }
+
+    void remove_child(Node* node);
+
+    virtual void update(float dt);
+    virtual void draw();
 };
 
 class SceneManager {
@@ -84,7 +89,7 @@ private:
     Scene* current_scene = nullptr;
 
 public:
-    // Node storage.
+    // Node storage. TODO: remove it, just like with Scene
     std::unordered_map<std::string, Node*> nodes;
 
     SceneManager();

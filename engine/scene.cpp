@@ -81,7 +81,24 @@ Scene::Scene(Color _bg_color)
 }
 
 Scene::Scene()
-    : bg_color({245, 245, 245, 255}) {
+    : Scene({245, 245, 245, 255}) {
+}
+
+void Scene::add_child(Node* node) {
+    root.add_child(node);
+}
+
+void Scene::remove_child(Node* node) {
+    root.remove_child(node);
+}
+
+void Scene::update(float dt) {
+    root.update(dt);
+}
+
+void Scene::draw() {
+    ClearBackground(bg_color);
+    root.draw();
 }
 
 // Scene manager
@@ -115,7 +132,6 @@ void SceneManager::update(float dt) {
     }
 
     BeginDrawing();
-    ClearBackground(current_scene->bg_color);
     current_scene->draw();
 
     for (const auto& [_, i] : nodes) {
