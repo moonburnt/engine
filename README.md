@@ -24,7 +24,6 @@ template is ok, TileMap with game-specific data is not).
 
 ```
 git submodule update --init
-mkdir ./build
 cmake . -B ./build
 cmake --build ./build
 ```
