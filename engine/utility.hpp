@@ -121,13 +121,15 @@ private:
     int fps_value;
 
 protected:
-    Vector2 pos;
     const char* format;
+    // According to raylib's sources, smallest size allowed by default is 10
+    // Probably there is a reason for that?
     int size;
     Color color;
+    Font font;
 
 public:
-    FrameCounter(Vector2 pos, const char* format, int size, Color color);
+    FrameCounter(Vector2 pos, const char* format, int size, Color color, Font font);
     FrameCounter(Vector2 pos, int size);
     FrameCounter(Vector2 pos);
     FrameCounter();

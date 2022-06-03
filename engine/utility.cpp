@@ -89,30 +89,42 @@ bool is_rect_inside_rect(Rectangle first, Rectangle second) {
 }
 
 // FPS counter
-FrameCounter::FrameCounter(Vector2 _pos, const char* _format, int _size, Color _color)
+FrameCounter::FrameCounter(Vector2 _pos, const char* _format, int _size, Color _color, Font _font)
     : fps_value(0)
-    , pos(_pos)
     , format(_format)
     , size(_size)
-    , color(_color) {
-}
-
-FrameCounter::FrameCounter(Vector2 _pos)
-    : FrameCounter(_pos, "FPS: %02i", 20, BLACK) {
+    , color(_color)
+    , font(_font) {
+    Node::set_pos(_pos);
 }
 
 FrameCounter::FrameCounter(Vector2 _pos, int _size)
-    : FrameCounter(_pos, "FPS: %02i", _size, BLACK) {
+    : FrameCounter(_pos, "FPS: %02i", _size, BLACK, GetFontDefault()) {
 }
+
+FrameCounter::FrameCounter(Vector2 _pos)
+    : FrameCounter(_pos, 20) {
+}
+
 
 FrameCounter::FrameCounter()
-    : FrameCounter({0, 0}, "FPS: %02i", 20, BLACK) {
+    : FrameCounter({0, 0}) {
 }
 
-void FrameCounter::update(float) {
+void FrameCounter::update(float dt) {
     fps_value = GetFPS();
+    // I think, default update logic should trigger after custom?
+    Node::update(dt);
 }
 
 void FrameCounter::draw() {
-    DrawText(TextFormat(format, fps_value), pos.x, pos.y, size, color);
+    // But for draw cycle, its kind of reverse
+    Node::draw();
+    DrawTextEx(
+        font,
+        TextFormat(format, fps_value),
+        get_abs_pos(),
+        size,
+        size / 10,
+        color);
 }
