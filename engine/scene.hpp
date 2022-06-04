@@ -15,6 +15,9 @@ protected:
 
     Vector2 pos = {0.0f, 0.0f};
 
+    void update_recursive(float dt);
+    void draw_recursive();
+
 public:
     virtual ~Node();
 
@@ -48,10 +51,8 @@ public:
     // Get absolute node position in the world.
     Vector2 get_abs_pos();
 
-    // These arent pure-virtual for two reasons:
-    // - Some children may not specify some of these. Say, audio node won't have
-    // draw method.
-    // - By default, these are used to cast something on node's children recursively
+    // These arent pure-virtual, coz some children may not specify some of these.
+    // Say, audio node won't have a draw method.
     virtual void update(float dt);
 
     virtual void draw();
@@ -60,7 +61,14 @@ public:
 // Scene is a base for everything
 class Scene {
 private:
-    Node root;
+    // RootNode is a scene-exclusive thing that should serve as an entry point
+    class RootNode: public Node {
+        public:
+            void update(float dt) override;
+            void draw() override;
+    };
+
+    RootNode root;
     Color bg_color;
 
 public:

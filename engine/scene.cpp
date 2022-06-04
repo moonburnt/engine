@@ -63,17 +63,39 @@ Vector2 Node::get_abs_pos() {
     }
 }
 
-void Node::update(float dt) {
+void Node::update_recursive(float dt) {
     for (auto i: children) {
         i->update(dt);
+        // It may be non-obvious, but Node will have access to private and
+        // protected methods of other Node objects too.
+        i->update_recursive(dt);
     }
 }
 
-void Node::draw() {
+void Node::update(float) {}
+
+void Node::draw_recursive() {
+    // We may use different logic there. Or maybe even turn basic Node's logic
+    // into a pure-virtual thing and write various implementations.
+    // But for now it will do. TODO
     for (auto i: children) {
         i->draw();
+        i->draw_recursive();
     }
 }
+
+void Node::draw() {}
+
+// RootNode
+// Thats how we specify logic of classes described inside other classes
+void Scene::RootNode::update(float dt) {
+    update_recursive(dt);
+}
+
+void Scene::RootNode::draw() {
+    draw_recursive();
+}
+
 
 // Scene
 Scene::Scene(Color _bg_color)
