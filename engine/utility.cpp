@@ -95,7 +95,7 @@ FrameCounter::FrameCounter(Vector2 _pos, const char* _format, int _size, Color _
     , size(_size)
     , color(_color)
     , font(_font) {
-    Node::set_pos(_pos);
+    set_pos(_pos);
 }
 
 FrameCounter::FrameCounter(Vector2 _pos, int _size)
@@ -111,15 +111,11 @@ FrameCounter::FrameCounter()
     : FrameCounter({0, 0}) {
 }
 
-void FrameCounter::update(float dt) {
+void FrameCounter::update(float) {
     fps_value = GetFPS();
-    // I think, default update logic should trigger after custom?
-    Node::update(dt);
 }
 
 void FrameCounter::draw() {
-    // But for draw cycle, its kind of reverse
-    Node::draw();
     DrawTextEx(
         font,
         TextFormat(format, fps_value),

@@ -65,7 +65,7 @@ std::vector<Sprite> make_sprites(const Texture2D* spritesheet, Vector2 sprite_si
 
 // Animation stuff
 void Animation::draw() {
-    DrawTexture(*frames[current_frame], pos.x, pos.y, WHITE);
+    DrawTextureV(*frames[current_frame], get_abs_pos(), WHITE);
 }
 
 // Spritesheet animation stuff
@@ -80,5 +80,5 @@ SpritesheetAnimation::SpritesheetAnimation(
 }
 
 void SpritesheetAnimation::draw() {
-    DrawTextureRec(*spritesheet, frames[current_frame], pos, WHITE);
+    DrawTextureRec(*spritesheet, frames[current_frame], get_abs_pos(), WHITE);
 }

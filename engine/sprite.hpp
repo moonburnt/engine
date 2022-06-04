@@ -1,6 +1,7 @@
 #pragma once
 
 #include "utility.hpp"
+#include "scene.hpp"
 #include "raylib.h"
 #include <vector>
 
@@ -28,7 +29,7 @@ std::vector<Sprite> make_sprites(const Texture2D* spritesheet, Vector2 sprite_si
 
 // TODO: maybe make it possible for animation to be both based on spritesheet
 // and separate textures? Thus this whole thing will become pointless
-template <typename T> class AnimationBase {
+template <typename T> class AnimationBase : public Node {
 protected:
     Timer timer;
     std::vector<T> frames;
@@ -36,17 +37,14 @@ protected:
     size_t current_frame = 0;
 
 public:
-    Vector2 pos;
-
     // Maybe I should make it not vector, but something less memory-consuming? TODO
     AnimationBase(std::vector<T> _frames, float speed, bool _loop, Vector2 _pos)
         : timer(speed)
         , frames(_frames)
-        , loop(_loop)
-        , pos(_pos) {
+        , loop(_loop) {
+        set_pos(_pos);
         timer.start();
     }
-    virtual ~AnimationBase() = default;
 
     // Manually current frame to provided value. Doing so will stop timer.
     void set_current_frame(size_t frame) {
@@ -54,7 +52,7 @@ public:
         timer.stop();
     }
 
-    void update(float dt) {
+    void update(float dt) override {
         if (timer.tick(dt)) {
             if (current_frame + 1 < frames.size()) {
                 current_frame++;
@@ -69,8 +67,6 @@ public:
             }
         };
     }
-
-    virtual void draw() = 0;
 };
 
 class Animation : public AnimationBase<const Texture2D*> {
