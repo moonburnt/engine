@@ -46,6 +46,24 @@ Vector2 operator-(const Vector2& v1, const Vector2& v2) {
     return {v1.x - v2.x, v1.y - v2.y};
 }
 
+// Multiplying operator.
+Vector2 operator*(const Vector2 v1, const Vector2 v2) {
+    return {v1.x * v2.x, v1.y * v2.y};
+}
+
+Vector2 operator*(const Vector2 v1, float val) {
+    return {v1.x * val, v1.y * val};
+}
+
+// Division operator.
+Vector2 operator/(const Vector2 v1, const Vector2 v2) {
+    return {v1.x / v2.x, v1.y / v2.y};
+}
+
+Vector2 operator/(const Vector2 v1, float val) {
+    return {v1.x / val, v1.y / val};
+}
+
 // Add in place.
 Color& operator+=(Color& c1, const Color& c2) {
     c1.r = std::clamp((c1.r + c2.r), 0, 255);
@@ -76,6 +94,36 @@ Color& operator-=(Color& c1, const Color& c2) {
 Vector2& operator-=(Vector2& v1, const Vector2& v2) {
     v1.x = v1.x - v2.x;
     v1.y = v1.y - v2.y;
+
+    return v1;
+}
+
+// Multiply in place.
+Vector2& operator*=(Vector2& v1, const Vector2& v2) {
+    v1.x = v1.x * v2.x;
+    v1.y = v1.y * v2.y;
+
+    return v1;
+}
+
+Vector2& operator*=(Vector2& v1, float val) {
+    v1.x = v1.x * val;
+    v1.y = v1.y * val;
+
+    return v1;
+}
+
+// Divide in place.
+Vector2& operator/=(Vector2& v1, const Vector2& v2) {
+    v1.x = v1.x / v2.x;
+    v1.y = v1.y / v2.y;
+
+    return v1;
+}
+
+Vector2& operator/=(Vector2& v1, float val) {
+    v1.x = v1.x / val;
+    v1.y = v1.y / val;
 
     return v1;
 }
