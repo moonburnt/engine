@@ -3,9 +3,6 @@
 #include "raylib.h"
 #include <functional>
 #include <vector>
-// #include <array>
-// For static assert's comparisons
-#include <type_traits>
 
 // An attempt to implement a QuadTree mechanism with raylib's primitives.
 // Highly based on https://en.wikipedia.org/wiki/Quadtree#Pseudocode .
@@ -18,6 +15,14 @@
 
 template <typename T> class QuadTree {
 private:
+    // Order is not the one from wiki, but one used in math.
+    enum class TreeBranch {
+        NorthEast,
+        NorthWest,
+        SouthWest,
+        SouthEast
+    };
+
     // Capacity of this tree node.
     const std::size_t capacity = 4;
     // Boundaries of this tree node.
@@ -31,23 +36,15 @@ private:
 
     std::function<bool(T, Rectangle)> contains;
 
-    // Children.
-    // Order may be changed - using not the one from wiki, but one used in math.
-    // TODO: maybe move these to an array?
-    QuadTree* north_east;
-    QuadTree* north_west;
-    QuadTree* south_west;
-    QuadTree* south_east;
+    // Children branches.
+    std::vector<QuadTree> children;
 
     QuadTree(size_t lvl, Rectangle _boundary, std::function<bool(T, Rectangle)> _contains)
         : boundary(_boundary)
         , level(lvl)
-        , contains(_contains)
-        , north_east(nullptr)
-        , north_west(nullptr)
-        , south_west(nullptr)
-        , south_east(nullptr) {
+        , contains(_contains) {
         items.reserve(capacity);
+        children.reserve(4);
     }
 
     // Create 4 children that fully divide this quad into 4 quads of equal area.
@@ -61,42 +58,29 @@ private:
 
         size_t new_level = level + 1;
 
-        north_east = new QuadTree(
+        children.push_back({
             new_level,
             {boundary.x + half_width, boundary.y, half_width, half_height},
-            contains);
-        north_west = new QuadTree(
+            contains});
+        children.push_back({
             new_level,
             {boundary.x, boundary.y, half_width, half_height},
-            contains);
-        south_west = new QuadTree(
+            contains});
+        children.push_back({
             new_level,
             {boundary.x, boundary.y + half_height, half_width, half_height},
-            contains);
-        south_east = new QuadTree(
+            contains});
+        children.push_back({
             new_level,
             {boundary.x + half_width, boundary.x + half_height, half_width, half_height},
-            contains);
+            contains});
     }
 
 public:
     QuadTree(Rectangle _boundary, std::function<bool(T, Rectangle)> _contains)
-        : boundary(_boundary)
-        , level(0)
-        , contains(_contains)
-        , north_east(nullptr)
-        , north_west(nullptr)
-        , south_west(nullptr)
-        , south_east(nullptr) {
-        items.reserve(capacity);
-    }
+        : QuadTree(0, _boundary, _contains) {}
 
-    ~QuadTree() {
-        if (north_east != nullptr) delete north_east;
-        if (north_west != nullptr) delete north_west;
-        if (south_west != nullptr) delete south_west;
-        if (south_east != nullptr) delete south_east;
-    }
+    virtual ~QuadTree() = default;
 
     // Insert specified point into quadtree. If invalid - returns false.
     bool insert(T p) {
@@ -108,21 +92,29 @@ public:
         // If quadtree runs out of space - it gets divided. Thats why we check
         // if it has children and then if it ran out of space.
         // If necessary - subdivide it.
-        if (items.size() < capacity && north_east == nullptr) {
+        if (items.size() < capacity && children.size() == 0) {
             items.push_back(p);
             return true;
         }
 
-        if (north_east == nullptr) {
+        if (children.size() == 0) {
             subdivide();
         }
 
         // If we got this far - we must already have children.
         // Thus trying to insert the point into one of them.
-        if (north_east->insert(p)) return true;
-        if (north_west->insert(p)) return true;
-        if (south_west->insert(p)) return true;
-        if (south_east->insert(p)) return true;
+        if (children[static_cast<int>(TreeBranch::NorthEast)].insert(p)) {
+            return true;
+        }
+        if (children[static_cast<int>(TreeBranch::NorthWest)].insert(p)) {
+            return true;
+        }
+        if (children[static_cast<int>(TreeBranch::SouthWest)].insert(p)) {
+            return true;
+        }
+        if (children[static_cast<int>(TreeBranch::SouthEast)].insert(p)) {
+            return true;
+        }
 
         // And this should never happen, but since non-void function must return
         // something at the end - returning false at the end.
@@ -146,23 +138,16 @@ public:
         }
 
         // If there are no children - return results as is.
-        if (north_east == nullptr) {
+        if (children.size() == 0) {
             return results;
         }
 
         // Else querrying results from children.
         // This may be inefficient and may need a rework. TODO
-        std::vector<T> n_east = north_east->query_range(range);
-        results.insert(results.end(), n_east.begin(), n_east.end());
-
-        std::vector<T> n_west = north_west->query_range(range);
-        results.insert(results.end(), n_west.begin(), n_west.end());
-
-        std::vector<T> s_west = south_west->query_range(range);
-        results.insert(results.end(), s_west.begin(), s_west.end());
-
-        std::vector<T> s_east = south_east->query_range(range);
-        results.insert(results.end(), s_east.begin(), s_east.end());
+        for (auto directon: children) {
+            std::vector<T> dir_vec = direction.query_range(range);
+            results.insert(results.end(), dir_vec.begin(), dir_vec.end());
+        }
 
         return results;
     }
@@ -172,11 +157,15 @@ public:
     void clear() {
         items.clear();
 
-        if (north_east != nullptr) {
-            north_east->clear();
-            north_west->clear();
-            south_west->clear();
-            south_east->clear();
+        for (auto direction: children) {
+            direction.clear();
         }
+    }
+
+    // Purge kids and clear content, returning tree to its default form
+    void purge() {
+        items.clear();
+
+        children.clear();
     }
 };
