@@ -40,6 +40,10 @@ void Label::set_text(const std::string& txt) {
     text = txt;
 }
 
+std::string Label::get_text() {
+    return text;
+}
+
 void Label::draw() {
     DrawText(text.c_str(), real_pos.x, real_pos.y, text_size, text_color);
 }

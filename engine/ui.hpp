@@ -59,6 +59,8 @@ public:
 
     // Set label's text. May need to re-center message after that.
     void set_text(const std::string& txt);
+    // Unsure if I should return const std::string& there. TODO
+    std::string get_text();
 
     void draw();
 };
