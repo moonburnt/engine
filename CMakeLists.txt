@@ -18,6 +18,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(OpenGL_GL_PREFERENCE GLVND)
 
 add_library(engine STATIC
+    engine/raybuff.cpp
     engine/raybuff.hpp
     engine/scene.cpp
     engine/scene.hpp
