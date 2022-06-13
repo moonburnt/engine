@@ -6,6 +6,7 @@
 #include <string>
 #include <stdexcept>
 #include <tuple>
+#include "raybuff.hpp"
 
 // Widget
 void Widget::set_align(Align _align) {
@@ -24,34 +25,87 @@ void Widget::center() {
 // Label
 Label::Label(const std::string& txt, Vector2 position)
     : text(txt)
-    , pos(position)
+    , font(GetFontDefault()) // TODO: make it customizable
     , real_pos(position) {
-}
-
-void Label::center() {
-    real_pos = center_text(text, pos);
-}
-
-void Label::set_pos(Vector2 _pos, bool _center) {
-    pos = _pos;
-    if (_center) {
-        center();
-    }
-    else {
-        real_pos = pos;
-    }
+    Node::set_pos(position);
 }
 
 void Label::set_pos(Vector2 _pos) {
-    set_pos(_pos, false);
+    // This may be resource consuming and overkill
+    // TODO: consider reimagining the concept of aligns
+    // to use functions like get_topleft() from parent node to
+    // set align, instead of affecting current node's offset.
+    Node::set_pos(_pos);
+
+    // TODO: if auto_align is not set, always align as TopLeft by default.
+    // And add private overload that will accept align value, based on which
+    // things will perform
+
+    switch (align) {
+    case Align::TopLeft: {
+        real_pos = pos;
+        break;
+    }
+    case Align::Top: {
+        real_pos = {pos.x - MeasureText(text.c_str(), text_size) / 2, pos.y};
+        break;
+    }
+    case Align::TopRight: {
+        real_pos = {pos.x - MeasureText(text.c_str(), text_size), pos.y};
+        break;
+    }
+    case Align::Left: {
+        real_pos = {
+            pos.x,
+            pos.y - MeasureTextEx(
+                font, text.c_str(), text_size, text_size / 10.0f).y / 2.0f};
+        break;
+    }
+    case Align::Center: {
+        Vector2 t_size = MeasureTextEx(
+                font, text.c_str(), text_size, text_size / 10.0f);
+        // real_pos = {pos.x - text_size.x / 2, pos.y - text_size.y / 2};
+        real_pos = pos - t_size / 2.0f;
+        break;
+    }
+    case Align::Right: {
+        Vector2 t_size = MeasureTextEx(
+                font, text.c_str(), text_size, text_size / 10.0f);
+        real_pos = {pos.x - t_size.x, pos.y - t_size.y / 2};
+        break;
+    }
+    case Align::BottomLeft: {
+        real_pos = {
+            pos.x,
+            pos.y - MeasureTextEx(
+                font, text.c_str(), text_size, text_size / 10.0f).y};
+        break;
+    }
+    case Align::Bottom: {
+        Vector2 t_size = MeasureTextEx(
+                font, text.c_str(), text_size, text_size / 10.0f);
+        real_pos = {pos.x - t_size.x / 2, pos.y - t_size.y};
+        break;
+    }
+    case Align::BottomRight: {
+        real_pos = pos - MeasureTextEx(
+                font, text.c_str(), text_size, text_size / 10.0f);
+        // real_pos = {pos.x - text_size.x, pos.y - text_size.y};
+        break;
+    }
+    }
 }
 
-Vector2 Label::get_pos() {
-    return pos;
+void Label::apply_align() {
+    set_pos(get_pos());
 }
 
 void Label::set_text(const std::string& txt) {
     text = txt;
+    if (auto_align) {
+        // set_pos(get_pos());
+        apply_align();
+    }
 }
 
 std::string Label::get_text() {
@@ -110,7 +164,10 @@ void TextInputField::set_text(const std::string& txt) {
 }
 
 void TextInputField::set_pos(Vector2 pos, bool center) {
-    Label::set_pos(pos, center);
+    Label::set_pos(pos);
+    if (center) {
+        Label::center();
+    }
     update_blink_pos();
 }
 

@@ -53,8 +53,9 @@ public:
 class Widget : public Node {
 protected:
     Align align = Align::TopLeft;
-    // Pos to draw things on. Different if align is not TopLeft
-    Vector2 real_pos;
+    // // Pos to draw things on. Different if align is not TopLeft
+    // TODO, for now only implemented in Label
+    // Vector2 real_pos;
 
 public:
     virtual void set_align(Align _align);
@@ -64,36 +65,37 @@ public:
 };
 
 // Basic label.
-class Label {
+class Label : public Widget {
 protected:
     std::string text;
     int text_size = DEFAULT_TEXT_SIZE;
     Color text_color = DEFAULT_TEXT_COLOR;
-
-    // Pos set by set_pos and on init
-    Vector2 pos;
-    // Pos to draw on, that may be different if center() has been used.
+    Font font;
+    // Pos to draw things on. Different if align is not TopLeft
+    // TODO: move this to Widget
     Vector2 real_pos;
+    // Auto align. If set to true - will auto align object on text change
+    bool auto_align = false;
 
 public:
     Label(const std::string& txt, Vector2 position);
 
-    // Center message around its position
-    void center();
+    void set_pos(Vector2 pos) override;
 
-    void set_pos(Vector2 pos, bool center);
-    void set_pos(Vector2 pos);
-    Vector2 get_pos();
+    // Apply current align
+    void apply_align();
 
     // Set label's text. May need to re-center message after that.
     void set_text(const std::string& txt);
     // Unsure if I should return const std::string& there. TODO
     std::string get_text();
 
-    void draw();
+    void draw() override;
 };
 
 // Simple text input field, for basic text editing.
+// TODO: update to fully use widget functionality (right now it only has overrides
+// for compatibility with Label, did not update any logic yet
 class TextInputField : public Label {
 protected:
     // Text shown on background if no input has been received
@@ -126,7 +128,7 @@ public:
 
     void set_text(const std::string& txt);
     void set_pos(Vector2 pos, bool center);
-    void set_pos(Vector2 pos);
+    void set_pos(Vector2 pos) override;
 
     // Toggles to enable/disable auto updater.
     void enable();
@@ -140,8 +142,8 @@ public:
 
     // Default input field update method.
     // TODO: add support for gamepad's virtual keyboard
-    void update(float dt);
-    void draw();
+    void update(float dt) override;
+    void draw() override;
 };
 
 class Button : public ButtonBase {
