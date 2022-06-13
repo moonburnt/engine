@@ -7,6 +7,20 @@
 #include <stdexcept>
 #include <tuple>
 
+// Widget
+void Widget::set_align(Align _align) {
+    align = _align;
+    set_pos(get_pos());
+}
+
+Align Widget::get_align() {
+    return align;
+}
+
+void Widget::center() {
+    set_align(Align::Center);
+}
+
 // Label
 Label::Label(const std::string& txt, Vector2 position)
     : text(txt)

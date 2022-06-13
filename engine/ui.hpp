@@ -10,7 +10,21 @@
 #include <vector>
 #include "utility.hpp"
 
+// Align of widgets
+enum class Align {
+    TopLeft,
+    Top,
+    TopRight,
+    Left,
+    Center,
+    Right,
+    BottomLeft,
+    Bottom,
+    BottomRight
+};
+
 // UI primitives.
+// TODO: change naming to make things start with Capital Character
 enum class ButtonStates {
     idle,
     hover,
@@ -19,6 +33,7 @@ enum class ButtonStates {
     disabled
 };
 
+// TODO: remove this in favor of widgets
 class ButtonBase {
 public:
     virtual ButtonStates update() = 0;
@@ -33,6 +48,19 @@ public:
     virtual Vector2 get_pos() = 0;
 
     virtual ~ButtonBase() = default;
+};
+
+class Widget : public Node {
+protected:
+    Align align = Align::TopLeft;
+    // Pos to draw things on. Different if align is not TopLeft
+    Vector2 real_pos;
+
+public:
+    virtual void set_align(Align _align);
+    Align get_align();
+
+    void center();
 };
 
 // Basic label.
