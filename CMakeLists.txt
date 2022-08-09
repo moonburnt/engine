@@ -4,6 +4,8 @@ if(PROJECT_IS_TOP_LEVEL)
     message("Engine is a main project - some additional flags will be available")
 endif()
 
+option(COMPILE_PLAYGROUND "Compile engine's playground" OFF)
+
 # set project name and version
 project(engine
     LANGUAGES CXX
@@ -91,4 +93,8 @@ if(PROJECT_IS_TOP_LEVEL)
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMAND find engine \( -name '*.cpp' -o -name '*.hpp' \) -exec clang-format -style=file -i {} \;
         VERBATIM)
+endif()
+
+if(COMPILE_PLAYGROUND)
+    add_subdirectory(playground)
 endif()

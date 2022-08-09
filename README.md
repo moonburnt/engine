@@ -22,11 +22,28 @@ template is ok, TileMap with game-specific data is not).
 
 ## Installation
 
+### Base
+
 ```
 git submodule update --init
 cmake . -B ./build
 cmake --build ./build
 ```
+
+### Playground
+
+This library includes demo/playground to tinker with. It serves as both usage
+example, base project template and practice dummy to test engine changes on.
+In order to compile this engine together with its playground, do the following:
+
+```
+git submodule update --init
+# If you've previously had build directory - delete it
+cmake . -B ./build -DCOMPILE_PLAYGROUND=ON
+cmake --build ./build
+```
+
+To run the playground, cd into ./build/game/ and then run Game executable.
 
 ## License
 
