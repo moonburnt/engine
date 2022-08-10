@@ -10,6 +10,9 @@
 #include <raylib.h>
 #include <functional>
 
+// TODO: rework all scenes to utilize Node attachment mechanism instead of
+// manually overwriting update() and draw() methods.
+
 // Title Screen
 TitleScreen::TitleScreen(App* app, SceneManager* p)
     : parent(p)
@@ -25,9 +28,11 @@ void TitleScreen::update(float dt) {
     if (timer.tick(dt)) {
         parent->set_current_scene(new MainMenu(app, parent));
     }
+    Scene::update(dt);
 }
 
 void TitleScreen::draw() {
+    Scene::draw();
     greeter.draw();
 }
 
@@ -146,7 +151,7 @@ public:
         delete exit_button;
     }
 
-    void update(float) override {
+    void update(float dt) override {
         save_button->update();
         exit_button->update();
         fps_cb->update();
@@ -168,9 +173,12 @@ public:
         else {
             settings_changed = false;
         }
+
+        Scene::update(dt);
     }
 
     void draw() override {
+        Scene::draw();
         title.draw();
 
         show_fps_title.draw();
@@ -218,7 +226,7 @@ MainMenu::MainMenu(App* app, SceneManager* p)
     buttons.center();
 }
 
-void MainMenu::update(float) {
+void MainMenu::update(float dt) {
     // TODO: add keyboard controller, toggle manual update mode on and off,
     // depending on what happend the last - some valid key press or mouse movement
     buttons.update();
@@ -237,8 +245,11 @@ void MainMenu::update(float) {
         call_exit();
         return;
     }
+
+    Scene::update(dt);
 }
 
 void MainMenu::draw() {
+    Scene::draw();
     buttons.draw();
 }
