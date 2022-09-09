@@ -86,6 +86,25 @@ void Node::draw_recursive() {
 
 void Node::draw() {}
 
+// RectangleNode
+RectangleNode::RectangleNode(const Rectangle& _rect)
+    : rect(_rect) {
+    // Idk if this is optimal resource-wise
+    Node::set_pos({rect.x, rect.y});
+}
+
+void RectangleNode::set_pos(Vector2 _pos) {
+    Node::set_pos(_pos);
+
+    // TODO: alignment logic goes there
+    rect.x = pos.x;
+    rect.y = pos.y;
+}
+
+Rectangle RectangleNode::get_rect() {
+    return rect;
+}
+
 // RootNode
 // Thats how we specify logic of classes described inside other classes
 void Scene::RootNode::update(float dt) {

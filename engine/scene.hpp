@@ -58,6 +58,27 @@ public:
     virtual void draw();
 };
 
+// Node with rectangle attached to it.
+// Should:
+// - Be used as base for everything collideable (buttons, entities, etc)
+// - Contain methods for collision checking
+// TODO:
+// - Maybe add ability to draw these, if compiled with dev flag and
+// has debug config enabled
+class RectangleNode: public Node {
+protected:
+    // Node's rectangle.
+    // Without alignments, its top left will be equal pos.
+    Rectangle rect = {0.0f, 0.0f, 0.0f, 0.0f};
+
+public:
+    RectangleNode(const Rectangle& rect);
+
+    virtual void set_pos(Vector2 pos) override;
+
+    Rectangle get_rect();
+};
+
 // Scene is a base for everything
 class Scene {
 private:
