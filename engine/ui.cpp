@@ -11,7 +11,7 @@
 // Widget
 void Widget::set_align(Align _align) {
     align = _align;
-    set_pos(get_pos());
+    // set_pos(get_pos());
 }
 
 Align Widget::get_align() {
@@ -30,16 +30,18 @@ Label::Label(const std::string& txt, Vector2 position)
     Node::set_pos(position);
 }
 
-void Label::set_pos(Vector2 _pos) {
-    // This may be resource consuming and overkill
+void Label::set_pos(Vector2 _pos, bool apply_align) {
+   // This may be resource consuming and overkill
     // TODO: consider reimagining the concept of aligns
     // to use functions like get_topleft() from parent node to
     // set align, instead of affecting current node's offset.
     Node::set_pos(_pos);
 
-    // TODO: if auto_align is not set, always align as TopLeft by default.
-    // And add private overload that will accept align value, based on which
-    // things will perform
+    // if (!auto_align) {
+    if (!auto_align || !apply_align) {
+        real_pos = pos;
+        return;
+    }
 
     switch (align) {
     case Align::TopLeft: {
@@ -96,8 +98,16 @@ void Label::set_pos(Vector2 _pos) {
     }
 }
 
+void Label::set_pos(Vector2 _pos) {
+    set_pos(_pos, auto_align);
+}
+
+Vector2 Label::get_pos() {
+    return real_pos;
+}
+
 void Label::apply_align() {
-    set_pos(get_pos());
+    set_pos(Node::get_pos(), true);
 }
 
 void Label::set_text(const std::string& txt) {
@@ -112,8 +122,15 @@ std::string Label::get_text() {
     return text;
 }
 
+void Label::center() {
+    Widget::center();
+    apply_align();
+}
+
 void Label::draw() {
-    DrawText(text.c_str(), real_pos.x, real_pos.y, text_size, text_color);
+    // TODO: rework this to use get_abs_pos()
+    // DrawText(text.c_str(), real_pos.x, real_pos.y, text_size, text_color);
+    DrawTextEx(font, text.c_str(), get_abs_pos(), text_size, text_size/10, text_color);
 }
 
 // Text Input Field
@@ -161,14 +178,6 @@ void TextInputField::set_text(const std::string& txt) {
     else {
         Label::set_text(txt);
     }
-}
-
-void TextInputField::set_pos(Vector2 pos, bool center) {
-    Label::set_pos(pos);
-    if (center) {
-        Label::center();
-    }
-    update_blink_pos();
 }
 
 void TextInputField::set_pos(Vector2 pos) {

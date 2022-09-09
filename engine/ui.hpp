@@ -61,7 +61,7 @@ public:
     virtual void set_align(Align _align);
     Align get_align();
 
-    void center();
+    virtual void center();
 };
 
 // Basic label.
@@ -77,10 +77,14 @@ protected:
     // Auto align. If set to true - will auto align object on text change
     bool auto_align = false;
 
+    void set_pos(Vector2 pos, bool apply_align);
+
 public:
     Label(const std::string& txt, Vector2 position);
 
     void set_pos(Vector2 pos) override;
+    // Returns real_pos to make get_abs_pos() work, idk if it makes sense. TODO
+    Vector2 get_pos() override;
 
     // Apply current align
     void apply_align();
@@ -89,6 +93,8 @@ public:
     void set_text(const std::string& txt);
     // Unsure if I should return const std::string& there. TODO
     std::string get_text();
+
+    void center() override;
 
     void draw() override;
 };
@@ -100,7 +106,7 @@ class TextInputField : public Label {
 protected:
     // Text shown on background if no input has been received
     std::string bg_text;
-    Vector2 bg_text_pos;
+    // Vector2 bg_text_pos; // TODO: unused
     int bg_text_size = DEFAULT_TEXT_SIZE;
     Color bg_text_color = LIGHTGRAY;
     // Max amount of characters in text box. 0 means "unlimited".
@@ -127,7 +133,6 @@ public:
     TextInputField(const std::string& default_text, Vector2 pos);
 
     void set_text(const std::string& txt);
-    void set_pos(Vector2 pos, bool center);
     void set_pos(Vector2 pos) override;
 
     // Toggles to enable/disable auto updater.
