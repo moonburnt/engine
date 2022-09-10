@@ -1,4 +1,5 @@
 #include "utility.hpp"
+#include "text.hpp"
 #include "spdlog/spdlog.h"
 #include "raylib.h"
 

@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <vector>
 #include "utility.hpp"
+#include "text.hpp"
 
 // Align of widgets
 // enum class Align {
@@ -50,6 +51,7 @@ public:
     virtual ~ButtonBase() = default;
 };
 
+// DEPRECATED, TODO: REMOVE THESE
 class Widget : public Node {
 protected:
     Align align = Align::TopLeft;
@@ -95,6 +97,28 @@ public:
     std::string get_text();
 
     void center() override;
+
+    void draw() override;
+};
+// END OF DEPRECATION WARNING
+
+// This will replace Label
+// TODO: maybe not include Text, but inherit from it?
+class TextNode : public RectangleNode {
+protected:
+    Text text;
+    int text_size = DEFAULT_TEXT_SIZE;
+    Color text_color = DEFAULT_TEXT_COLOR;
+    Font font = DEFAULT_TEXT_FONT;
+    int spacing = DEFAULT_TEXT_SPACING;
+
+public:
+    TextNode(Text txt);
+    TextNode(const std::string& txt);
+
+    void set_text(Text txt);
+    void set_text(const std::string& txt);
+    Text get_text();
 
     void draw() override;
 };

@@ -133,6 +133,35 @@ void Label::draw() {
     DrawTextEx(font, text.c_str(), get_abs_pos(), text_size, text_size/10, text_color);
 }
 
+// TextNode
+TextNode::TextNode(Text txt)
+    // TODO: measure rectangle there and pass it to RectangleNode
+    // : RectangleNode(text.get_rect())
+    : RectangleNode({0.0f, 0.0f, 0.0f, 0.0f})
+    , text(txt) {
+    rect = text.get_rect();
+}
+
+TextNode::TextNode(const std::string& txt)
+    : TextNode(Text(txt)) {}
+
+void TextNode::set_text(Text txt) {
+    text = txt;
+    rect = text.get_rect();
+}
+
+void TextNode::set_text(const std::string& txt) {
+    set_text(Text(txt));
+}
+
+Text TextNode::get_text() {
+    return text;
+}
+
+void TextNode::draw() {
+    text.draw(get_abs_pos(), font, text_size, spacing, text_color);
+}
+
 // Text Input Field
 TextInputField::TextInputField(
     const std::string& default_text,

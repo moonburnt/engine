@@ -8,8 +8,8 @@
 #include "core.hpp"
 #include <algorithm>
 
-static constexpr uint32_t DEFAULT_TEXT_SIZE = 20u;
-static constexpr Color DEFAULT_TEXT_COLOR = BLACK;
+// static constexpr uint32_t DEFAULT_TEXT_SIZE = 20u;
+// static constexpr Color DEFAULT_TEXT_COLOR = BLACK;
 
 void handle_assert(const char* file, int line, const char* fun, const char* expr);
 

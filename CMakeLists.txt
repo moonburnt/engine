@@ -33,6 +33,8 @@ add_library(engine STATIC
     engine/sound.hpp
     engine/sprite.cpp
     engine/sprite.hpp
+    engine/text.cpp
+    engine/text.hpp
     engine/ui.cpp
     engine/ui.hpp
     engine/utility.cpp
