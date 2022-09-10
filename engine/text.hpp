@@ -18,6 +18,8 @@ protected:
 public:
     Text(const std::string& _txt);
 
+    void set_text(const std::string& _txt);
+
     // Get text size
     Vector2 get_size(Font font, int size, int spacing);
     Vector2 get_size();
@@ -29,25 +31,3 @@ public:
     virtual void draw(Vector2 pos);
 
 };
-
-// A bit more self-efficient text
-// class Text : public BasicText {
-// protected:
-//     std::string txt;
-//     int text_size = DEFAULT_TEXT_SIZE;
-//     // Maybe I will move color out of there later, idk
-//     Color text_color = DEFAULT_TEXT_COLOR;
-//     Font font = GetFontDefault();
-
-// public:
-//     Text(const std::string& _txt);
-
-//     void set_text_size(int size);
-//     int get_text_size();
-//     void set_text_color();
-//     Color get_text_color();
-//     void set_text_font();
-//     Font get_text_font();
-
-//     void draw(Vector2 pos) override;
-// }

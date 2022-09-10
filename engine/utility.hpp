@@ -114,26 +114,3 @@ bool has_mouse_moved();
 // Returns true if second rect is inside first rect, false if some part of it
 // is outside of borders.
 bool is_rect_inside_rect(Rectangle first, Rectangle second);
-
-// TODO: customizable font
-class FrameCounter : public Node {
-private:
-    int fps_value;
-
-protected:
-    const char* format;
-    // According to raylib's sources, smallest size allowed by default is 10
-    // Probably there is a reason for that?
-    int size;
-    Color color;
-    Font font;
-
-public:
-    FrameCounter(Vector2 pos, const char* format, int size, Color color, Font font);
-    FrameCounter(Vector2 pos, int size);
-    FrameCounter(Vector2 pos);
-    FrameCounter();
-
-    void update(float) override;
-    void draw() override;
-};

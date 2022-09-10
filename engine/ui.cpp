@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <tuple>
 #include "raybuff.hpp"
+#include "spdlog/spdlog.h"
 
 // Widget
 void Widget::set_align(Align _align) {
@@ -133,8 +134,8 @@ void Label::draw() {
     DrawTextEx(font, text.c_str(), get_abs_pos(), text_size, text_size/10, text_color);
 }
 
-// TextNode
-TextNode::TextNode(Text txt)
+// BasicTextNode
+BasicTextNode::BasicTextNode(Text txt)
     // TODO: measure rectangle there and pass it to RectangleNode
     // : RectangleNode(text.get_rect())
     : RectangleNode({0.0f, 0.0f, 0.0f, 0.0f})
@@ -142,24 +143,54 @@ TextNode::TextNode(Text txt)
     rect = text.get_rect();
 }
 
-TextNode::TextNode(const std::string& txt)
-    : TextNode(Text(txt)) {}
+BasicTextNode::BasicTextNode(const std::string& txt)
+    : BasicTextNode(Text(txt)) {}
 
+BasicTextNode::BasicTextNode(
+    Text txt, Font _font, int _size, int _spacing, Color _color)
+    // TODO: get rid of copypaste
+    : RectangleNode({0.0f, 0.0f, 0.0f, 0.0f})
+    , text(txt)
+    , text_size(_size)
+    , text_color(_color)
+    , font(_font)
+    , spacing(_spacing) {
+    rect = text.get_rect();
+}
+
+Text BasicTextNode::get_text() {
+    return text;
+}
+
+void BasicTextNode::draw() {
+    text.draw(get_abs_pos(), font, text_size, spacing, text_color);
+}
+
+// TextNode
 void TextNode::set_text(Text txt) {
     text = txt;
     rect = text.get_rect();
 }
 
 void TextNode::set_text(const std::string& txt) {
-    set_text(Text(txt));
+    text.set_text(txt);
+    rect = text.get_rect();
 }
 
-Text TextNode::get_text() {
-    return text;
-}
+// FPS counter
+FrameCounter::FrameCounter(
+    const char* _format, Font _font, int _size, int _spacing, Color _color)
+    : BasicTextNode(Text(""), _font, _size, _spacing, _color)
+    , format(_format) {}
 
-void TextNode::draw() {
-    text.draw(get_abs_pos(), font, text_size, spacing, text_color);
+FrameCounter::FrameCounter()
+    : BasicTextNode("") {
+        // set_pos({4.0f, 4.0f});
+    }
+
+void FrameCounter::update(float) {
+    fps_value = GetFPS();
+    text.set_text(TextFormat(format, fps_value));
 }
 
 // Text Input Field

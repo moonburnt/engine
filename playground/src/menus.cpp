@@ -72,7 +72,8 @@ private:
 
         if (current_settings["show_fps"].value_exact<bool>().value()) {
             if (app->window.sc_mgr.nodes.count("fps_counter") == 0) {
-                app->window.sc_mgr.nodes["fps_counter"] = new FrameCounter({4.0f, 4.0f});
+                app->window.sc_mgr.nodes["fps_counter"] = new FrameCounter();
+                app->window.sc_mgr.nodes["fps_counter"]->set_pos({4.0f, 4.0f});
             }
         }
         else {

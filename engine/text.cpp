@@ -5,6 +5,10 @@
 Text::Text(const std::string& _txt)
     : txt(_txt) {}
 
+void Text::set_text(const std::string& _txt) {
+    txt = _txt;
+}
+
 Vector2 Text::get_size(Font font, int size, int spacing) {
     return MeasureTextEx(font, txt.c_str(), size, spacing);
 }
@@ -42,11 +46,3 @@ void Text::draw(Vector2 pos) {
         DEFAULT_TEXT_COLOR
     );
 }
-
-// Text
-// Text::Text(const std::string& _txt)
-//     : txt(_txt) {}
-
-// void Text::draw(Vector2 pos) {
-//     DrawTextEx(font, text.c_str(), pos, text_size, text_size/10, text_color);
-// }

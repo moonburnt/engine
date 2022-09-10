@@ -104,23 +104,47 @@ public:
 
 // This will replace Label
 // TODO: maybe not include Text, but inherit from it?
-class TextNode : public RectangleNode {
+// Basic text node with non-editable text
+class BasicTextNode : public RectangleNode {
 protected:
     Text text;
+    // According to raylib's sources, smallest size allowed by default is 10
+    // Probably there is a reason for that?
     int text_size = DEFAULT_TEXT_SIZE;
     Color text_color = DEFAULT_TEXT_COLOR;
     Font font = DEFAULT_TEXT_FONT;
     int spacing = DEFAULT_TEXT_SPACING;
 
 public:
-    TextNode(Text txt);
-    TextNode(const std::string& txt);
+    BasicTextNode(Text txt, Font _font, int _size, int _spacing, Color _color);
+    BasicTextNode(Text txt);
+    BasicTextNode(const std::string& txt);
 
-    void set_text(Text txt);
-    void set_text(const std::string& txt);
     Text get_text();
 
     void draw() override;
+};
+
+// Flexible text node
+class TextNode : public BasicTextNode {
+public:
+    void set_text(Text txt);
+    void set_text(const std::string& txt);
+};
+
+// FrameCounter from utility. Reworked.
+class FrameCounter : public BasicTextNode {
+private:
+    int fps_value = 0;
+
+protected:
+    const char* format = "FPS: %02i";
+
+public:
+    FrameCounter(const char* format, Font font, int size, int spacing, Color color);
+    FrameCounter();
+
+    void update(float) override;
 };
 
 // Simple text input field, for basic text editing.
