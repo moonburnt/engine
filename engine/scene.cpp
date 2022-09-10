@@ -110,6 +110,64 @@ void RectangleNode::set_pos(Vector2 _pos) {
     rect.y = pos.y;
 }
 
+Vector2 RectangleNode::get_abs_pos() {
+    // Maybe I should call Node's method inside and put custom logic afterwards?
+    // Idk, will do for now.
+
+    if (parent != nullptr) {
+        Vector2 origin_pos = parent->get_abs_pos();
+        // I think, alignment-related logic goes there?
+        switch (parent->get_align()) {
+        case Align::TopLeft: {
+            // Do nothing since its the default align
+            break;
+        }
+        // I think these are about right?
+        case Align::Top: {
+            origin_pos = {origin_pos.x - rect.width / 2.0f, origin_pos.y};
+            break;
+        }
+        case Align::TopRight: {
+            origin_pos = {origin_pos.x - rect.width, origin_pos.y};
+            break;
+        }
+        case Align::Left: {
+            origin_pos = {origin_pos.x, origin_pos.y - rect.height / 2.0f};
+            break;
+        }
+        case Align::Center: {
+            origin_pos = {
+                origin_pos.x - rect.width / 2.0f,
+                origin_pos.y - rect.height / 2.0f
+            };
+            break;
+        }
+        case Align::Right: {
+            origin_pos = {origin_pos.x - rect.width, pos.y - rect.height / 2.0f};
+            break;
+        }
+        case Align::BottomLeft: {
+            origin_pos = {origin_pos.x, origin_pos.y - rect.height};
+            break;
+        }
+        case Align::Bottom: {
+            origin_pos = {origin_pos.x - rect.width / 2.0f, origin_pos.y - rect.height};
+            break;
+        }
+        case Align::BottomRight: {
+            origin_pos = {origin_pos.x - rect.width, origin_pos.y - rect.height};
+            break;
+        }
+        // Not adding default since we should cover all cases there
+        }
+
+        return origin_pos + get_pos();
+    }
+    else {
+        return get_pos();
+    }
+}
+
 Rectangle RectangleNode::get_rect() {
     return rect;
 }

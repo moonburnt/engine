@@ -77,7 +77,9 @@ public:
     // Get current node position in relevance to its parent
     virtual Vector2 get_pos();
     // Get absolute node position in the world.
-    Vector2 get_abs_pos();
+    // Set to virtual since we don't store abs_pos - needed to adjust positions
+    // of RectangleNode and similar
+    virtual Vector2 get_abs_pos();
 
     // These arent pure-virtual, coz some children may not specify some of these.
     // Say, audio node won't have a draw method.
@@ -107,6 +109,8 @@ public:
     RectangleNode(Rectangle rect);
 
     virtual void set_pos(Vector2 pos) override;
+
+    virtual Vector2 get_abs_pos() override;
 
     Rectangle get_rect();
 
