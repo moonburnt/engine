@@ -28,6 +28,8 @@ class Node {
 protected:
     std::vector<Node*> children;
     Node* parent = nullptr;
+    // Node alignment.
+    // For now, does not affect basic nodes - just RectangleNode and its relatives
     Align align = Align::TopLeft;
 
     Vector2 pos = {0.0f, 0.0f};
@@ -62,9 +64,13 @@ public:
     void set_parent(Node* node);
 
     // Set node's alignment, which will affect placement of child nodes (qt-style)
-    // TODO: think if this should be re-applied manually or automatically
+    // TODO: think if apply_align() should be applied right away
     virtual void set_align(Align _align);
     Align get_align();
+    // Manually re-calculate position of all child nodes according to current align
+    // Not implemented, since for now we don't store abs_pos but use get_abs_pos()
+    // to calculate it manually on demand.
+    // void apply_align();
 
     virtual void set_pos(Vector2 pos);
 
@@ -75,6 +81,7 @@ public:
 
     // These arent pure-virtual, coz some children may not specify some of these.
     // Say, audio node won't have a draw method.
+    // TODO: think if this should auto-update position of child nodes recursively.
     virtual void update(float dt);
 
     virtual void draw();

@@ -80,6 +80,7 @@ void Node::update_recursive(float dt) {
     }
 }
 
+// TODO: think if we should adjust base node's pos each frame
 void Node::update(float) {}
 
 void Node::draw_recursive() {
