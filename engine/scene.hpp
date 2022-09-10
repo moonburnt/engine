@@ -72,11 +72,24 @@ protected:
     Rectangle rect = {0.0f, 0.0f, 0.0f, 0.0f};
 
 public:
-    RectangleNode(const Rectangle& rect);
+    // Don't overthink it for now
+    // May optimize later if these will become an issue
+    // RectangleNode(const Rectangle& rect);
+    RectangleNode(Rectangle rect);
 
     virtual void set_pos(Vector2 pos) override;
 
     Rectangle get_rect();
+
+    // Check if node collides with other objects
+    bool collides(RectangleNode other);
+    bool collides(Rectangle _rect);
+    bool collides(Vector2 _pos);
+    // TODO: maybe create a class for circle
+    // Then there could be relevant collision check function
+
+    Rectangle get_collision_rect(RectangleNode other);
+    Rectangle get_collision_rect(Rectangle _rect);
 };
 
 // Scene is a base for everything

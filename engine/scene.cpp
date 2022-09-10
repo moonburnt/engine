@@ -87,7 +87,7 @@ void Node::draw_recursive() {
 void Node::draw() {}
 
 // RectangleNode
-RectangleNode::RectangleNode(const Rectangle& _rect)
+RectangleNode::RectangleNode(Rectangle _rect)
     : rect(_rect) {
     // Idk if this is optimal resource-wise
     Node::set_pos({rect.x, rect.y});
@@ -103,6 +103,26 @@ void RectangleNode::set_pos(Vector2 _pos) {
 
 Rectangle RectangleNode::get_rect() {
     return rect;
+}
+
+bool RectangleNode::collides(RectangleNode other) {
+    return CheckCollisionRecs(get_rect(), other.get_rect());
+}
+
+bool RectangleNode::collides(Rectangle _rect) {
+    return CheckCollisionRecs(get_rect(), _rect);
+}
+
+bool RectangleNode::collides(Vector2 _pos) {
+    return CheckCollisionPointRec(_pos, get_rect());
+}
+
+Rectangle RectangleNode::get_collision_rect(RectangleNode other) {
+    return GetCollisionRec(get_rect(), other.get_rect());
+}
+
+Rectangle RectangleNode::get_collision_rect(Rectangle _rect) {
+    return GetCollisionRec(get_rect(), _rect);
 }
 
 // RootNode
