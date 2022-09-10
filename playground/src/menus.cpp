@@ -187,6 +187,21 @@ public:
     }
 };
 
+class TestRectangleNodeScene : public Scene {
+// private:
+//     SceneManager* parent;
+//     App* app;
+
+public:
+    TestRectangleNodeScene(App*, SceneManager*) {
+        // I think this should be destroyed in Node's destructor, so thats fine
+        add_child(new RectangleNode({50.0f, 50.0f, 50.0f, 50.0f}));
+    }
+
+    // void draw() override {}
+
+};
+
 // Main menu
 void MainMenu::call_exit() {
     // parent->active = false;
@@ -195,7 +210,7 @@ void MainMenu::call_exit() {
 
 void MainMenu::new_game() {
     spdlog::info("Switching to level");
-    // parent->set_current_scene(new Level(app, parent));
+    parent->set_current_scene(new TestRectangleNodeScene(app, parent));
 }
 
 void MainMenu::open_settings() {

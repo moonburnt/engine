@@ -83,17 +83,25 @@ void Node::update_recursive(float dt) {
 // TODO: think if we should adjust base node's pos each frame
 void Node::update(float) {}
 
+
+void Node::draw() {}
+
+#if defined(DRAW_DEBUG)
+void Node::draw_debug() {}
+#endif
+
 void Node::draw_recursive() {
     // We may use different logic there. Or maybe even turn basic Node's logic
     // into a pure-virtual thing and write various implementations.
     // But for now it will do. TODO
     for (auto i: children) {
         i->draw();
+        #if defined(DRAW_DEBUG)
+        i->draw_debug();
+        #endif
         i->draw_recursive();
     }
 }
-
-void Node::draw() {}
 
 // RectangleNode
 RectangleNode::RectangleNode(Rectangle _rect)
@@ -191,6 +199,18 @@ Rectangle RectangleNode::get_collision_rect(RectangleNode other) {
 Rectangle RectangleNode::get_collision_rect(Rectangle _rect) {
     return GetCollisionRec(get_rect(), _rect);
 }
+
+#if defined(DRAW_DEBUG)
+void RectangleNode::draw_debug() {
+    // DrawRectangle
+    // TODO: do something about rect's first two values being off
+    // TODO: switch to DrawRectangleRec
+    Vector2 abs_pos = get_abs_pos();
+    DrawRectangleV(abs_pos, {rect.width, rect.height}, DEBUG_DRAW_COLOR_BG);
+    DrawRectangleLines(
+        abs_pos.x, abs_pos.y, rect.width, rect.height, DEBUG_DRAW_COLOR_FG);
+}
+#endif
 
 // RootNode
 // Thats how we specify logic of classes described inside other classes

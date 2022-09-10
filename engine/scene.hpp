@@ -5,6 +5,12 @@
 #include <unordered_map>
 #include <vector>
 
+#if defined(DRAW_DEBUG)
+static constexpr Color DEBUG_DRAW_COLOR_FG = RED;
+static constexpr Color DEBUG_DRAW_COLOR_BG = PINK;
+static constexpr Color DEBUG_DRAW_COLOR = RED;
+#endif
+
 // Various scene management shenanigans
 
 // Alignment for nodes
@@ -36,6 +42,13 @@ protected:
 
     void update_recursive(float dt);
     void draw_recursive();
+
+    // Attach debug drawing method if compiled with DRAW_DEBUG flag
+    // It shouldn't be called directly, but from draw_recursive.
+    // Won't do anything for base Node, thus protected and virtual
+    #if defined(DRAW_DEBUG)
+    virtual void draw_debug();
+    #endif
 
 public:
     virtual ~Node();
@@ -101,6 +114,10 @@ protected:
     // Node's rectangle.
     // Without alignments, its top left will be equal pos.
     Rectangle rect = {0.0f, 0.0f, 0.0f, 0.0f};
+
+    #if defined(DRAW_DEBUG)
+    virtual void draw_debug() override;
+    #endif
 
 public:
     // Don't overthink it for now

@@ -5,6 +5,7 @@ if(PROJECT_IS_TOP_LEVEL)
 endif()
 
 option(COMPILE_PLAYGROUND "Compile engine's playground" OFF)
+option(DRAW_DEBUG "Draw debug info, such as hitboxes" OFF)
 
 # set project name and version
 project(engine
@@ -52,6 +53,14 @@ target_include_directories(engine PUBLIC
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR MINGW)
     target_compile_definitions(engine PRIVATE
         _CRT_SECURE_NO_WARNINGS
+    )
+endif()
+
+# Draw debug info if specific flag has been received
+# I hope this won't eat previous target_compile_definitions statement.
+if(DRAW_DEBUG)
+    target_compile_definitions(engine PRIVATE
+        "DRAW_DEBUG"
     )
 endif()
 
