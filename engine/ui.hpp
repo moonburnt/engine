@@ -11,17 +11,17 @@
 #include "utility.hpp"
 
 // Align of widgets
-enum class Align {
-    TopLeft,
-    Top,
-    TopRight,
-    Left,
-    Center,
-    Right,
-    BottomLeft,
-    Bottom,
-    BottomRight
-};
+// enum class Align {
+//     TopLeft,
+//     Top,
+//     TopRight,
+//     Left,
+//     Center,
+//     Right,
+//     BottomLeft,
+//     Bottom,
+//     BottomRight
+// };
 
 // UI primitives.
 // TODO: change naming to make things start with Capital Character
@@ -58,7 +58,7 @@ protected:
     // Vector2 real_pos;
 
 public:
-    virtual void set_align(Align _align);
+    virtual void set_align(Align _align) override;
     Align get_align();
 
     virtual void center();

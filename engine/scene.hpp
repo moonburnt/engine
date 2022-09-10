@@ -7,11 +7,28 @@
 
 // Various scene management shenanigans
 
+// Alignment for nodes
+// Originally I've intended to implement AlignNode and set it exclusively for
+// it and its relatives. But then I couldn't figure out how to check for
+// parent's alignment. Thus this will be included in base node. For now.
+enum class Align {
+    TopLeft,
+    Top,
+    TopRight,
+    Left,
+    Center,
+    Right,
+    BottomLeft,
+    Bottom,
+    BottomRight
+};
+
 // Node is an abstract thing that can be attached to Scene or SceneManager
 class Node {
 protected:
     std::vector<Node*> children;
     Node* parent = nullptr;
+    Align align = Align::TopLeft;
 
     Vector2 pos = {0.0f, 0.0f};
 
@@ -43,6 +60,11 @@ public:
     // Attach this node to specific parent. If it has already been attached to
     // some, then detach it and move to new one, with all its ancestors
     void set_parent(Node* node);
+
+    // Set node's alignment, which will affect placement of child nodes (qt-style)
+    // TODO: think if this should be re-applied manually or automatically
+    virtual void set_align(Align _align);
+    Align get_align();
 
     virtual void set_pos(Vector2 pos);
 

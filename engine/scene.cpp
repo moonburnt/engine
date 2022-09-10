@@ -45,6 +45,14 @@ void Node::set_parent(Node* node) {
     node->add_child(this);
 }
 
+void Node::set_align(Align _align) {
+    align = _align;
+}
+
+Align Node::get_align() {
+    return align;
+}
+
 void Node::set_pos(Vector2 _pos) {
     pos = _pos;
 }
