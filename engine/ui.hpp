@@ -11,19 +11,6 @@
 #include "utility.hpp"
 #include "text.hpp"
 
-// Align of widgets
-// enum class Align {
-//     TopLeft,
-//     Top,
-//     TopRight,
-//     Left,
-//     Center,
-//     Right,
-//     BottomLeft,
-//     Bottom,
-//     BottomRight
-// };
-
 // UI primitives.
 // TODO: change naming to make things start with Capital Character
 enum class ButtonStates {

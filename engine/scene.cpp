@@ -216,25 +216,9 @@ void RectangleNode::draw_debug() {
 }
 #endif
 
-// RootNode
-// Thats how we specify logic of classes described inside other classes
-// void Scene::RootNode::update_child_nodes(float dt) {
-//     update_recursive(dt);
-// }
-
-// void Scene::RootNode::draw_child_nodes() {
-//     draw_recursive();
-// }
-
-
 // Scene
 Scene::Scene(Color _bg_color)
-    : bg_color(_bg_color) {
-}
-
-// Scene::Scene()
-//     : Scene({245, 245, 245, 255}) {
-// }
+    : bg_color(_bg_color) {}
 
 void Scene::add_child(Node* node) {
     root.add_child(node);
@@ -321,6 +305,8 @@ void SceneManager::update(float dt) {
         return;
     }
 
+    // Doing switch at the beginning and not end of update cycle, since otherwise
+    // initial scene loading breaks.
     try_to_switch_scene();
 
     current_scene->update_recursive(dt);
@@ -339,13 +325,6 @@ void SceneManager::update(float dt) {
     EndDrawing();
     // try_to_switch_scene();
 }
-
-// Default SceneManager's constructor is all way down, coz TitleScreen is in its
-// body. But don't worry - even if instantiation is declared above, nothing bad
-// will happen - this one will get triggered correctly
-// SceneManager::SceneManager()
-//     : active(true) {
-// }
 
 SceneManager::~SceneManager() {
     if (current_scene != nullptr) {

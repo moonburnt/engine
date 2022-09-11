@@ -40,12 +40,6 @@ protected:
 
     Vector2 pos = {0.0f, 0.0f};
 
-    // void update_recursive(float dt);
-    // void draw_recursive();
-
-    // To allow Scene to call update_recursive() and draw_recursive()
-    // friend class Scene;
-
     // Attach debug drawing method if compiled with DRAW_DEBUG flag
     // It shouldn't be called directly, but from draw_recursive.
     // Won't do anything for base Node, thus protected and virtual
@@ -97,7 +91,8 @@ public:
     // of RectangleNode and similar
     virtual Vector2 get_abs_pos();
 
-    // TODO: protecc these back after figuring out why Scene segfaults in update
+    // TODO: consider moving this to protected, since they aren't intended to
+    // be called directly.
     void update_recursive(float dt);
     void draw_recursive();
 
@@ -152,17 +147,7 @@ public:
 // Scene is a base for everything. TODO: consider subclassing Node
 class Scene {
 private:
-    // RootNode is a scene-exclusive thing that should serve as an entry point
-    // class RootNode: public Node {
-    //     // Kinda stupid way to allow Scene to execute Node's update_recursive
-    //     // and draw_recursive methods without befriending it.
-    //     // Maybe I should ditch it later, idk
-    //     public:
-    //         void update_child_nodes(float dt);
-    //         void draw_child_nodes();
-    // };
-
-    // RootNode root;
+    // Root node that should serve as an entry point.
     Node root;
     Color bg_color = {245, 245, 245, 255};
 
@@ -211,7 +196,6 @@ public:
     // Node storage. TODO: remove it, just like with Scene
     std::unordered_map<std::string, Node*> nodes;
 
-    // SceneManager();
     ~SceneManager();
 
     // Schedule provided scene to be set as current_scene at the beginning of
