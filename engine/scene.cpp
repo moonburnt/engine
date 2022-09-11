@@ -72,8 +72,11 @@ Vector2 Node::get_abs_pos() {
 }
 
 void Node::update_recursive(float dt) {
+    // TODO: maybe move things around for draw cycle (what happens before and what
+    // should happen after - children's or parent's things)
+    update(dt);
     for (auto i: children) {
-        i->update(dt);
+        // i->update(dt);
         // It may be non-obvious, but Node will have access to private and
         // protected methods of other Node objects too.
         i->update_recursive(dt);
@@ -91,11 +94,12 @@ void Node::draw_debug() {}
 #endif
 
 void Node::draw_recursive() {
+    draw();
     // We may use different logic there. Or maybe even turn basic Node's logic
     // into a pure-virtual thing and write various implementations.
     // But for now it will do. TODO
     for (auto i: children) {
-        i->draw();
+        // i->draw();
         #if defined(DRAW_DEBUG)
         i->draw_debug();
         #endif
@@ -214,13 +218,13 @@ void RectangleNode::draw_debug() {
 
 // RootNode
 // Thats how we specify logic of classes described inside other classes
-void Scene::RootNode::update(float dt) {
-    update_recursive(dt);
-}
+// void Scene::RootNode::update_child_nodes(float dt) {
+//     update_recursive(dt);
+// }
 
-void Scene::RootNode::draw() {
-    draw_recursive();
-}
+// void Scene::RootNode::draw_child_nodes() {
+//     draw_recursive();
+// }
 
 
 // Scene
@@ -228,9 +232,9 @@ Scene::Scene(Color _bg_color)
     : bg_color(_bg_color) {
 }
 
-Scene::Scene()
-    : Scene({245, 245, 245, 255}) {
-}
+// Scene::Scene()
+//     : Scene({245, 245, 245, 255}) {
+// }
 
 void Scene::add_child(Node* node) {
     root.add_child(node);
@@ -240,13 +244,19 @@ void Scene::remove_child(Node* node) {
     root.remove_child(node);
 }
 
-void Scene::update(float dt) {
-    root.update(dt);
+void Scene::update(float) {}
+
+void Scene::draw() {}
+
+void Scene::update_recursive(float dt) {
+    update(dt);
+    root.update_recursive(dt);
 }
 
-void Scene::draw() {
+void Scene::draw_recursive() {
     ClearBackground(bg_color);
-    root.draw();
+    draw();
+    root.draw_recursive();
 }
 
 // Scene manager
@@ -255,13 +265,51 @@ void Scene::draw() {
 // initializing it from zero and clearing up other scenes from memory.
 // Or to keep all scenes initialized in some storage. For now, we are going for
 // the first one, but this behavior may change in future.
-void SceneManager::set_current_scene(Scene* scene) {
+
+bool SceneManager::try_to_switch_scene() {
+    if (next_scene == nullptr) {
+        return false;
+    }
+
     if (current_scene != nullptr) {
         delete current_scene;
     };
 
-    current_scene = scene;
+    current_scene = next_scene;
+    next_scene = nullptr;
+    return true;
+}
+
+void SceneManager::set_current_scene(Scene* scene, bool ensure_unique) {
+    if (ensure_unique) {
+        if (current_scene == scene) {
+            return;
+        }
+    }
+
+    // Avoid scheduling a switch to the same scene multiple times
+    if (next_scene == scene) {
+        return;
+    }
+    // Ensure attempting to switch to different scenes within same update frame
+    // won't cause now-invalid switch options to stay in memory
+    else if (next_scene != nullptr) {
+        delete next_scene;
+    }
+
+    next_scene = scene;
+
+    // Old logic below
+    // if (current_scene != nullptr) {
+    //     delete current_scene;
+    // };
+
+    // current_scene = scene;
     // active = true;
+}
+
+void SceneManager::set_current_scene(Scene* scene) {
+    set_current_scene(scene, false);
 }
 
 bool SceneManager::is_active() {
@@ -273,28 +321,31 @@ void SceneManager::update(float dt) {
         return;
     }
 
-    current_scene->update(dt);
+    try_to_switch_scene();
+
+    current_scene->update_recursive(dt);
 
     for (const auto& [_, i] : nodes) {
         i->update(dt);
     }
 
     BeginDrawing();
-    current_scene->draw();
+    current_scene->draw_recursive();
 
     for (const auto& [_, i] : nodes) {
         i->draw();
     }
 
     EndDrawing();
+    // try_to_switch_scene();
 }
 
 // Default SceneManager's constructor is all way down, coz TitleScreen is in its
 // body. But don't worry - even if instantiation is declared above, nothing bad
 // will happen - this one will get triggered correctly
-SceneManager::SceneManager()
-    : active(true) {
-}
+// SceneManager::SceneManager()
+//     : active(true) {
+// }
 
 SceneManager::~SceneManager() {
     if (current_scene != nullptr) {

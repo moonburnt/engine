@@ -191,6 +191,7 @@ FrameCounter::FrameCounter()
 void FrameCounter::update(float) {
     fps_value = GetFPS();
     text.set_text(TextFormat(format, fps_value));
+    // rect = text.get_rect();
 }
 
 // Text Input Field

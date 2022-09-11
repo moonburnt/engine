@@ -40,8 +40,11 @@ protected:
 
     Vector2 pos = {0.0f, 0.0f};
 
-    void update_recursive(float dt);
-    void draw_recursive();
+    // void update_recursive(float dt);
+    // void draw_recursive();
+
+    // To allow Scene to call update_recursive() and draw_recursive()
+    // friend class Scene;
 
     // Attach debug drawing method if compiled with DRAW_DEBUG flag
     // It shouldn't be called directly, but from draw_recursive.
@@ -94,6 +97,10 @@ public:
     // of RectangleNode and similar
     virtual Vector2 get_abs_pos();
 
+    // TODO: protecc these back after figuring out why Scene segfaults in update
+    void update_recursive(float dt);
+    void draw_recursive();
+
     // These arent pure-virtual, coz some children may not specify some of these.
     // Say, audio node won't have a draw method.
     // TODO: think if this should auto-update position of child nodes recursively.
@@ -142,22 +149,33 @@ public:
     Rectangle get_collision_rect(Rectangle _rect);
 };
 
-// Scene is a base for everything
+// Scene is a base for everything. TODO: consider subclassing Node
 class Scene {
 private:
     // RootNode is a scene-exclusive thing that should serve as an entry point
-    class RootNode: public Node {
-        public:
-            void update(float dt) override;
-            void draw() override;
-    };
+    // class RootNode: public Node {
+    //     // Kinda stupid way to allow Scene to execute Node's update_recursive
+    //     // and draw_recursive methods without befriending it.
+    //     // Maybe I should ditch it later, idk
+    //     public:
+    //         void update_child_nodes(float dt);
+    //         void draw_child_nodes();
+    // };
 
-    RootNode root;
-    Color bg_color;
+    // RootNode root;
+    Node root;
+    Color bg_color = {245, 245, 245, 255};
+
+    // Allow SceneManager to access our private and protected things
+    friend class SceneManager;
+
+protected:
+    void update_recursive(float dt);
+    void draw_recursive();
 
 public:
     Scene(Color bg_color);
-    Scene();
+    Scene() = default;
 
     virtual ~Scene() = default;
 
@@ -178,17 +196,31 @@ class SceneManager {
 private:
     // We are using pointer to Scene, to make it work with Scene's children.
     // By default its set to nullptr, to verify if children has been configured.
+    // TODO: consider replacing this logic with deque to simplify checks in
+    // try_to_switch_scene call
     Scene* current_scene = nullptr;
+    Scene* next_scene = nullptr;
+
+protected:
+    // Switch scene to the next scene, if next_scene != nullptr
+    // Implemented coz using set_current_scene() to perform actual switch
+    // mid update cycle caused segfaults
+    bool try_to_switch_scene();
 
 public:
     // Node storage. TODO: remove it, just like with Scene
     std::unordered_map<std::string, Node*> nodes;
 
-    SceneManager();
+    // SceneManager();
     ~SceneManager();
 
+    // Schedule provided scene to be set as current_scene at the beginning of
+    // the next update cycle. If ensure_unique is set - will also check if new
+    // scene is not the same as current scene. Default - false.
+    // TODO: consider a less deceiving name for this
+    void set_current_scene(Scene* scene, bool ensure_unique);
     void set_current_scene(Scene* scene);
     void update(float dt);
-    bool active;
+    bool active = true;
     bool is_active();
 };
