@@ -99,7 +99,7 @@ protected:
     // Probably there is a reason for that?
     int text_size = DEFAULT_TEXT_SIZE;
     Color text_color = DEFAULT_TEXT_COLOR;
-    Font font = DEFAULT_TEXT_FONT;
+    Font font = GetFontDefault();
     int spacing = DEFAULT_TEXT_SPACING;
 
 public:

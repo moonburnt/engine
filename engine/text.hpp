@@ -7,7 +7,7 @@ static constexpr uint32_t DEFAULT_TEXT_SIZE = 20u;
 static constexpr Color DEFAULT_TEXT_COLOR = BLACK;
 static constexpr uint32_t DEFAULT_TEXT_SPACING = DEFAULT_TEXT_SIZE / 10;
 // static constexpr Font DEFAULT_TEXT_FONT = GetFontDefault();
-static Font DEFAULT_TEXT_FONT = GetFontDefault();
+// static Font DEFAULT_TEXT_FONT = GetFontDefault();
 
 // Basic text class, include only necessary things.
 // Maybe should merge into raybuff thingy later.

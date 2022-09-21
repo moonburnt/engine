@@ -15,7 +15,7 @@ Vector2 Text::get_size(Font font, int size, int spacing) {
 
 Vector2 Text::get_size() {
     return MeasureTextEx(
-        DEFAULT_TEXT_FONT,
+        GetFontDefault(),
         txt.c_str(),
         DEFAULT_TEXT_SIZE,
         DEFAULT_TEXT_SPACING
@@ -28,7 +28,7 @@ Rectangle Text::get_rect(Font font, int size, int spacing) {
 }
 
 Rectangle Text::get_rect() {
-    return get_rect(DEFAULT_TEXT_FONT, DEFAULT_TEXT_SIZE, DEFAULT_TEXT_SPACING);
+    return get_rect(GetFontDefault(), DEFAULT_TEXT_SIZE, DEFAULT_TEXT_SPACING);
 }
 
 void Text::draw(Vector2 pos, Font font, int size, int spacing, Color color) {
@@ -40,7 +40,7 @@ void Text::draw(Vector2 pos, Font font, int size, int spacing, Color color) {
 void Text::draw(Vector2 pos) {
     draw(
         pos,
-        DEFAULT_TEXT_FONT,
+        GetFontDefault(),
         DEFAULT_TEXT_SIZE,
         DEFAULT_TEXT_SPACING,
         DEFAULT_TEXT_COLOR

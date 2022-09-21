@@ -118,7 +118,7 @@ protected:
     Rectangle rect = {0.0f, 0.0f, 0.0f, 0.0f};
 
     #if defined(DRAW_DEBUG)
-    virtual void draw_debug() override;
+    void draw_debug() override;
     #endif
 
 public:
@@ -127,9 +127,9 @@ public:
     // RectangleNode(const Rectangle& rect);
     RectangleNode(Rectangle rect);
 
-    virtual void set_pos(Vector2 pos) override;
+    void set_pos(Vector2 pos) override;
 
-    virtual Vector2 get_abs_pos() override;
+    Vector2 get_abs_pos() override;
 
     Rectangle get_rect();
 
