@@ -94,15 +94,18 @@ void Node::draw_debug() {}
 #endif
 
 void Node::draw_recursive() {
+    #if defined(DRAW_DEBUG)
+    draw_debug();
+    #endif
     draw();
     // We may use different logic there. Or maybe even turn basic Node's logic
     // into a pure-virtual thing and write various implementations.
     // But for now it will do. TODO
     for (auto i: children) {
         // i->draw();
-        #if defined(DRAW_DEBUG)
-        i->draw_debug();
-        #endif
+        // #if defined(DRAW_DEBUG)
+        // i->draw_debug();
+        // #endif
         i->draw_recursive();
     }
 }
@@ -312,14 +315,16 @@ void SceneManager::update(float dt) {
     current_scene->update_recursive(dt);
 
     for (const auto& [_, i] : nodes) {
-        i->update(dt);
+        // i->update(dt);
+        i->update_recursive(dt);
     }
 
     BeginDrawing();
     current_scene->draw_recursive();
 
     for (const auto& [_, i] : nodes) {
-        i->draw();
+        // i->draw();
+        i->draw_recursive();
     }
 
     EndDrawing();

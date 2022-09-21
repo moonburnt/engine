@@ -163,8 +163,8 @@ Text BasicTextNode::get_text() {
 }
 
 void BasicTextNode::draw() {
-    RectangleNode::draw();
-    // text.draw(get_abs_pos(), font, text_size, spacing, text_color);
+    // RectangleNode::draw();
+    text.draw(get_abs_pos(), font, text_size, spacing, text_color);
 }
 
 // TextNode
@@ -185,9 +185,7 @@ FrameCounter::FrameCounter(
     , format(_format) {}
 
 FrameCounter::FrameCounter()
-    : BasicTextNode("") {
-        // set_pos({4.0f, 4.0f});
-    }
+    : BasicTextNode("") {}
 
 void FrameCounter::update(float) {
     fps_value = GetFPS();
