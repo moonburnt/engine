@@ -38,7 +38,19 @@ protected:
     // For now, does not affect basic nodes - just RectangleNode and its relatives
     Align align = Align::TopLeft;
 
-    Vector2 pos = {0.0f, 0.0f};
+    // local_pos is position relative to parent
+    // used to calculate children's world pos
+    Vector2 local_pos = {0.0f, 0.0f};
+    // world_pos is global position in the world
+    // used to draw things and perform all calculations
+    Vector2 world_pos = {0.0f, 0.0f};
+    // If this one is set to true - cached world_pos will be recalculated
+    bool pos_is_dirty = false;
+    // Set children's pos dirty recursively
+    void set_dirty();
+    // Calculate world pos and update world_pos
+    // virtual coz logic may be altered depending on node
+    virtual void calculate_world_pos();
 
     // Attach debug drawing method if compiled with DRAW_DEBUG flag
     // It shouldn't be called directly, but from draw_recursive.
@@ -78,18 +90,15 @@ public:
     virtual void set_align(Align _align);
     Align get_align();
     // Manually re-calculate position of all child nodes according to current align
-    // Not implemented, since for now we don't store abs_pos but use get_abs_pos()
-    // to calculate it manually on demand.
+    // Not implemented yet - tempting.
     // void apply_align();
 
     virtual void set_pos(Vector2 pos);
 
     // Get current node position in relevance to its parent
-    virtual Vector2 get_pos();
+    Vector2 get_local_pos();
     // Get absolute node position in the world.
-    // Set to virtual since we don't store abs_pos - needed to adjust positions
-    // of RectangleNode and similar
-    virtual Vector2 get_abs_pos();
+    Vector2 get_world_pos();
 
     // TODO: consider moving this to protected, since they aren't intended to
     // be called directly.
@@ -108,14 +117,15 @@ public:
 // Should:
 // - Be used as base for everything collideable (buttons, entities, etc)
 // - Contain methods for collision checking
-// TODO:
-// - Maybe add ability to draw these, if compiled with dev flag and
-// has debug config enabled
 class RectangleNode: public Node {
 protected:
-    // Node's rectangle.
-    // Without alignments, its top left will be equal pos.
-    Rectangle rect = {0.0f, 0.0f, 0.0f, 0.0f};
+    // Node rectangle's width and height
+    // Rect itself will be constructed on get_rect() from
+    // get_world_pos() and size.
+    // TODO: consider caching this.
+    Vector2 size = {0.0f, 0.0f};
+
+    void calculate_world_pos() override;
 
     #if defined(DRAW_DEBUG)
     void draw_debug() override;
@@ -126,10 +136,6 @@ public:
     // May optimize later if these will become an issue
     // RectangleNode(const Rectangle& rect);
     RectangleNode(Rectangle rect);
-
-    void set_pos(Vector2 pos) override;
-
-    Vector2 get_abs_pos() override;
 
     Rectangle get_rect();
 

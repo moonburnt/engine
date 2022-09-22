@@ -53,22 +53,41 @@ Align Node::get_align() {
     return align;
 }
 
-void Node::set_pos(Vector2 _pos) {
-    pos = _pos;
+void Node::set_dirty() {
+    pos_is_dirty = true;
+    for (auto i: children) {
+        i->set_dirty();
+    }
 }
 
-Vector2 Node::get_pos() {
-    return pos;
-}
-
-Vector2 Node::get_abs_pos() {
+void Node::calculate_world_pos() {
     if (parent != nullptr) {
-        // This may need some optimisations, too much Vector copying. TODO
-        return parent->get_abs_pos() + get_pos();
+        world_pos = parent->get_world_pos() + get_local_pos();
     }
     else {
-        return get_pos();
+        world_pos = get_local_pos();
     }
+}
+
+void Node::set_pos(Vector2 pos) {
+    local_pos = pos;
+    for (auto i: children) {
+        i->set_dirty();
+    }
+}
+
+Vector2 Node::get_local_pos() {
+    return local_pos;
+}
+
+Vector2 Node::get_world_pos() {
+    if (pos_is_dirty) {
+        // TODO: think if this should be done recursively
+        calculate_world_pos();
+        pos_is_dirty = false;
+    }
+
+    return world_pos;
 }
 
 void Node::update_recursive(float dt) {
@@ -111,26 +130,15 @@ void Node::draw_recursive() {
 }
 
 // RectangleNode
-RectangleNode::RectangleNode(Rectangle _rect)
-    : rect(_rect) {
+RectangleNode::RectangleNode(Rectangle rect)
+    : size({rect.width, rect.height}) {
     // Idk if this is optimal resource-wise
     Node::set_pos({rect.x, rect.y});
 }
 
-void RectangleNode::set_pos(Vector2 _pos) {
-    Node::set_pos(_pos);
-
-    // TODO: alignment logic goes there
-    rect.x = pos.x;
-    rect.y = pos.y;
-}
-
-Vector2 RectangleNode::get_abs_pos() {
-    // Maybe I should call Node's method inside and put custom logic afterwards?
-    // Idk, will do for now.
-
+void RectangleNode::calculate_world_pos() {
     if (parent != nullptr) {
-        Vector2 origin_pos = parent->get_abs_pos();
+        Vector2 origin_pos = parent->get_world_pos();
         // I think, alignment-related logic goes there?
         switch (parent->get_align()) {
         case Align::TopLeft: {
@@ -139,52 +147,54 @@ Vector2 RectangleNode::get_abs_pos() {
         }
         // I think these are about right?
         case Align::Top: {
-            origin_pos = {origin_pos.x - rect.width / 2.0f, origin_pos.y};
+            origin_pos = {origin_pos.x - size.x / 2.0f, origin_pos.y};
             break;
         }
         case Align::TopRight: {
-            origin_pos = {origin_pos.x - rect.width, origin_pos.y};
+            origin_pos = {origin_pos.x - size.x, origin_pos.y};
             break;
         }
         case Align::Left: {
-            origin_pos = {origin_pos.x, origin_pos.y - rect.height / 2.0f};
+            origin_pos = {origin_pos.x, origin_pos.y - size.y / 2.0f};
             break;
         }
         case Align::Center: {
             origin_pos = {
-                origin_pos.x - rect.width / 2.0f,
-                origin_pos.y - rect.height / 2.0f
+                origin_pos.x - size.x / 2.0f,
+                origin_pos.y - size.y / 2.0f
             };
             break;
         }
         case Align::Right: {
-            origin_pos = {origin_pos.x - rect.width, pos.y - rect.height / 2.0f};
+            origin_pos = {origin_pos.x - size.x, origin_pos.y - size.y / 2.0f};
             break;
         }
         case Align::BottomLeft: {
-            origin_pos = {origin_pos.x, origin_pos.y - rect.height};
+            origin_pos = {origin_pos.x, origin_pos.y - size.y};
             break;
         }
         case Align::Bottom: {
-            origin_pos = {origin_pos.x - rect.width / 2.0f, origin_pos.y - rect.height};
+            origin_pos = {origin_pos.x - size.x / 2.0f, origin_pos.y - size.y};
             break;
         }
         case Align::BottomRight: {
-            origin_pos = {origin_pos.x - rect.width, origin_pos.y - rect.height};
+            origin_pos = {origin_pos.x - size.x, origin_pos.y - size.y};
             break;
         }
         // Not adding default since we should cover all cases there
         }
 
-        return origin_pos + get_pos();
+        world_pos = origin_pos + get_local_pos();
     }
     else {
-        return get_pos();
+        world_pos = get_local_pos();
     }
 }
 
 Rectangle RectangleNode::get_rect() {
-    return rect;
+    // Coz it may be dirty
+    Vector2 _wp = get_world_pos();
+    return {_wp.x, _wp.y, size.x, size.y};
 }
 
 bool RectangleNode::collides(RectangleNode other) {
@@ -209,13 +219,8 @@ Rectangle RectangleNode::get_collision_rect(Rectangle _rect) {
 
 #if defined(DRAW_DEBUG)
 void RectangleNode::draw_debug() {
-    // DrawRectangle
-    // TODO: do something about rect's first two values being off
-    // TODO: switch to DrawRectangleRec
-    Vector2 abs_pos = get_abs_pos();
-    DrawRectangleV(abs_pos, {rect.width, rect.height}, DEBUG_DRAW_COLOR_BG);
-    DrawRectangleLines(
-        abs_pos.x, abs_pos.y, rect.width, rect.height, DEBUG_DRAW_COLOR_FG);
+    DrawRectangleRec(get_rect(), DEBUG_DRAW_COLOR_FG);
+    DrawRectangleLinesEx(get_rect(), 0.5f, DEBUG_DRAW_COLOR_BG);
 }
 #endif
 
