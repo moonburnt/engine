@@ -134,56 +134,53 @@ public:
 };
 
 // Simple text input field, for basic text editing.
-// TODO: update to fully use widget functionality (right now it only has overrides
-// for compatibility with Label, did not update any logic yet
-// class TextInputField : public Label {
-// protected:
-//     // Text shown on background if no input has been received
-//     std::string bg_text;
-//     // Vector2 bg_text_pos; // TODO: unused
-//     int bg_text_size = DEFAULT_TEXT_SIZE;
-//     Color bg_text_color = LIGHTGRAY;
-//     // Max amount of characters in text box. 0 means "unlimited".
-//     // This only affects text received from input, not bg_text.
-//     size_t max_size = 0;
+class TextInputField : public TextNode {
+protected:
+    // Text shown on background if no input has been received
+    std::string bg_text;
+    // Vector2 bg_text_pos; // TODO: unused
+    int bg_text_size = DEFAULT_TEXT_SIZE;
+    Color bg_text_color = LIGHTGRAY;
+    // Max amount of characters in text box. 0 means "unlimited".
+    // This only affects text received from input, not bg_text.
+    size_t max_size = 0;
 
-//     std::string blink_char;
-//     Vector2 blink_pos;
-//     bool draw_blink = false;
-//     Timer blink_timer;
-//     bool is_enabled = true;
+    std::string blink_char;
+    Vector2 blink_pos;
+    bool draw_blink = false;
+    Timer blink_timer;
+    bool is_enabled = true;
 
-//     void update_blink_pos();
+    void update_blink_pos();
 
-// public:
-//     // default_text is text that will be set as bg_text
-//     TextInputField(
-//         const std::string& default_text,
-//         Vector2 pos,
-//         size_t max_size,
-//         const char blink_char,
-//         float blink_frequency);
-//     TextInputField(const std::string& default_text, Vector2 pos, size_t max_size);
-//     TextInputField(const std::string& default_text, Vector2 pos);
+public:
+    // default_text is text that will be set as bg_text
+    TextInputField(
+        const std::string& default_text,
+        size_t max_size,
+        const char blink_char,
+        float blink_frequency);
+    TextInputField(const std::string& default_text, size_t max_size);
+    TextInputField(const std::string& default_text);
 
-//     void set_text(const std::string& txt);
-//     void set_pos(Vector2 pos) override;
+    void set_text(const std::string& txt);
+    void set_pos(Vector2 pos) override;
 
-//     // Toggles to enable/disable auto updater.
-//     void enable();
-//     void disable();
+    // Toggles to enable/disable auto updater.
+    void enable();
+    void disable();
 
-//     // Check if text length is 0.
-//     bool is_empty();
-//     // Check if text length is equal to max_size.
-//     // If max_size is set to 0 - will always return false.
-//     bool is_full();
+    // Check if text length is 0.
+    bool is_empty();
+    // Check if text length is equal to max_size.
+    // If max_size is set to 0 - will always return false.
+    bool is_full();
 
-//     // Default input field update method.
-//     // TODO: add support for gamepad's virtual keyboard
-//     void update(float dt) override;
-//     void draw() override;
-// };
+    // Default input field update method.
+    // TODO: add support for gamepad's virtual keyboard
+    void update(float dt) override;
+    void draw() override;
+};
 
 // class Button : public ButtonBase {
 // protected:

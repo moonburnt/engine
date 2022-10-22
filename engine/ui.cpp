@@ -199,149 +199,146 @@ void FrameCounter::update(float) {
 }
 
 // Text Input Field
-// TextInputField::TextInputField(
-//     const std::string& default_text,
-//     Vector2 pos,
-//     size_t max_size,
-//     const char blink_char,
-//     float blink_frequency)
-//     : Label("", pos)
-//     , bg_text(default_text)
-//     , max_size(max_size)
-//     , blink_char({blink_char})
-//     , blink_timer(blink_frequency) {
+TextInputField::TextInputField(
+    const std::string& default_text,
+    size_t max_size,
+    const char blink_char,
+    float blink_frequency)
+    : TextNode("")
+    , bg_text(default_text)
+    , max_size(max_size)
+    , blink_char({blink_char})
+    , blink_timer(blink_frequency) {
 
-//     update_blink_pos();
+    update_blink_pos();
 
-//     if (max_size != 0) {
-//         text.reserve(max_size);
-//     }
+    if (max_size != 0) {
+        text.reserve(max_size);
+    }
 
-//     blink_timer.start();
-// }
+    blink_timer.start();
+}
 
-// TextInputField::TextInputField(const std::string& default_text, Vector2 pos, size_t max_size)
-//     : TextInputField(default_text, pos, max_size, '_', 0.5f) {
-// }
+TextInputField::TextInputField(const std::string& default_text, size_t max_size)
+    : TextInputField(default_text, max_size, '_', 0.5f) {
+}
 
-// TextInputField::TextInputField(const std::string& default_text, Vector2 pos)
-//     : TextInputField(default_text, pos, 0) {}
+TextInputField::TextInputField(const std::string& default_text)
+    : TextInputField(default_text, 0) {}
 
-// void TextInputField::update_blink_pos() {
-//     blink_pos = {
-//         real_pos.x + 2 + MeasureText(text.c_str(), text_size),
-//         real_pos.y + 4};
-// }
+void TextInputField::update_blink_pos() {
+    blink_pos =  get_abs_pos() + text.get_size() + {2.0f, 4.0f};
+}
 
-// void TextInputField::set_text(const std::string& txt) {
-//     if (max_size != 0 && max_size < txt.length()) {
-//         // Doing it like that to avoid damaging original string
-//         std::string txt_copy = txt;
-//         txt_copy.resize(max_size);
-//         Label::set_text(txt_copy);
-//     }
-//     else {
-//         Label::set_text(txt);
-//     }
-// }
+void TextInputField::set_text(const std::string& txt) {
+    if (max_size != 0 && max_size < txt.length()) {
+        // Doing it like that to avoid damaging original string
+        std::string txt_copy = txt;
+        txt_copy.resize(max_size);
+        Label::set_text(txt_copy);
+    }
+    else {
+        Label::set_text(txt);
+    }
+}
 
-// void TextInputField::set_pos(Vector2 pos) {
-//     Label::set_pos(pos);
-//     update_blink_pos();
-// }
+void TextInputField::set_pos(Vector2 pos) {
+    Label::set_pos(pos);
+    update_blink_pos();
+}
 
-// void TextInputField::enable() {
-//     if (is_enabled) {
-//         return;
-//     }
+void TextInputField::enable() {
+    if (is_enabled) {
+        return;
+    }
 
-//     is_enabled = true;
-//     blink_timer.start();
-// }
+    is_enabled = true;
+    blink_timer.start();
+}
 
-// void TextInputField::disable() {
-//     if (!is_enabled) {
-//         return;
-//     }
+void TextInputField::disable() {
+    if (!is_enabled) {
+        return;
+    }
 
-//     is_enabled = false;
-//     draw_blink = false;
-// }
+    is_enabled = false;
+    draw_blink = false;
+}
 
-// bool TextInputField::is_empty() {
-//     return (text.length() == 0);
-// }
+bool TextInputField::is_empty() {
+    return (text.length() == 0);
+}
 
-// bool TextInputField::is_full() {
-//     return (max_size != 0 && text.length() == max_size);
-// }
+bool TextInputField::is_full() {
+    return (max_size != 0 && text.length() == max_size);
+}
 
-// void TextInputField::update(float dt) {
-//     if (!is_enabled) {
-//         return;
-//     }
+void TextInputField::update(float dt) {
+    if (!is_enabled) {
+        return;
+    }
 
-//     int key = GetCharPressed();
+    int key = GetCharPressed();
 
-//     bool text_changed = false;
+    bool text_changed = false;
 
-//     // Support for multiple characters pressed on the same frame
-//     while (key > 0) {
-//         // Only allow keys in between 32 to 125
-//         if ((key >= 32) && (key <= 125)) {
-//             if (max_size != 0 && text.length() >= max_size) {
-//                 break;
-//             }
+    // Support for multiple characters pressed on the same frame
+    while (key > 0) {
+        // Only allow keys in between 32 to 125
+        if ((key >= 32) && (key <= 125)) {
+            if (max_size != 0 && text.length() >= max_size) {
+                break;
+            }
 
-//             text += static_cast<char>(key);
-//             text_changed = true;
-//         }
+            text += static_cast<char>(key);
+            text_changed = true;
+        }
 
-//         // Switching key to next char in queue (if there is such char, else 0)
-//         key = GetCharPressed();
-//     }
+        // Switching key to next char in queue (if there is such char, else 0)
+        key = GetCharPressed();
+    }
 
-//     // TODO: add support for backspace being held, as right now this require
-//     // it to be pressed manually for each symbol
-//     if (IsKeyPressed(KEY_BACKSPACE)) {
-//         if (text.length() > 0) {
-//             text.pop_back();
-//             text_changed = true;
-//         }
-//     }
+    // TODO: add support for backspace being held, as right now this require
+    // it to be pressed manually for each symbol
+    if (IsKeyPressed(KEY_BACKSPACE)) {
+        if (text.length() > 0) {
+            text.pop_back();
+            text_changed = true;
+        }
+    }
 
-//     if (blink_timer.tick(dt)) {
-//         draw_blink = !draw_blink;
-//         blink_timer.start();
-//     }
+    if (blink_timer.tick(dt)) {
+        draw_blink = !draw_blink;
+        blink_timer.start();
+    }
 
-//     if (text_changed) {
-//         update_blink_pos();
-//     }
-// }
+    if (text_changed) {
+        update_blink_pos();
+    }
+}
 
-// void TextInputField::draw() {
-//     if (text.length() > 0) {
-//         Label::draw();
-//     }
-//     else {
-//         DrawText(
-//             bg_text.c_str(),
-//             real_pos.x,
-//             real_pos.y,
-//             bg_text_size,
-//             bg_text_color);
-//     }
+void TextInputField::draw() {
+    if (text.length() > 0) {
+        Label::draw();
+    }
+    else {
+        DrawText(
+            bg_text.c_str(),
+            real_pos.x,
+            real_pos.y,
+            bg_text_size,
+            bg_text_color);
+    }
 
-//     if (draw_blink) {
-//         DrawText(
-//             blink_char.c_str(),
-//             blink_pos.x,
-//             blink_pos.y,
-//             text_size,
-//             text_color);
-//     }
-// }
+    if (draw_blink) {
+        DrawText(
+            blink_char.c_str(),
+            blink_pos.x,
+            blink_pos.y,
+            text_size,
+            text_color);
+    }
+}
 
 // // Buttons
 // void Button::reset_state() {
