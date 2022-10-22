@@ -1,6 +1,10 @@
+#pragma once
+
+#include "raylib.h"
 // #include <vector>
 #include <string>
 #include <utility>
+#include <functional>
 
 // Idea is the following:
 // InputController is an abstract template that does some logic in its update()
@@ -39,14 +43,17 @@
 //         }
 // }
 
-template <typename I> <typename O>
+// Low-effort definitely-not-an-MVC-like-bicycle thingy
+// Designed to be a base for every controller.
+// Accepts data from input_cb, processes it in handler, returns to output_cb.
+template <typename I, typename O>
 class AbstractDataProcessor {
     protected:
-        std::function<I(void)> input_cb,
-        std::function<void(O)> output_cb,
+        std::function<I(void)> input_cb;
+        std::function<void(O)> output_cb;
 
     public:
-        DataProcessor(
+        AbstractDataProcessor(
             std::function<I(void)> _input_cb,
             std::function<void(O)> _output_cb)
             : input_cb(_input_cb)
@@ -54,14 +61,19 @@ class AbstractDataProcessor {
 
         virtual O handler(I data) = 0;
 
-        void update() {
+        void process() {
             output_cb(handler(input_cb()));
         }
+
+        virtual ~AbstractDataProcessor() = default;
 };
 
-class TextInputProcessor : public AbstractDataProcessor <const std::string& data, std::pair<std::string, bool>> {
+// Example controller implementation to process text input.
+// class TextInputProcessor : public AbstractDataProcessor <const std::string&, std::pair<std::string, bool>> {
+class TextInputProcessor : public AbstractDataProcessor <std::string, std::pair<std::string, bool>> {
     public:
-        std::pair<std::string, bool> handler(const std::string& text) override {
+        // std::pair<std::string, bool> handler(const std::string& text) override {
+        std::pair<std::string, bool> handler(std::string text) override {
             // if (!is_enabled) {
             //     return;
             // }
@@ -74,9 +86,9 @@ class TextInputProcessor : public AbstractDataProcessor <const std::string& data
             while (key > 0) {
                 // Only allow keys in between 32 to 125
                 if ((key >= 32) && (key <= 125)) {
-                    if (max_size != 0 && text.length() >= max_size) {
-                        break;
-                    }
+                    // if (max_size != 0 && text.length() >= max_size) {
+                    //     break;
+                    // }
 
                     text += static_cast<char>(key);
                     text_changed = true;
@@ -96,5 +108,5 @@ class TextInputProcessor : public AbstractDataProcessor <const std::string& data
             }
 
             return std::pair(text, text_changed);
-        };
-}
+        }
+};

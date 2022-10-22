@@ -10,6 +10,7 @@
 #include <vector>
 #include "utility.hpp"
 #include "text.hpp"
+#include "input.hpp"
 
 // UI primitives.
 // TODO: change naming to make things start with Capital Character
@@ -134,52 +135,17 @@ public:
 };
 
 // Simple text input field, for basic text editing.
-class TextInputField : public TextNode {
+class TextInputField : public BasicTextNode {
 protected:
-    // Text shown on background if no input has been received
-    std::string bg_text;
-    // Vector2 bg_text_pos; // TODO: unused
-    int bg_text_size = DEFAULT_TEXT_SIZE;
-    Color bg_text_color = LIGHTGRAY;
-    // Max amount of characters in text box. 0 means "unlimited".
-    // This only affects text received from input, not bg_text.
-    size_t max_size = 0;
-
-    std::string blink_char;
-    Vector2 blink_pos;
-    bool draw_blink = false;
-    Timer blink_timer;
-    bool is_enabled = true;
-
-    void update_blink_pos();
-
+    AbstractDataProcessor<std::string, std::pair<std::string, bool>>* input_hander;
 public:
-    // default_text is text that will be set as bg_text
-    TextInputField(
-        const std::string& default_text,
-        size_t max_size,
-        const char blink_char,
-        float blink_frequency);
-    TextInputField(const std::string& default_text, size_t max_size);
-    TextInputField(const std::string& default_text);
+    TextInputField(AbstractDataProcessor<std::string, std::pair<std::string, bool>>* _input_handler)
+        : BasicTextNode("")
+        , input_hander(_input_handler) {}
 
-    void set_text(const std::string& txt);
-    void set_pos(Vector2 pos) override;
-
-    // Toggles to enable/disable auto updater.
-    void enable();
-    void disable();
-
-    // Check if text length is 0.
-    bool is_empty();
-    // Check if text length is equal to max_size.
-    // If max_size is set to 0 - will always return false.
-    bool is_full();
-
-    // Default input field update method.
-    // TODO: add support for gamepad's virtual keyboard
-    void update(float dt) override;
-    void draw() override;
+    void update(float dt) override {
+        text.set_text(input_handler(text.get_text()));
+    };
 };
 
 // class Button : public ButtonBase {
