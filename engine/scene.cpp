@@ -26,9 +26,10 @@ void Node::add_child(Node* node) {
     // if (node_parent != nullptr) {
     //     node_parent->remove_child(node);
     // }
-    node->detach();
-    children.push_back(node);
-    node->parent = this;
+    // node->detach();
+    // children.push_back(node);
+    // node->parent = this;
+    node->set_parent(this);
 }
 
 void Node::remove_child(Node* node) {
@@ -45,9 +46,15 @@ void Node::set_parent(Node* node) {
     // if (parent != nullptr) {
     //     parent->remove_child(this);
     // }
-    detach();
-
-    node->add_child(this);
+    if (parent == node) {
+        return;
+    }
+    else {
+        detach();
+        // node->add_child(this);
+        node->children.push_back(this);
+        parent = node;
+    }
 }
 
 void Node::detach() {
@@ -109,9 +116,10 @@ Vector2 Node::get_world_pos() {
 void Node::update_recursive(float dt) {
     // TODO: maybe move things around for draw cycle (what happens before and what
     // should happen after - children's or parent's things)
+    spdlog::info("updating node");
     update(dt);
     for (auto i: children) {
-        // i->update(dt);
+        spdlog::info("now updating children");
         // It may be non-obvious, but Node will have access to private and
         // protected methods of other Node objects too.
         i->update_recursive(dt);
@@ -119,7 +127,9 @@ void Node::update_recursive(float dt) {
 }
 
 // TODO: think if we should adjust base node's pos each frame
-void Node::update(float) {}
+void Node::update(float) {
+    spdlog::info("a");
+}
 
 
 void Node::draw() {}
