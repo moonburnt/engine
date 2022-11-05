@@ -4,8 +4,6 @@
 
 #include <engine/utility.hpp>
 
-#include <raylib.h>
-
 #include <fmt/format.h>
 
 App::App() {

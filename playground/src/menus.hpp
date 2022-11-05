@@ -3,7 +3,6 @@
 #include "engine/core.hpp"
 #include "engine/ui.hpp"
 #include "engine/utility.hpp"
-#include "raylib.h"
 
 class App;
 
@@ -11,7 +10,7 @@ class TitleScreen : public Scene {
 private:
     SceneManager* parent;
     Timer timer;
-    Label greeter;
+    // Label greeter;
     App* app;
 
 public:
@@ -21,26 +20,26 @@ public:
     void draw() override;
 };
 
-class MainMenu : public Scene {
-private:
-    enum MM_BUTTONS {
-        MM_NEWGAME,
-        MM_SETTINGS,
-        MM_EXIT,
-        MM_CONTINUE
-    };
+// class MainMenu : public Scene {
+// private:
+//     enum MM_BUTTONS {
+//         MM_NEWGAME,
+//         MM_SETTINGS,
+//         MM_EXIT,
+//         MM_CONTINUE
+//     };
 
-    SceneManager* parent;
-    VerticalContainer buttons;
-    App* app;
+//     SceneManager* parent;
+//     VerticalContainer buttons;
+//     App* app;
 
-    void call_exit();
-    void new_game();
-    void open_settings();
+//     void call_exit();
+//     void new_game();
+//     void open_settings();
 
-public:
-    MainMenu(App* app, SceneManager* p);
+// public:
+//     MainMenu(App* app, SceneManager* p);
 
-    void update(float) override;
-    void draw() override;
-};
+//     void update(float) override;
+//     void draw() override;
+// };

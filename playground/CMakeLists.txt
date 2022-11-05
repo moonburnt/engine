@@ -73,8 +73,8 @@ endif()
 target_sources(Game PRIVATE
     src/app.cpp
     src/app.hpp
-    src/common.cpp
-    src/common.hpp
+#    src/common.cpp
+#    src/common.hpp
     src/menus.cpp
     src/menus.hpp
     src/main.cpp
@@ -83,7 +83,7 @@ target_sources(Game PRIVATE
 )
 
 target_compile_options(Game PRIVATE
-    $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-Wall -Wextra -Wpedantic -Werror -Wextra-semi -Wsuggest-override -Wno-missing-field-initializers>
+    $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-Wall -Wextra -Wpedantic -Werror -Wextra-semi -Wsuggest-override -Wno-missing-field-initializers -Wno-unused-parameter -Wno-unused-private-field>
     $<$<CXX_COMPILER_ID:MSVC>:/Wall /w34263 /w34266>
 )
 

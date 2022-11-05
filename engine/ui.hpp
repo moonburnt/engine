@@ -107,8 +107,22 @@ protected:
     virtual void on_disable() {}
 };
 
-// Simple button to build upon
-class Button : public ButtonMixin, public RectangleNode {
+// Simple rectangle button to build upon
+class Button : public ButtonMixin, public virtual RectangleNode {
 public:
     Button(Rectangle rect);
+};
+
+// Simple gui button.
+// Can be split into mixins, but I could not care less rn, thus thats TODO.
+class GuiButton : public virtual TextNode, public Button {
+protected:
+    std::unordered_map<ButtonMixin::ButtonState, const Texture2D*> textures;
+    std::unordered_map<ButtonMixin::ButtonState, const Sound*> sounds;
+
+public:
+    GuiButton(
+        std::unordered_map<ButtonMixin::ButtonState, const Texture2D*> _textures,
+        std::unordered_map<ButtonMixin::ButtonState, const Sound*> _sounds
+    );
 };

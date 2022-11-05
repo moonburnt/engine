@@ -150,5 +150,5 @@ ButtonMixin::ButtonState ButtonMixin::get_current_state() {
 
 // Button
 Button::Button(Rectangle rect)
-    : ButtonMixin()
-    , RectangleNode(rect) {}
+    : RectangleNode(rect)
+    , ButtonMixin() {}

@@ -109,7 +109,7 @@ int get_window_height() {
 
 Vector2 get_window_size() {
     return {
-        get_window_width(),
-        get_window_height()
+        static_cast<float>(get_window_width()),
+        static_cast<float>(get_window_height())
     };
 }
