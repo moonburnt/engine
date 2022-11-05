@@ -22,14 +22,3 @@ public:
 private:
     App* app;
 };
-
-// Returns random Vector2 with values between 0 and provided
-Vector2 get_rand_vec2(int x, int y);
-Vector2 get_rand_vec2(Vector2 size);
-
-// Returns random non-white color
-Color get_rand_color();
-
-// Get current window's size, regardless if its fullscreen or not
-int get_window_width();
-int get_window_height();

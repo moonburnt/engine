@@ -88,3 +88,28 @@ bool is_rect_inside_rect(Rectangle first, Rectangle second) {
         first.x <= second.x && first.y <= second.y && first.width >= second.width &&
         first.height >= second.height);
 }
+
+int get_window_width() {
+    if (IsWindowFullscreen()) {
+        return GetMonitorWidth(GetCurrentMonitor());
+    }
+    else {
+        return GetScreenWidth();
+    }
+}
+
+int get_window_height() {
+    if (IsWindowFullscreen()) {
+        return GetMonitorHeight(GetCurrentMonitor());
+    }
+    else {
+        return GetScreenHeight();
+    }
+}
+
+Vector2 get_window_size() {
+    return {
+        get_window_width(),
+        get_window_height()
+    };
+}

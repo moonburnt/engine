@@ -114,3 +114,8 @@ bool has_mouse_moved();
 // Returns true if second rect is inside first rect, false if some part of it
 // is outside of borders.
 bool is_rect_inside_rect(Rectangle first, Rectangle second);
+
+// Get current window's size, regardless if its fullscreen or not
+int get_window_width();
+int get_window_height();
+Vector2 get_window_size();
