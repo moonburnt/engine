@@ -14,17 +14,21 @@ Node::~Node(){
     // TODO: maybe I should add code to also delete node from parent?
 }
 
+Node::Node(Align _align)
+    : align(_align) {}
+
 Node* Node::get_parent() {
     return parent;
 }
 
 void Node::add_child(Node* node) {
-    Node* node_parent = node->get_parent();
-    if (node_parent != nullptr) {
-        node_parent->remove_child(node);
-    }
-
+    // Node* node_parent = node->get_parent();
+    // if (node_parent != nullptr) {
+    //     node_parent->remove_child(node);
+    // }
+    node->detach();
     children.push_back(node);
+    node->parent = this;
 }
 
 void Node::remove_child(Node* node) {
@@ -38,11 +42,23 @@ void Node::remove_child(Node* node) {
 }
 
 void Node::set_parent(Node* node) {
-    if (parent != nullptr) {
-        parent->remove_child(this);
-    }
+    // if (parent != nullptr) {
+    //     parent->remove_child(this);
+    // }
+    detach();
 
     node->add_child(this);
+}
+
+void Node::detach() {
+    if (parent == nullptr) {
+        return;
+    }
+    else {
+        parent->remove_child(this);
+        parent = nullptr;
+        set_dirty();
+    }
 }
 
 void Node::set_align(Align _align) {

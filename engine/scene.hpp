@@ -45,7 +45,7 @@ protected:
     // used to draw things and perform all calculations
     Vector2 world_pos = {0.0f, 0.0f};
     // If this one is set to true - cached world_pos will be recalculated
-    bool pos_is_dirty = false;
+    bool pos_is_dirty = true;
     // Set children's pos dirty recursively
     void set_dirty();
     // Calculate world pos and update world_pos
@@ -61,6 +61,9 @@ protected:
 
 public:
     virtual ~Node();
+
+    Node() = default;
+    Node(Align _align);
 
     // Get node's parent. If does not exist - returns nullptr.
     // TODO: maybe remove it, coz it messes with Scene
@@ -84,6 +87,9 @@ public:
     // Attach this node to specific parent. If it has already been attached to
     // some, then detach it and move to new one, with all its ancestors
     void set_parent(Node* node);
+
+    // Detach node from current parent (if exists)
+    void detach();
 
     // Set node's alignment, which will affect placement of child nodes (qt-style)
     // TODO: think if apply_align() should be applied right away

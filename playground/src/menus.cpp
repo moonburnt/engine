@@ -12,12 +12,18 @@
 TitleScreen::TitleScreen(App* app, SceneManager* p)
     : parent(p)
     , timer(Timer(2.0f))
-    // , greeter("This game has been made with raylib", {get_window_width() / 2.0f, get_window_height() / 2.0f})
     , app(app) {
 
-    add_child(
+    Node* ui_container = new Node(Align::Center);
+    // ui_container->set_align(Align::Center);
+    // ui_container->set_align(Align::Center);
+    ui_container->add_child(
         new BasicTextNode("This game has been made with raylib")
     );
+    // add_child(
+    //     new BasicTextNode("This game has been made with raylib")
+    // );
+    add_child(ui_container);
 
     // greeter.center();
     timer.start();
