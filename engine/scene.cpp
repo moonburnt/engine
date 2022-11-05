@@ -69,7 +69,10 @@ void Node::detach() {
 }
 
 void Node::set_align(Align _align) {
-    align = _align;
+    if (align != _align) {
+        align = _align;
+        set_dirty();
+    }
 }
 
 Align Node::get_align() {

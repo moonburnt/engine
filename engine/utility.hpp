@@ -119,3 +119,4 @@ bool is_rect_inside_rect(Rectangle first, Rectangle second);
 int get_window_width();
 int get_window_height();
 Vector2 get_window_size();
+Rectangle get_window_rect();

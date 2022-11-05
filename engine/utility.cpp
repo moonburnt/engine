@@ -113,3 +113,12 @@ Vector2 get_window_size() {
         static_cast<float>(get_window_height())
     };
 }
+
+Rectangle get_window_rect() {
+    return {
+        0.0f,
+        0.0f,
+        static_cast<float>(get_window_width()),
+        static_cast<float>(get_window_height())
+    };
+}
