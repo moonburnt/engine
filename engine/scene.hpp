@@ -93,7 +93,8 @@ public:
 
     // Set node's alignment, which will affect placement of child nodes (qt-style)
     // TODO: think if apply_align() should be applied right away
-    virtual void set_align(Align _align);
+    // virtual void set_align(Align _align);
+    void set_align(Align _align);
     Align get_align();
     // Manually re-calculate position of all child nodes according to current align
     // Not implemented yet - tempting.

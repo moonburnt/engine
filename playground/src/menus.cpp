@@ -14,18 +14,20 @@ TitleScreen::TitleScreen(App* app, SceneManager* p)
     , timer(Timer(2.0f))
     , app(app) {
 
-    Node* ui_container = new Node(Align::Center);
-    // ui_container->set_align(Align::Center);
-    // ui_container->set_align(Align::Center);
-    ui_container->add_child(
-        new BasicTextNode("This game has been made with raylib")
-    );
-    // add_child(
-    //     new BasicTextNode("This game has been made with raylib")
+
+    Node* ui_container = new Node();
+    ui_container->set_align(Align::Center);
+
+    BasicTextNode* text = new BasicTextNode("This game has been made with raylib");
+    // text->set_pos(
+    //     {
+    //         get_window_width() / 2.0f,
+    //         get_window_height() / 2.0f
+    //     }
     // );
+    ui_container->add_child(text);
     add_child(ui_container);
 
-    // greeter.center();
     timer.start();
 }
 
