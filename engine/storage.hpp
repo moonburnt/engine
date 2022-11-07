@@ -20,11 +20,15 @@ protected:
     virtual void unload_data(T) {}
 
 public:
-    // virtual ~Storage() = default;
-    virtual ~Storage() {
+    virtual ~Storage() = default;
+
+    // Unload all data and clear storage.
+    // Should be called in destructor automatically, but can also be used manually.
+    virtual void clear() {
         for (const auto &kv: items) {
             unload_data(kv.second);
         }
+        items.clear();
     }
 
     // TODO: return tuple of files found and files successfully loaded
@@ -62,16 +66,22 @@ class SpriteStorage : public Storage<Texture2D> {
 protected:
     virtual Texture2D load_data(const std::string &path) override;
     virtual void unload_data(Texture2D data) override;
+public:
+    ~SpriteStorage();
 };
 
 class SoundStorage : public Storage<Sound> {
 protected:
     virtual Sound load_data(const std::string &path) override;
     virtual void unload_data(Sound data) override;
+public:
+    ~SoundStorage();
 };
 
 class MusicStorage : public Storage<Music> {
 protected:
     virtual Music load_data(const std::string &path) override;
     virtual void unload_data(Music data) override;
+public:
+    ~MusicStorage();
 };

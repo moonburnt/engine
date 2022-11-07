@@ -11,6 +11,10 @@ void SpriteStorage::unload_data(Texture2D data) {
     UnloadTexture(data);
 }
 
+SpriteStorage::~SpriteStorage() {
+    clear();
+}
+
 
 Sound SoundStorage::load_data(const std::string &path) {
     return LoadSound(path.c_str());
@@ -18,6 +22,10 @@ Sound SoundStorage::load_data(const std::string &path) {
 
 void SoundStorage::unload_data(Sound data) {
     UnloadSound(data);
+}
+
+SoundStorage::~SoundStorage() {
+    clear();
 }
 
 
@@ -28,4 +36,8 @@ Music MusicStorage::load_data(const std::string &path) {
 
 void MusicStorage::unload_data(Music data) {
     UnloadMusicStream(data);
+}
+
+MusicStorage::~MusicStorage() {
+    clear();
 }
