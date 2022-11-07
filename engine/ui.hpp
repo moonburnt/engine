@@ -113,16 +113,18 @@ public:
     Button(Rectangle rect);
 };
 
+// Refused to compile due to ambiguous something warn.
+// Will have to lookup into that later. TODO
 // Simple gui button.
 // Can be split into mixins, but I could not care less rn, thus thats TODO.
-class GuiButton : public virtual TextNode, public Button {
-protected:
-    std::unordered_map<ButtonMixin::ButtonState, const Texture2D*> textures;
-    std::unordered_map<ButtonMixin::ButtonState, const Sound*> sounds;
+// class GuiButton : public virtual TextNode, public virtual Button {
+// protected:
+//     std::unordered_map<ButtonMixin::ButtonState, const Texture2D*> textures;
+//     std::unordered_map<ButtonMixin::ButtonState, const Sound*> sounds;
 
-public:
-    GuiButton(
-        std::unordered_map<ButtonMixin::ButtonState, const Texture2D*> _textures,
-        std::unordered_map<ButtonMixin::ButtonState, const Sound*> _sounds
-    );
-};
+// public:
+//     GuiButton(
+//         std::unordered_map<ButtonMixin::ButtonState, const Texture2D*> _textures,
+//         std::unordered_map<ButtonMixin::ButtonState, const Sound*> _sounds
+//     );
+// };

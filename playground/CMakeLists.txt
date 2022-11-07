@@ -87,6 +87,12 @@ target_compile_options(Game PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:/Wall /w34263 /w34266>
 )
 
+# If building with debug - enable sanitizer for hard-to-debug moments
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_options(-fsanitize=address,undefined)
+    add_link_options(-fsanitize=address,undefined)
+endif()
+
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
     # Custom command to be used after Game is built
     # This should copy assets into the directory with game's binary
