@@ -14,6 +14,11 @@ Node::~Node(){
     // TODO: maybe I should add code to also delete node from parent?
 }
 
+void Node::attach_to_scene(Scene* _scene) {
+    // TODO: maybe ensure node can't be reattached? idk
+    scene = _scene;
+}
+
 Node::Node(Align _align)
     : align(_align) {}
 
@@ -27,6 +32,16 @@ Node* Node::get_root() {
     }
     else {
         return parent->get_root();
+    }
+}
+
+Scene* Node::get_scene() {
+    Node* root_node = get_root();
+    if (root_node == nullptr) {
+        return nullptr;
+    }
+    else {
+        return root_node->scene;
     }
 }
 

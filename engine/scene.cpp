@@ -4,8 +4,14 @@
 #include "spdlog/spdlog.h"
 
 // Scene
+Scene::Scene() {
+    root.attach_to_scene(this);
+}
+
 Scene::Scene(Color _bg_color)
-    : bg_color(_bg_color) {}
+    : bg_color(_bg_color) {
+    root.attach_to_scene(this);
+}
 
 void Scene::add_child(Node* node) {
     root.add_child(node);

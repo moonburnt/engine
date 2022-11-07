@@ -34,6 +34,16 @@ enum class Align {
 
 // Node is an abstract thing that can be attached to Scene or SceneManager
 class Node {
+private:
+    // Scene, this node is attached too.
+    // Should be nullptr for everything that isnt RootNode
+    Scene* scene = nullptr;
+    void attach_to_scene(Scene* _scene);
+
+    // Befriend with scene to allow it to set pointer to itself on root node's
+    // init.
+    friend class Scene;
+
 protected:
     std::vector<Node*> children;
     Node* parent = nullptr;
@@ -75,6 +85,10 @@ public:
     // Get to the very beginning of branch, this node is attached to.
     // Returns the node itself if there is no parent.
     Node* get_root();
+
+    // Get scene, this node's branch is attached to.
+    // Returns nullptr if its detached.
+    Scene* get_scene();
 
     // Attach existing node as a child to this node
     void add_child(Node* node);

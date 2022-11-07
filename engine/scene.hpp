@@ -23,7 +23,7 @@ protected:
 
 public:
     Scene(Color bg_color);
-    Scene() = default;
+    Scene();
 
     virtual ~Scene() = default;
 
