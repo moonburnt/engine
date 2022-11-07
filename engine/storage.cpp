@@ -2,33 +2,30 @@
 #include "raylib.h"
 #include <string>
 
-void SpriteStorage::load(const std::string &path, const std::string &extension) {
-    load_with(path, extension, LoadTexture);
+
+Texture2D SpriteStorage::load_data(const std::string &path) {
+    return LoadTexture(path.c_str());
 }
 
-SpriteStorage::~SpriteStorage() {
-    for (const auto &kv: items) {
-        UnloadTexture(kv.second);
-    }
+void SpriteStorage::unload_data(Texture2D data) {
+    UnloadTexture(data);
 }
 
-void SoundStorage::load(const std::string &path, const std::string &extension) {
-    load_with(path, extension, LoadSound);
+
+Sound SoundStorage::load_data(const std::string &path) {
+    return LoadSound(path.c_str());
 }
 
-SoundStorage::~SoundStorage() {
-    for (const auto &kv: items) {
-        UnloadSound(kv.second);
-    }
+void SoundStorage::unload_data(Sound data) {
+    UnloadSound(data);
 }
 
-// Idk if its good idea to keep all streams in memory. But will do for now. #TODO
-void MusicStorage::load(const std::string &path, const std::string &extension) {
-    load_with(path, extension, LoadMusicStream);
+
+// Idk if its good idea to keep all streams in memory. But will do for now. TODO
+Music MusicStorage::load_data(const std::string &path) {
+    return LoadMusicStream(path.c_str());
 }
 
-MusicStorage::~MusicStorage() {
-    for (auto& kv : items) {
-        UnloadMusicStream(kv.second);
-    }
+void MusicStorage::unload_data(Music data) {
+    UnloadMusicStream(data);
 }
