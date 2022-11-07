@@ -21,6 +21,15 @@ Node* Node::get_parent() {
     return parent;
 }
 
+Node* Node::get_root() {
+    if (parent == nullptr) {
+        return this;
+    }
+    else {
+        return parent->get_root();
+    }
+}
+
 void Node::add_child(Node* node) {
     // Node* node_parent = node->get_parent();
     // if (node_parent != nullptr) {
@@ -331,6 +340,10 @@ void SceneManager::set_current_scene(Scene* scene, bool ensure_unique) {
 
 void SceneManager::set_current_scene(Scene* scene) {
     set_current_scene(scene, false);
+}
+
+Scene* SceneManager::get_current_scene() {
+    return current_scene;
 }
 
 bool SceneManager::is_active() {

@@ -69,6 +69,10 @@ public:
     // TODO: maybe remove it, coz it messes with Scene
     Node* get_parent();
 
+    // Get to the very beginning of branch, this node is attached to.
+    // Returns the node itself if there is no parent.
+    Node* get_root();
+
     // Attach existing node as a child to this node
     void add_child(Node* node);
 
@@ -217,6 +221,11 @@ public:
     // TODO: consider a less deceiving name for this
     void set_current_scene(Scene* scene, bool ensure_unique);
     void set_current_scene(Scene* scene);
+
+    // Get current scene.
+    // Returns nullptr if there is none.
+    Scene* get_current_scene();
+
     void update(float dt);
     bool active = true;
     bool is_active();
