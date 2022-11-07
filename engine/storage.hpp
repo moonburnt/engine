@@ -4,11 +4,35 @@
 
 #include <string>
 #include <unordered_map>
+#include <functional>
 
 // TODO: maybe rework Storage into subclassed unordered_map?
 template <typename ContentType> class Storage {
 protected:
     std::unordered_map<std::string, ContentType> items;
+
+    virtual int load_with(
+        const std::string &path,
+        const std::string &extension,
+        std::function<ContentType(const char*)> callback
+    ) {
+        FilePathList files = LoadDirectoryFilesEx(
+            path.c_str(),
+            extension.c_str(),
+            false
+        );
+
+        for (auto current = 0ul; current < files.count; current++) {
+            std::string name_key(GetFileNameWithoutExt(files.paths[current]));
+            items[name_key] = callback(files.paths[current]);
+        }
+
+        int files_amount = files.count;
+
+        UnloadDirectoryFiles(files);
+
+        return files_amount;
+    }
 
 public:
     virtual ~Storage() = default;
