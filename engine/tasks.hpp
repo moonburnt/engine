@@ -7,8 +7,8 @@
 class Task {
 public:
     ~Task() = default;
-    virtual void perform_task() {};
-}
+    virtual void perform_task() {}
+};
 
 
 class TaskManager {
@@ -16,8 +16,9 @@ protected:
     std::vector<Task*> tasks;
 
 public:
+
     void add_task(Task* task) {
-        std::vector.push_back(task);
+        tasks.push_back(task);
     }
 
     void perform_tasks() {

@@ -26,6 +26,9 @@ void Scene::update(float) {}
 void Scene::draw() {}
 
 void Scene::update_recursive(float dt) {
+    // Add, remove and move nodes around
+    node_mgr.perform_tasks();
+
     update(dt);
     root.update_recursive(dt);
 }

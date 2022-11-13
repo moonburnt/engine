@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "tasks.hpp"
 
 // Various scene management shenanigans
 
@@ -13,6 +14,10 @@ private:
     // Root node that should serve as an entry point.
     Node root;
     Color bg_color = {245, 245, 245, 255};
+
+    // Task manager for node tasks.
+    // Add, remove, etc
+    TaskManager node_mgr;
 
     // Allow SceneManager to access our private and protected things
     friend class SceneManager;
