@@ -30,7 +30,8 @@ public:
     Scene(Color bg_color);
     Scene();
 
-    virtual ~Scene() = default;
+    // virtual ~Scene() = default;
+    virtual ~Scene();
 
     void add_child(Node* node);
 

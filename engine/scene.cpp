@@ -8,6 +8,10 @@ Scene::Scene() {
     root.attach_to_scene(this);
 }
 
+Scene::~Scene() {
+    spdlog::debug("Deleting scene");
+}
+
 Scene::Scene(Color _bg_color)
     : bg_color(_bg_color) {
     root.attach_to_scene(this);
@@ -26,6 +30,7 @@ void Scene::update(float) {}
 void Scene::draw() {}
 
 void Scene::update_recursive(float dt) {
+    // TODO: think about moving this trigger to SceneManager
     // Add, remove and move nodes around
     node_mgr.perform_tasks();
 
@@ -129,6 +134,7 @@ void SceneManager::update(float dt) {
 }
 
 SceneManager::~SceneManager() {
+    spdlog::debug("Deleting scene manager");
     if (current_scene != nullptr) {
         delete current_scene;
     }

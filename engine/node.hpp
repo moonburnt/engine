@@ -40,6 +40,8 @@ private:
     Scene* scene = nullptr;
     void attach_to_scene(Scene* _scene);
 
+    // bool scheduled_to_delete = false;
+
     // Befriend with scene to allow it to set pointer to itself on root node's
     // init.
     friend class Scene;
@@ -121,7 +123,10 @@ public:
     // Not implemented yet - tempting.
     // void apply_align();
 
-    virtual void set_pos(Vector2 pos);
+    // For now, lets un-virtual it.
+    // Since adding "virtual" tag to it caused destructor to call.
+    // I have no idea why it happend. TODO
+    void set_pos(Vector2 pos);
 
     // Get current node position in relevance to its parent
     Vector2 get_local_pos();

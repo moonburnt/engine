@@ -7,11 +7,16 @@
 
 // Node
 Node::~Node(){
+    spdlog::debug("Deleting node");
     for (auto i: children) {
         delete i;
     }
 
     // TODO: maybe I should add code to also delete node from parent?
+    // TODO: ensure deleting actually happens recursively for all subchildren.
+    // TODO: deleting should only happen at the beginning/end of cycle.
+    // Ensure it doesnt happen mid-update - mark node to be scheduled for removal
+    // instead.
 }
 
 void Node::attach_to_scene(Scene* _scene) {
