@@ -27,8 +27,8 @@ add_executable(Game)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     file(GLOB RESOURCES
-        "src/Assets/SFX/*.ogg"
-        "src/Assets/Sprites/*.png")
+        "Assets/SFX/*.ogg"
+        "Assets/Sprites/*.png")
 
     target_sources(Game PRIVATE
         src/macos/platform_macos.mm
@@ -41,7 +41,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
     set_target_properties(Game PROPERTIES
         MACOSX_BUNDLE TRUE
-        MACOSX_BUNDLE_INFO_PLIST "src/macos/Info.plist.in"
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/src/macos/Info.plist.in"
         XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER com.moonburnt.engine-playground
         XCODE_ATTRIBUTE_COMBINE_HIDPI_IMAGES YES
         XCODE_ATTRIBUTE_CURRENT_PROJECT_VERSION 0.0.1
