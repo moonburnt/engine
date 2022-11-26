@@ -166,9 +166,7 @@ void Node::update(float) {
 
 void Node::draw() {}
 
-#if defined(DRAW_DEBUG)
 void Node::draw_debug() {}
-#endif
 
 void Node::draw_recursive() {
     #if defined(DRAW_DEBUG)
@@ -275,9 +273,9 @@ Rectangle RectangleNode::get_collision_rect(Rectangle _rect) {
     return GetCollisionRec(get_rect(), _rect);
 }
 
-#if defined(DRAW_DEBUG)
 void RectangleNode::draw_debug() {
+    #if defined(DRAW_DEBUG)
     DrawRectangleRec(get_rect(), DEBUG_DRAW_COLOR_FG);
     DrawRectangleLinesEx(get_rect(), 0.5f, DEBUG_DRAW_COLOR_BG);
+    #endif
 }
-#endif

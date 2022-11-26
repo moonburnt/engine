@@ -5,11 +5,11 @@
 #include <unordered_map>
 #include <vector>
 
-#if defined(DRAW_DEBUG)
+// #if defined(DRAW_DEBUG)
 static constexpr Color DEBUG_DRAW_COLOR_FG = RED;
 static constexpr Color DEBUG_DRAW_COLOR_BG = PINK;
 static constexpr Color DEBUG_DRAW_COLOR = RED;
-#endif
+// #endif
 
 // Node stuff.
 
@@ -67,12 +67,14 @@ protected:
     // virtual coz logic may be altered depending on node
     virtual void calculate_world_pos();
 
-    // Attach debug drawing method if compiled with DRAW_DEBUG flag
-    // It shouldn't be called directly, but from draw_recursive.
-    // Won't do anything for base Node, thus protected and virtual
-    #if defined(DRAW_DEBUG)
+    // Debug drawing method. Shouldn't be called directly, but from draw_recursive.
+    // Won't do anything for base Node, thus protected and virtual.
+    // DO NOT attempt to ifdef it there, coz if game and engine have different
+    // compile-time flags, this will mess with vtable.
+    // Rather than that, ifdef the logic inside overrides.
+    // #if defined(DRAW_DEBUG)
     virtual void draw_debug();
-    #endif
+    // #endif
 
 public:
     virtual ~Node();
@@ -123,9 +125,8 @@ public:
     // Not implemented yet - tempting.
     // void apply_align();
 
-    // For now, lets un-virtual it.
-    // Since adding "virtual" tag to it caused destructor to call.
-    // I have no idea why it happend. TODO
+    // For now, there is no point to make it virtual.
+    // But maybe that will change later.
     void set_pos(Vector2 pos);
 
     // Get current node position in relevance to its parent
@@ -133,7 +134,7 @@ public:
     // Get absolute node position in the world.
     Vector2 get_world_pos();
 
-    // TODO: consider moving this to protected, since they aren't intended to
+    // TODO: consider moving these to protected, since these aren't intended to
     // be called directly.
     void update_recursive(float dt);
     void draw_recursive();
@@ -160,9 +161,7 @@ protected:
 
     void calculate_world_pos() override;
 
-    #if defined(DRAW_DEBUG)
     void draw_debug() override;
-    #endif
 
 public:
     // Don't overthink it for now
