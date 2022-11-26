@@ -50,6 +50,10 @@ GameWindow::GameWindow()
 }
 
 void GameWindow::init(int x, int y, const std::string &title, int fps) {
+    if (initialized) {
+        spdlog::warn("GameWindow has already been initialized.");
+        return;
+    }
     spdlog::info("Initializing GameWindow.");
 
     InitWindow(x, y, title.c_str());
@@ -86,6 +90,11 @@ void GameWindow::run() {
                          "Did you forget GameWindow.init()?");
         abort();
     };
+
+    if (active) {
+        spdlog::warn("GameWindow is already running.");
+        return;
+    }
 
     active = true;
 
