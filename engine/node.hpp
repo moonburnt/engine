@@ -40,7 +40,7 @@ private:
     Scene* scene = nullptr;
     void attach_to_scene(Scene* _scene);
 
-    // bool scheduled_to_delete = false;
+    bool scheduled_to_delete = false;
 
     // Befriend with scene to allow it to set pointer to itself on root node's
     // init.
@@ -81,6 +81,18 @@ public:
 
     Node() = default;
     Node(Align _align);
+
+    // Schedule node to be deleted at the end of cycle
+    // This is the recommended way to delete nodes, to avoid iterator invalidation.
+    // Ideally, node is scheduled to be deleted - any further action would do
+    // nothing to it.
+    void schedule_delete();
+    // Check if node is not scheduled to be deleted
+    // This will ofc fail on dingling pointers.
+    // Maybe I should store smart pointers instead of normal pointers, idk
+    static bool is_valid(Node* n) {
+        return !n->scheduled_to_delete;
+    }
 
     // Get node's parent. If does not exist - returns nullptr.
     // TODO: maybe remove it, coz it messes with Scene
