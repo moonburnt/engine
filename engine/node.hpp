@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "spdlog/spdlog.h"
 
 // #if defined(DRAW_DEBUG)
 static constexpr Color DEBUG_DRAW_COLOR_FG = RED;
@@ -40,7 +41,29 @@ private:
     Scene* scene = nullptr;
     void attach_to_scene(Scene* _scene);
 
-    // bool scheduled_to_delete = false;
+    // Check if node is scheduled to be deleted on the beginning of next update
+    // cycle.
+    // is_deleted() - public getter
+    // del() - toggle this true
+    bool _is_deleted = false;
+
+    // TODO: schedule node reattaching instead of doing it right away
+    void build_removal_list(std::vector<Node*> &store) {
+        if (is_deleted()) {
+            spdlog::info("{}", store.size());
+            store.push_back(this);
+            detach();
+            for (auto i: children) {
+                i->del();
+                i->build_removal_list(store);
+            }
+        }
+        else {
+            for (auto i: children) {
+                i->build_removal_list(store);
+            }
+        }
+    }
 
     // Befriend with scene to allow it to set pointer to itself on root node's
     // init.
@@ -81,6 +104,14 @@ public:
 
     Node() = default;
     Node(Align _align);
+
+    bool is_deleted() {
+        return _is_deleted;
+    }
+
+    void del() {
+        _is_deleted = true;
+    }
 
     // Get node's parent. If does not exist - returns nullptr.
     // TODO: maybe remove it, coz it messes with Scene

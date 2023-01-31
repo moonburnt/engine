@@ -35,6 +35,10 @@ public:
 
     void add_child(Node* node);
 
+    const std::vector<Node*>& get_children() {
+        return root.children;
+    }
+
     template <typename T, typename... Args>
     T* create_child(Args&&... args) {
         return root.create_child<T>(std::forward(args)...);

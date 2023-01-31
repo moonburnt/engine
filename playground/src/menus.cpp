@@ -15,26 +15,38 @@ TitleScreen::TitleScreen(App* app, SceneManager* p)
     , app(app) {
 
 
-    Node* ui_container = new Node();
-    ui_container->set_align(Align::Center);
+    // Node* ui_container = new Node();
+    // ui_container->set_align(Align::Center);
 
-    BasicTextNode* text = new BasicTextNode("This game has been made with raylib");
-    text->set_pos(
-        {
-            get_window_width() / 2.0f,
-            get_window_height() / 2.0f
-        }
-    );
-    ui_container->add_child(text);
-    add_child(ui_container);
+    // BasicTextNode* text = new BasicTextNode("This game has been made with raylib");
+    // text->set_pos(
+    //     {
+    //         get_window_width() / 2.0f,
+    //         get_window_height() / 2.0f
+    //     }
+    // );
+    // ui_container->add_child(text);
+    // add_child(ui_container);
 
     timer.start();
 }
 
-void TitleScreen::update(float) {
-    // if (timer.tick(dt)) {
-    //     parent->set_current_scene(new MainMenu(app, parent));
-    // }
+void TitleScreen::update(float dt) {
+    if (timer.tick(dt)) {
+        // parent->set_current_scene(new MainMenu(app, parent));
+        auto count = get_children().size();
+        if (count < 3) {
+            spdlog::info("add garbage node {}", count);
+            add_child(new Node());
+        }
+        else {
+            spdlog::info("Purging children");
+            for (auto c: get_children()) {
+                c->del();
+            }
+        }
+        timer.start();
+    }
 }
 
 void TitleScreen::draw() {
