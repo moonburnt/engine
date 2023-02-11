@@ -9,12 +9,20 @@ Scene::Scene() {
 }
 
 Scene::~Scene() {
-    spdlog::debug("Deleting scene");
+    spdlog::debug("Deleting scene {}", tag);
 }
 
 Scene::Scene(Color _bg_color)
     : bg_color(_bg_color) {
     root.attach_to_scene(this);
+}
+
+void Scene::add_tag(const std::string &txt) {
+    tag = txt;
+}
+
+std::string Scene::get_tag() {
+    return tag;
 }
 
 void Scene::add_child(Node* node) {

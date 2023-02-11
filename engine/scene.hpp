@@ -25,6 +25,8 @@ private:
     // Flat list of nodes to update this frame
     std::vector<Node*> children_nodes;
 
+    std::string tag = "";
+
 protected:
     void update_recursive(float dt);
     void draw_recursive();
@@ -35,6 +37,9 @@ public:
 
     // virtual ~Scene() = default;
     virtual ~Scene();
+
+    void add_tag(const std::string &txt);
+    std::string get_tag();
 
     void add_child(Node* node);
 
