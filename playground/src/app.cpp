@@ -43,16 +43,14 @@ App::App() {
 }
 
 void App::run() {
-    // TODO: figure out something about logic of these, since attaching some
-    // (like FrameCounter) things to the named node storage of scene manager
-    // prior engine initialization may cause segfault
-    // (This one does it if default FrameCounter's text is set to non-empty).
+    Scene* ts = new TitleScreen(this, &window.sc_mgr);
+
+    window.sc_mgr.configure_layer("scenes", ts);
+    LayerStorage* overlay = window.sc_mgr.configure_layer("overlay");
+
     if (config->settings["show_fps"].value_or(false)) {
-        window.sc_mgr.nodes["fps_counter"] = new FrameCounter();
-        // And this is bugged out too, seems to be for the same reason.
-        // window.sc_mgr.nodes["fps_counter"]->set_pos({4.0f, 4.0f});
+        overlay->get_current_or_future()->add_child(new FrameCounter());
     };
 
-    window.sc_mgr.set_current_scene(new TitleScreen(this, &window.sc_mgr));
     window.run();
 }

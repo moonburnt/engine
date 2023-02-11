@@ -74,14 +74,8 @@ void Scene::draw_recursive() {
     }
 }
 
-// Scene manager
-
-// There are two ways to work with scenes: to add scene manually each time,
-// initializing it from zero and clearing up other scenes from memory.
-// Or to keep all scenes initialized in some storage. For now, we are going for
-// the first one, but this behavior may change in future.
-
-bool SceneManager::try_to_switch_scene() {
+// LayerStorage, for multiple scenes at once
+bool LayerStorage::try_to_switch() {
     if (next_scene == nullptr) {
         return false;
     }
@@ -95,7 +89,7 @@ bool SceneManager::try_to_switch_scene() {
     return true;
 }
 
-void SceneManager::set_current_scene(Scene* scene, bool ensure_unique) {
+void LayerStorage::set_current(Scene* scene, bool ensure_unique) {
     if (ensure_unique) {
         if (current_scene == scene) {
             return;
@@ -113,22 +107,60 @@ void SceneManager::set_current_scene(Scene* scene, bool ensure_unique) {
     }
 
     next_scene = scene;
-
-    // Old logic below
-    // if (current_scene != nullptr) {
-    //     delete current_scene;
-    // };
-
-    // current_scene = scene;
-    // active = true;
 }
 
-void SceneManager::set_current_scene(Scene* scene) {
-    set_current_scene(scene, false);
+void LayerStorage::set_current(Scene* scene) {
+    set_current(scene, false);
 }
 
-Scene* SceneManager::get_current_scene() {
+Scene* LayerStorage::get_current() {
     return current_scene;
+}
+
+Scene* LayerStorage::get_future() {
+    return next_scene;
+}
+
+Scene* LayerStorage::get_current_or_future() {
+    Scene* s = get_current();
+
+    if (s == nullptr) {
+        return get_future();
+    }
+    else {
+        return s;
+    }
+}
+
+void LayerStorage::update(float dt) {
+    if (current_scene != nullptr) {
+        current_scene->update_recursive(dt);
+    }
+}
+void LayerStorage::draw() {
+    if (current_scene != nullptr) {
+        current_scene->draw_recursive();
+    }
+}
+
+LayerStorage::~LayerStorage() {
+    spdlog::debug("Deleting layer storage");
+    if (current_scene != nullptr) {
+        delete current_scene;
+    }
+}
+
+// Scene manager
+
+// There are two ways to work with scenes: to add scene manually each time,
+// initializing it from zero and clearing up other scenes from memory.
+// Or to keep all scenes initialized in some storage. For now, we are going for
+// the first one, but this behavior may change in future.
+
+void SceneManager::try_to_switch_layers() {
+    for (auto& [_, i]: layers) {
+        i.try_to_switch();
+    }
 }
 
 bool SceneManager::is_active() {
@@ -140,39 +172,20 @@ void SceneManager::update(float dt) {
         return;
     }
 
-    // Doing switch at the beginning and not end of update cycle, since otherwise
-    // initial scene loading breaks.
-    try_to_switch_scene();
+    try_to_switch_layers();
 
-    current_scene->update_recursive(dt);
-
-    // TODO: drop this stuff in favor of multi-scene setups
-    for (const auto& [_, i] : nodes) {
-        // i->update(dt);
-        i->update(dt);
+    for (auto& [_, i]: layers) {
+        i.update(dt);
     }
 
     BeginDrawing();
-    current_scene->draw_recursive();
-
-    for (const auto& [_, i] : nodes) {
-        // i->draw();
-        i->draw();
+    for (auto& [_, i]: layers) {
+        i.draw();
     }
 
     EndDrawing();
-    // try_to_switch_scene();
 }
 
 SceneManager::~SceneManager() {
     spdlog::debug("Deleting scene manager");
-    if (current_scene != nullptr) {
-        delete current_scene;
-    }
-
-    for (const auto &kv: nodes) {
-        if (kv.second != nullptr) {
-            delete kv.second;
-        }
-    }
 }

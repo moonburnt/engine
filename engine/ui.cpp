@@ -64,7 +64,9 @@ FrameCounter::FrameCounter(
     , format(_format) {}
 
 FrameCounter::FrameCounter()
-    : BasicTextNode("") {}
+    : BasicTextNode("") {
+    add_tag("FPS Counter");
+}
 
 void FrameCounter::update(float) {
     fps_value = GetFPS();
