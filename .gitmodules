@@ -10,3 +10,7 @@
 [submodule "dependencies/tomlplusplus"]
 	path = dependencies/tomlplusplus
 	url = https://github.com/marzer/tomlplusplus.git
+[submodule "angelscript"]
+	path = dependencies/angelscript
+	url = https://github.com/moonburnt/angelscript-mirror.git
+	branch = fork

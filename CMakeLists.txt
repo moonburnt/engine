@@ -92,6 +92,11 @@ add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/raylib")
 target_link_libraries(engine raylib)
 target_include_directories(engine PUBLIC ${raylib_INCLUDE_DIRS})
 
+# Setup angelscript
+add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/angelscript")
+target_link_libraries(engine angelscript)
+target_include_directories(engine PUBLIC ${angelscript_INCLUDE_DIRS})
+
 # Setup fmt
 add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/fmt")
 target_link_libraries(engine fmt)
