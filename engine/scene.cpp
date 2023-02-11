@@ -30,9 +30,12 @@ void Scene::update(float) {}
 void Scene::draw() {}
 
 void Scene::update_recursive(float dt) {
+    // Cleanup previous scene's children nodes.
+    children_nodes.clear();
+
     // Delete nodes scheduled for removal on previous frame.
     std::vector<Node*> to_remove;
-    root.build_removal_list(to_remove);
+    root.build_flat_children_vector(children_nodes, to_remove);
 
     for (auto i = 0ul; i < to_remove.size(); i++) {
         Node* n = to_remove.at(i);
@@ -47,13 +50,20 @@ void Scene::update_recursive(float dt) {
     node_mgr.perform_tasks();
 
     update(dt);
-    root.update_recursive(dt);
+    for (auto i: children_nodes) {
+        i->update(dt);
+    }
 }
 
 void Scene::draw_recursive() {
     ClearBackground(bg_color);
     draw();
-    root.draw_recursive();
+    for (auto i: children_nodes) {
+        #if defined(DRAW_DEBUG)
+        i->draw_debug();
+        #endif
+        i->draw();
+    }
 }
 
 // Scene manager
@@ -128,9 +138,10 @@ void SceneManager::update(float dt) {
 
     current_scene->update_recursive(dt);
 
+    // TODO: drop this stuff in favor of multi-scene setups
     for (const auto& [_, i] : nodes) {
         // i->update(dt);
-        i->update_recursive(dt);
+        i->update(dt);
     }
 
     BeginDrawing();
@@ -138,7 +149,7 @@ void SceneManager::update(float dt) {
 
     for (const auto& [_, i] : nodes) {
         // i->draw();
-        i->draw_recursive();
+        i->draw();
     }
 
     EndDrawing();

@@ -55,28 +55,32 @@ void Node::cleanup() {
     );
 }
 
-void Node::build_removal_list(std::vector<Node*> &store) {
+void Node::build_flat_children_vector(
+    std::vector<Node*> &valid,
+    std::vector<Node*> &to_remove
+) {
     if (is_deleted()) {
-        if (children.size() > 0) {
-            for (auto i: children) {
-                if (i != nullptr) {
-                    spdlog::info("c {}", i->get_tag());
-                    i->mark_to_delete();
-                    i->build_removal_list(store);
-                }
+        for (auto i: children) {
+            if (i != nullptr) {
+                // spdlog::info("c {}", i->get_tag());
+                i->mark_to_delete();
+                i->build_flat_children_vector(valid, to_remove);
             }
-            // children.clear();
-            cleanup();
         }
+        // children.clear();
+        cleanup();
         detach();
         // spdlog::info("pb {}", tag);
-        store.push_back(this);
+        to_remove.push_back(this);
         // spdlog::info("{}", store.size());
     }
     else {
+        // Old update_recursive logic was "first we update parent, then
+        // children". Lets follow it for now
+        valid.push_back(this);
         for (auto i: children) {
             if (i != nullptr) {
-                i->build_removal_list(store);
+                i->build_flat_children_vector(valid, to_remove);
             }
         }
         cleanup();
@@ -209,21 +213,6 @@ Vector2 Node::get_world_pos() {
     return world_pos;
 }
 
-void Node::update_recursive(float dt) {
-    // TODO: maybe move things around for draw cycle (what happens before and what
-    // should happen after - children's or parent's things)
-    // spdlog::info("updating node");
-    update(dt);
-    for (auto i: children) {
-        if (i != nullptr) {
-            // spdlog::info("now updating children");
-            // It may be non-obvious, but Node will have access to private and
-            // protected methods of other Node objects too.
-            i->update_recursive(dt);
-        }
-    }
-}
-
 // TODO: think if we should adjust base node's pos each frame
 void Node::update(float) {
 }
@@ -232,25 +221,6 @@ void Node::update(float) {
 void Node::draw() {}
 
 void Node::draw_debug() {}
-
-void Node::draw_recursive() {
-    #if defined(DRAW_DEBUG)
-    draw_debug();
-    #endif
-    draw();
-    // We may use different logic there. Or maybe even turn basic Node's logic
-    // into a pure-virtual thing and write various implementations.
-    // But for now it will do. TODO
-    for (auto i: children) {
-        if (i != nullptr) {
-            // i->draw();
-            // #if defined(DRAW_DEBUG)
-            // i->draw_debug();
-            // #endif
-            i->draw_recursive();
-        }
-    }
-}
 
 // RectangleNode
 RectangleNode::RectangleNode(Rectangle rect)

@@ -22,6 +22,9 @@ private:
     // Allow SceneManager to access our private and protected things
     friend class SceneManager;
 
+    // Flat list of nodes to update this frame
+    std::vector<Node*> children_nodes;
+
 protected:
     void update_recursive(float dt);
     void draw_recursive();
