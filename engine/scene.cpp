@@ -21,8 +21,8 @@ void Scene::add_child(Node* node) {
     root.add_child(node);
 }
 
-void Scene::remove_child(Node* node) {
-    root.remove_child(node);
+void Scene::detach_child(Node* node) {
+    root.detach_child(node);
 }
 
 void Scene::update(float) {}
@@ -33,23 +33,17 @@ void Scene::update_recursive(float dt) {
     // Delete nodes scheduled for removal on previous frame.
     std::vector<Node*> to_remove;
     root.build_removal_list(to_remove);
+
     for (auto i = 0ul; i < to_remove.size(); i++) {
-        spdlog::info("{} of {}", i, to_remove.size());
-        delete to_remove[i];
+        Node* n = to_remove.at(i);
+        spdlog::info("rm {}", n->get_tag());
+        to_remove.at(i) = nullptr;
+        delete n;
     }
     to_remove.clear();
 
-    // auto remove_node = [](Node* i) { delete i; };
-    // std::for_each(to_remove.cbegin(), to_remove.cend(), remove_node);
-    // to_remove.clear();
-
-    // TODO: move around nodes scheduled for that on previous frame.
-
     // TODO: maybe build a single list there, without needs to go for that
     // recursive thingy few times? Or few lists, but at once
-
-    // TODO: think about moving this trigger to SceneManager
-    // Add, remove and move nodes around
     node_mgr.perform_tasks();
 
     update(dt);

@@ -44,7 +44,7 @@ public:
         return root.create_child<T>(std::forward(args)...);
     }
 
-    void remove_child(Node* node);
+    void detach_child(Node* node);
 
     virtual void update(float dt);
     virtual void draw();

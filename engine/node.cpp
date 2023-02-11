@@ -7,16 +7,7 @@
 
 // Node
 Node::~Node(){
-    spdlog::debug("Deleting node");
-    for (auto i: children) {
-        delete i;
-    }
-
-    // TODO: maybe I should add code to also delete node from parent?
-    // TODO: ensure deleting actually happens recursively for all subchildren.
-    // TODO: deleting should only happen at the beginning/end of cycle.
-    // Ensure it doesnt happen mid-update - mark node to be scheduled for removal
-    // instead.
+    spdlog::debug("Deleting node {}", tag);
 }
 
 void Node::attach_to_scene(Scene* _scene) {
@@ -40,6 +31,74 @@ Node* Node::get_root() {
     }
 }
 
+void Node::detach(bool remove_from_parent) {
+    if (parent == nullptr) {
+        spdlog::info("Node {}'s parent is null", tag);
+        return;
+    }
+    else {
+        if (remove_from_parent) {
+            parent->detach_child(this);
+        }
+        parent = nullptr;
+        set_dirty();
+    }
+}
+
+void Node::cleanup() {
+    children.erase(
+        std::remove_if(
+            children.begin(),
+            children.end(),
+            [](Node* i){ return i == nullptr; }),
+        children.end()
+    );
+}
+
+void Node::build_removal_list(std::vector<Node*> &store) {
+    if (is_deleted()) {
+        if (children.size() > 0) {
+            for (auto i: children) {
+                if (i != nullptr) {
+                    spdlog::info("c {}", i->get_tag());
+                    i->mark_to_delete();
+                    i->build_removal_list(store);
+                }
+            }
+            // children.clear();
+            cleanup();
+        }
+        detach();
+        // spdlog::info("pb {}", tag);
+        store.push_back(this);
+        // spdlog::info("{}", store.size());
+    }
+    else {
+        for (auto i: children) {
+            if (i != nullptr) {
+                i->build_removal_list(store);
+            }
+        }
+        cleanup();
+    }
+}
+
+void Node::add_tag(const std::string &txt) {
+    tag = txt;
+}
+
+std::string Node::get_tag() {
+    return tag;
+}
+
+bool Node::is_deleted() {
+    return _is_deleted;
+}
+
+void Node::mark_to_delete() {
+    _is_deleted = true;
+}
+
 Scene* Node::get_scene() {
     Node* root_node = get_root();
     if (root_node == nullptr) {
@@ -51,30 +110,42 @@ Scene* Node::get_scene() {
 }
 
 void Node::add_child(Node* node) {
-    // Node* node_parent = node->get_parent();
-    // if (node_parent != nullptr) {
-    //     node_parent->remove_child(node);
-    // }
-    // node->detach();
-    // children.push_back(node);
-    // node->parent = this;
     node->set_parent(this);
 }
 
-void Node::remove_child(Node* node) {
+// This won't delete child nodes, coz that caused too much headache.
+// This will also show an incorrect child counter, coz it replaces these with nullptr
+// Thus never trust the child counter, filter it manually from nullptr
+void Node::detach_child(Node* node) {
+    node->detach(false);
+
+    spdlog::info("detaching child {}, current len {}", node->get_tag(), children.size());
     std::vector<Node*>::iterator it;
     it = std::find(children.begin(), children.end(), node);
 
     // I think thats how it should work?
     if (it != children.end()) {
-        children.erase(it);
+        // If we will remove node there, it will cause iteration issues.
+        // For that reason, lets try to replace it with nullptr, patch
+        // update_recursive() and draw_recursive() to support that and do
+        // something about it later. TODO
+        // children.erase(it);
+
+        // Node* ch = children[std::distance(children.begin(), it)];
+        children[std::distance(children.begin(), it)] = nullptr;
+
+        // // Remove tangling nodes
+        // if (ch->is_deleted()) {
+        //     delete ch;
+        // }
     }
+
+    // TODO: implement cleanup logic to purge all nullptr nodes from there.
+
+    // spdlog::info("new size {}", children.size());
 }
 
 void Node::set_parent(Node* node) {
-    // if (parent != nullptr) {
-    //     parent->remove_child(this);
-    // }
     if (parent == node) {
         return;
     }
@@ -87,14 +158,7 @@ void Node::set_parent(Node* node) {
 }
 
 void Node::detach() {
-    if (parent == nullptr) {
-        return;
-    }
-    else {
-        parent->remove_child(this);
-        parent = nullptr;
-        set_dirty();
-    }
+    detach(true);
 }
 
 void Node::set_align(Align _align) {
@@ -151,16 +215,17 @@ void Node::update_recursive(float dt) {
     // spdlog::info("updating node");
     update(dt);
     for (auto i: children) {
-        // spdlog::info("now updating children");
-        // It may be non-obvious, but Node will have access to private and
-        // protected methods of other Node objects too.
-        i->update_recursive(dt);
+        if (i != nullptr) {
+            // spdlog::info("now updating children");
+            // It may be non-obvious, but Node will have access to private and
+            // protected methods of other Node objects too.
+            i->update_recursive(dt);
+        }
     }
 }
 
 // TODO: think if we should adjust base node's pos each frame
 void Node::update(float) {
-    // spdlog::info("a");
 }
 
 
@@ -177,11 +242,13 @@ void Node::draw_recursive() {
     // into a pure-virtual thing and write various implementations.
     // But for now it will do. TODO
     for (auto i: children) {
-        // i->draw();
-        // #if defined(DRAW_DEBUG)
-        // i->draw_debug();
-        // #endif
-        i->draw_recursive();
+        if (i != nullptr) {
+            // i->draw();
+            // #if defined(DRAW_DEBUG)
+            // i->draw_debug();
+            // #endif
+            i->draw_recursive();
+        }
     }
 }
 

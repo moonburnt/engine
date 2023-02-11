@@ -36,13 +36,16 @@ void TitleScreen::update(float dt) {
         // parent->set_current_scene(new MainMenu(app, parent));
         auto count = get_children().size();
         if (count < 3) {
-            spdlog::info("add garbage node {}", count);
-            add_child(new Node());
+            // spdlog::info("add garbage node {}", count);
+            Node* n = new Node();
+            n->add_tag(fmt::format("{}", count));
+            add_child(n);
         }
         else {
-            spdlog::info("Purging children");
+            spdlog::info("Purging children {}", count);
             for (auto c: get_children()) {
-                c->del();
+                spdlog::info("p c {}", c->get_tag());
+                c->mark_to_delete();
             }
         }
         timer.start();

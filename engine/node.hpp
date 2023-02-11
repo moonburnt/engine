@@ -16,6 +16,70 @@ static constexpr Color DEBUG_DRAW_COLOR = RED;
 
 // Forward declaration to make node compile
 class Scene;
+// class Node;
+
+// class NodeBranch {
+// private:
+//     std::vector<Node*> items = {};
+
+//     bool iterator_is_dirty = false;
+
+// public:
+//     void push_back(Node* node) {
+//         items.push_back(node);
+//     }
+
+//     bool is_iterator_valid() {
+//         return iterator_is_dirty;
+//     }
+
+//     // UB-proof back()
+//     Node* back() {
+//         if (items.count() > 0) {
+//             return items.back();
+//         }
+//         else {
+//             return nullptr;
+//         }
+//     }
+
+//     Node* operator[](int i) {
+//         return items.at(key);
+//     }
+
+//     void clear() {
+
+//     }
+
+//     void Node::detach_node(Node* node) {
+//         node->detach(false);
+
+//         spdlog::info("detaching child {}, current len {}", node->get_tag(), items.size());
+//         std::vector<Node*>::iterator it;
+//         it = std::find(children.begin(), children.end(), node);
+
+//         // I think thats how it should work?
+//         if (it != children.end()) {
+//             // If we will remove node there, it will cause iteration issues.
+//             // For that reason, lets try to replace it with nullptr, patch
+//             // update_recursive() and draw_recursive() to support that and do
+//             // something about it later. TODO
+//             // children.erase(it);
+
+//             Node* ch = children[std::distance(children.begin(), it)];
+//             children[std::distance(children.begin(), it)] = nullptr;
+
+//             // Remove tangling nodes
+//             if (ch->is_deleted()) {
+//                 delete ch;
+//             }
+//         }
+
+//         // TODO: implement cleanup logic to purge all nullptr nodes from there.
+
+//         spdlog::info("new size {}", children.size());
+//     }
+// }
 
 // Alignment for nodes
 // Originally I've intended to implement AlignNode and set it exclusively for
@@ -44,26 +108,17 @@ private:
     // Check if node is scheduled to be deleted on the beginning of next update
     // cycle.
     // is_deleted() - public getter
-    // del() - toggle this true
+    // mark_to_delete() - toggle this true
     bool _is_deleted = false;
 
-    // TODO: schedule node reattaching instead of doing it right away
-    void build_removal_list(std::vector<Node*> &store) {
-        if (is_deleted()) {
-            spdlog::info("{}", store.size());
-            store.push_back(this);
-            detach();
-            for (auto i: children) {
-                i->del();
-                i->build_removal_list(store);
-            }
-        }
-        else {
-            for (auto i: children) {
-                i->build_removal_list(store);
-            }
-        }
-    }
+    void detach(bool remove_from_parent);
+
+    // Remove nullptr placeholders from storage
+    void cleanup();
+
+    void build_removal_list(std::vector<Node*> &store);
+
+    std::string tag = "";
 
     // Befriend with scene to allow it to set pointer to itself on root node's
     // init.
@@ -105,13 +160,12 @@ public:
     Node() = default;
     Node(Align _align);
 
-    bool is_deleted() {
-        return _is_deleted;
-    }
+    void add_tag(const std::string &txt);
 
-    void del() {
-        _is_deleted = true;
-    }
+    std::string get_tag();
+
+    bool is_deleted();
+    void mark_to_delete();
 
     // Get node's parent. If does not exist - returns nullptr.
     // TODO: maybe remove it, coz it messes with Scene
@@ -138,7 +192,7 @@ public:
 
     // Detach provided child from node.
     // If has not been attached - does nothing (for now)
-    void remove_child(Node* node);
+    void detach_child(Node* node);
 
     // Attach this node to specific parent. If it has already been attached to
     // some, then detach it and move to new one, with all its ancestors
