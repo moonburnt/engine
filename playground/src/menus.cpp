@@ -10,23 +10,24 @@
 
 // Title Screen
 TitleScreen::TitleScreen(App* app, SceneManager* p)
-    : parent(p)
+    : Scene({245, 245, 245, 255})
+    , parent(p)
     , timer(Timer(2.0f))
     , app(app) {
 
 
-    // Node* ui_container = new Node();
-    // ui_container->set_align(Align::Center);
+    Node* ui_container = new Node();
+    ui_container->set_align(Align::Center);
 
-    // BasicTextNode* text = new BasicTextNode("This game has been made with raylib");
-    // text->set_pos(
-    //     {
-    //         get_window_width() / 2.0f,
-    //         get_window_height() / 2.0f
-    //     }
-    // );
-    // ui_container->add_child(text);
-    // add_child(ui_container);
+    BasicTextNode* text = new BasicTextNode("This game has been made with raylib");
+    text->set_pos(
+        {
+            get_window_width() / 2.0f,
+            get_window_height() / 2.0f
+        }
+    );
+    ui_container->add_child(text);
+    add_child(ui_container);
 
     timer.start();
 }
@@ -34,26 +35,22 @@ TitleScreen::TitleScreen(App* app, SceneManager* p)
 void TitleScreen::update(float dt) {
     if (timer.tick(dt)) {
         // parent->set_current_scene(new MainMenu(app, parent));
-        auto count = get_children().size();
-        if (count < 3) {
-            // spdlog::info("add garbage node {}", count);
-            Node* n = new Node();
-            n->add_tag(fmt::format("{}", count));
-            add_child(n);
-        }
-        else {
-            spdlog::info("Purging children {}", count);
-            for (auto c: get_children()) {
-                spdlog::info("p c {}", c->get_tag());
-                c->mark_to_delete();
-            }
-        }
+        // auto count = get_children().size();
+        // if (count < 3) {
+        //     // spdlog::info("add garbage node {}", count);
+        //     Node* n = new Node();
+        //     n->add_tag(fmt::format("{}", count));
+        //     add_child(n);
+        // }
+        // else {
+        //     spdlog::info("Purging children {}", count);
+        //     for (auto c: get_children()) {
+        //         spdlog::info("p c {}", c->get_tag());
+        //         c->mark_to_delete();
+        //     }
+        // }
         timer.start();
     }
-}
-
-void TitleScreen::draw() {
-    // greeter.draw();
 }
 
 // // Settings Screen

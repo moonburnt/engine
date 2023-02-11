@@ -14,7 +14,7 @@ class Scene {
 private:
     // Root node that should serve as an entry point.
     Node root;
-    Color bg_color = {245, 245, 245, 255};
+    Color bg_color = {0, 0, 0, 0};
 
     // Task manager for node tasks.
     // Add, remove, etc
