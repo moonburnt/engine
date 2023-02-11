@@ -43,14 +43,14 @@ App::App() {
 }
 
 void App::run() {
-    Scene* ts = new TitleScreen(this, &window.sc_mgr);
-
-    window.sc_mgr.configure_layer("scenes", ts);
+    LayerStorage* scenes = window.sc_mgr.configure_layer("scenes");
     LayerStorage* overlay = window.sc_mgr.configure_layer("overlay");
 
     if (config->settings["show_fps"].value_or(false)) {
         overlay->get_current_or_future()->add_child(new FrameCounter());
     };
+
+    scenes->set_current(new TitleScreen(this, scenes));
 
     window.run();
 }

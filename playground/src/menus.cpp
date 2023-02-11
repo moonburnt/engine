@@ -8,14 +8,19 @@
 
 #include <functional>
 
-// Title Screen
-TitleScreen::TitleScreen(App* app, SceneManager* p)
+// Playground Scene
+PlaygroundScene::PlaygroundScene(App* app, LayerStorage* p, const std::string& _tag)
     : Scene({245, 245, 245, 255})
     , parent(p)
-    , timer(Timer(2.0f))
-    , app(app) {
+    , app(app)  {
+    add_tag(_tag);
+}
 
 
+// Title Screen
+TitleScreen::TitleScreen(App* app, LayerStorage* p)
+    : PlaygroundScene(app, p, "Title Screen")
+    , timer(Timer(2.0f)) {
     Node* ui_container = new Node();
     ui_container->set_align(Align::Center);
 
@@ -35,22 +40,28 @@ TitleScreen::TitleScreen(App* app, SceneManager* p)
 void TitleScreen::update(float dt) {
     if (timer.tick(dt)) {
         // parent->set_current_scene(new MainMenu(app, parent));
-        // auto count = get_children().size();
-        // if (count < 3) {
-        //     // spdlog::info("add garbage node {}", count);
-        //     Node* n = new Node();
-        //     n->add_tag(fmt::format("{}", count));
-        //     add_child(n);
-        // }
-        // else {
-        //     spdlog::info("Purging children {}", count);
-        //     for (auto c: get_children()) {
-        //         spdlog::info("p c {}", c->get_tag());
-        //         c->mark_to_delete();
-        //     }
-        // }
-        timer.start();
+        spdlog::info("Switching to main menu");
+        parent->set_current(new MainMenu(app, parent));
+
     }
+}
+
+// Main Menu
+MainMenu::MainMenu(App* app, LayerStorage* p)
+    : PlaygroundScene(app, p, "Main Menu") {
+    Node* ui_container = new Node();
+    ui_container->set_align(Align::Center);
+
+    BasicTextNode* text = new BasicTextNode("Main Menu");
+    text->set_pos(
+        {
+            get_window_width() / 2.0f,
+            100.0f,
+        }
+    );
+    ui_container->add_child(text);
+
+    add_child(ui_container);
 }
 
 // // Settings Screen

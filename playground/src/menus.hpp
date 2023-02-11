@@ -6,16 +6,36 @@
 
 class App;
 
-class TitleScreen : public Scene {
-private:
-    SceneManager* parent;
-    Timer timer;
+class PlaygroundScene : public Scene {
+protected:
+    LayerStorage* parent;
     App* app;
+public:
+    PlaygroundScene(App* app, LayerStorage* p, const std::string& _tag);
+};
+
+class TitleScreen : public PlaygroundScene {
+private:
+    Timer timer;
 
 public:
-    TitleScreen(App* app, SceneManager* p);
+    TitleScreen(App* app, LayerStorage* p);
 
     void update(float dt) override;
+};
+
+class MainMenu : public PlaygroundScene {
+private:
+    enum class MM_BUTTONS{
+        MM_NEWGAME,
+        MM_SETTINGS,
+        MM_EXIT,
+        MM_CONTINUE
+    };
+
+    std::unordered_map<MM_BUTTONS, Node*> buttons;
+public:
+    MainMenu(App* app, LayerStorage* p);
 };
 
 // class MainMenu : public Scene {
