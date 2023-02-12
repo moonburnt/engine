@@ -93,7 +93,14 @@ target_link_libraries(engine raylib)
 target_include_directories(engine PUBLIC ${raylib_INCLUDE_DIRS})
 
 # Setup angelscript
+option(WITH_ADDONS "" ON)
 add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/angelscript")
+#set_target_properties(angelscript PROPERTIES WITH_ADDONS ON)
+#target_compile_options(
+#    angelscript PUBLIC
+#    -DWITH_ADDONS=ON
+#)
+#target_link_libraries(engine ${angelscript_LIBS})
 target_link_libraries(engine angelscript)
 target_include_directories(engine PUBLIC ${angelscript_INCLUDE_DIRS})
 
