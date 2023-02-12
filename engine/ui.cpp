@@ -77,80 +77,80 @@ void FrameCounter::update(float) {
 
 // ButtonMixin
 
-void ButtonMixin::set_callback(ButtonMixin::ButtonState state, std::function<void()>cb) {
-    callbacks[state] = cb;
-}
+// void ButtonMixin::set_callback(ButtonMixin::ButtonState state, std::function<void()>cb) {
+//     callbacks[state] = cb;
+// }
 
-void ButtonMixin::set_idle() {
-    if (current_state == ButtonMixin::ButtonState::Idle) {
-        return;
-    }
-    else {
-        current_state = ButtonMixin::ButtonState::Idle;
-        on_idle();
-        if (callbacks.count(ButtonMixin::ButtonState::Idle) > 0) {
-            callbacks.at(ButtonMixin::ButtonState::Idle)();
-        }
-    }
-}
+// void ButtonMixin::set_idle() {
+//     if (current_state == ButtonMixin::ButtonState::Idle) {
+//         return;
+//     }
+//     else {
+//         current_state = ButtonMixin::ButtonState::Idle;
+//         on_idle();
+//         if (callbacks.count(ButtonMixin::ButtonState::Idle) > 0) {
+//             callbacks.at(ButtonMixin::ButtonState::Idle)();
+//         }
+//     }
+// }
 
-void ButtonMixin::set_hover() {
-    if (current_state == ButtonMixin::ButtonState::Hover) {
-        return;
-    }
-    else {
-        current_state = ButtonMixin::ButtonState::Hover;
-        on_hover();
-        if (callbacks.count(ButtonMixin::ButtonState::Hover) > 0) {
-            callbacks.at(ButtonMixin::ButtonState::Hover)();
-        }
-    }
-}
+// void ButtonMixin::set_hover() {
+//     if (current_state == ButtonMixin::ButtonState::Hover) {
+//         return;
+//     }
+//     else {
+//         current_state = ButtonMixin::ButtonState::Hover;
+//         on_hover();
+//         if (callbacks.count(ButtonMixin::ButtonState::Hover) > 0) {
+//             callbacks.at(ButtonMixin::ButtonState::Hover)();
+//         }
+//     }
+// }
 
-void ButtonMixin::set_pressed() {
-    if (current_state == ButtonMixin::ButtonState::Pressed) {
-        return;
-    }
-    else {
-        current_state = ButtonMixin::ButtonState::Pressed;
-        on_press();
-        if (callbacks.count(ButtonMixin::ButtonState::Pressed) > 0) {
-            callbacks.at(ButtonMixin::ButtonState::Pressed)();
-        }
-    }
-}
+// void ButtonMixin::set_pressed() {
+//     if (current_state == ButtonMixin::ButtonState::Pressed) {
+//         return;
+//     }
+//     else {
+//         current_state = ButtonMixin::ButtonState::Pressed;
+//         on_press();
+//         if (callbacks.count(ButtonMixin::ButtonState::Pressed) > 0) {
+//             callbacks.at(ButtonMixin::ButtonState::Pressed)();
+//         }
+//     }
+// }
 
-void ButtonMixin::set_clicked() {
-    if (current_state == ButtonMixin::ButtonState::Clicked) {
-        return;
-    }
-    else {
-        current_state = ButtonMixin::ButtonState::Clicked;
-        on_click();
-        if (callbacks.count(ButtonMixin::ButtonState::Clicked) > 0) {
-            callbacks.at(ButtonMixin::ButtonState::Clicked)();
-        }
-    }
-}
+// void ButtonMixin::set_clicked() {
+//     if (current_state == ButtonMixin::ButtonState::Clicked) {
+//         return;
+//     }
+//     else {
+//         current_state = ButtonMixin::ButtonState::Clicked;
+//         on_click();
+//         if (callbacks.count(ButtonMixin::ButtonState::Clicked) > 0) {
+//             callbacks.at(ButtonMixin::ButtonState::Clicked)();
+//         }
+//     }
+// }
 
-void ButtonMixin::set_disabled() {
-    if (current_state == ButtonMixin::ButtonState::Disabled) {
-        return;
-    }
-    else {
-        current_state = ButtonMixin::ButtonState::Disabled;
-        on_disable();
-        if (callbacks.count(ButtonMixin::ButtonState::Disabled) > 0) {
-            callbacks.at(ButtonMixin::ButtonState::Disabled)();
-        }
-    }
-}
+// void ButtonMixin::set_disabled() {
+//     if (current_state == ButtonMixin::ButtonState::Disabled) {
+//         return;
+//     }
+//     else {
+//         current_state = ButtonMixin::ButtonState::Disabled;
+//         on_disable();
+//         if (callbacks.count(ButtonMixin::ButtonState::Disabled) > 0) {
+//             callbacks.at(ButtonMixin::ButtonState::Disabled)();
+//         }
+//     }
+// }
 
-ButtonMixin::ButtonState ButtonMixin::get_current_state() {
-    return current_state;
-}
+// ButtonMixin::ButtonState ButtonMixin::get_current_state() {
+//     return current_state;
+// }
 
-// Button
-Button::Button(Rectangle rect)
-    : RectangleNode(rect)
-    , ButtonMixin() {}
+// // Button
+// Button::Button(Rectangle rect)
+//     : RectangleNode(rect)
+//     , ButtonMixin() {}
