@@ -87,37 +87,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_link_options(-fsanitize=address,undefined)
 endif()
 
-# Setup raylib
-add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/raylib")
-target_link_libraries(engine raylib)
-target_include_directories(engine PUBLIC ${raylib_INCLUDE_DIRS})
-
-# Setup angelscript
-option(WITH_ADDONS "" ON)
-add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/angelscript")
-#set_target_properties(angelscript PROPERTIES WITH_ADDONS ON)
-#target_compile_options(
-#    angelscript PUBLIC
-#    -DWITH_ADDONS=ON
-#)
-#target_link_libraries(engine ${angelscript_LIBS})
-target_link_libraries(engine angelscript)
-target_include_directories(engine PUBLIC ${angelscript_INCLUDE_DIRS})
-
-# Setup fmt
-add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/fmt")
-target_link_libraries(engine fmt)
-target_include_directories(engine PUBLIC ${fmt_INCLUDE_DIRS})
-
-# Setup spdlog
-add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/spdlog")
-target_link_libraries(engine spdlog)
-target_include_directories(engine PUBLIC ${spdlog_INCLUDE_DIRS})
-
-# Setup tomlplusplus
-add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/tomlplusplus")
-target_link_libraries(engine tomlplusplus::tomlplusplus)
-target_include_directories(engine PUBLIC ${tomlplusplus_INCLUDE_DIRS})
+add_subdirectory(dependencies)
 
 if(PROJECT_IS_TOP_LEVEL)
     add_custom_target(compile_commands
