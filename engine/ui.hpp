@@ -57,8 +57,21 @@ public:
     void update(float) override;
 };
 
+
+class InputControllerBase {
+public:
+    virtual void update(float dt) = 0;
+}
+
+class ButtonMouseInputController {
+public:
+    void update(float dt) override {}
+}
+
 // General button's concepts, detached from any particular form
-class ButtonMixin {
+class Button {
+private:
+
 public:
     enum class ButtonState {
         Idle,
@@ -67,51 +80,63 @@ public:
         Clicked,
         Disabled
     };
+}
 
-    void set_callback(ButtonMixin::ButtonState state, std::function<void()> cb);
 
-    void set_idle();
-    void set_hover();
-    void set_pressed();
-    void set_clicked();
-    void set_disabled();
+// class ButtonMixin {
+// public:
+//     enum class ButtonState {
+//         Idle,
+//         Hover,
+//         Pressed,
+//         Clicked,
+//         Disabled
+//     };
 
-    ButtonMixin::ButtonState get_current_state();
+//     void set_callback(ButtonMixin::ButtonState state, std::function<void()> cb);
 
-protected:
-    ButtonMixin::ButtonState current_state = ButtonMixin::ButtonState::Idle;
+//     void set_idle();
+//     void set_hover();
+//     void set_pressed();
+//     void set_clicked();
+//     void set_disabled();
 
-    /*
-    General flow idea is the following:
-    - We call set_{state}();
-    - It performs check;
-    - If current_state == state:
-    - - Return and thats it
-    - Else:
-    - - call on_{state}, which performs common things that can be overriden via
-    inheritance. For example - plays sound or changes texture.
-    - - if exists - call callback, which can be set via set_callback() function
-    and serves as a task that can be set for each particular button instance.
-    This can be useful, if we want to assign specific buttons with specific
-    actions directly instead of queuing their state changes.
-    Be vary tho - some actions performed during update cycle may cause segfaults,
-    thus design callbacks with caution.
-    */
+//     ButtonMixin::ButtonState get_current_state();
 
-    std::unordered_map<ButtonMixin::ButtonState, std::function<void()>> callbacks;
+// protected:
+//     ButtonMixin::ButtonState current_state = ButtonMixin::ButtonState::Idle;
 
-    virtual void on_idle() {}
-    virtual void on_hover() {}
-    virtual void on_press() {}
-    virtual void on_click() {}
-    virtual void on_disable() {}
-};
+//     /*
+//     General flow idea is the following:
+//     - We call set_{state}();
+//     - It performs check;
+//     - If current_state == state:
+//     - - Return and thats it
+//     - Else:
+//     - - call on_{state}, which performs common things that can be overriden via
+//     inheritance. For example - plays sound or changes texture.
+//     - - if exists - call callback, which can be set via set_callback() function
+//     and serves as a task that can be set for each particular button instance.
+//     This can be useful, if we want to assign specific buttons with specific
+//     actions directly instead of queuing their state changes.
+//     Be vary tho - some actions performed during update cycle may cause segfaults,
+//     thus design callbacks with caution.
+//     */
 
-// Simple rectangle button to build upon
-class Button : public ButtonMixin, public virtual RectangleNode {
-public:
-    Button(Rectangle rect);
-};
+//     std::unordered_map<ButtonMixin::ButtonState, std::function<void()>> callbacks;
+
+//     virtual void on_idle() {}
+//     virtual void on_hover() {}
+//     virtual void on_press() {}
+//     virtual void on_click() {}
+//     virtual void on_disable() {}
+// };
+
+// // Simple rectangle button to build upon
+// class Button : public ButtonMixin, public virtual RectangleNode {
+// public:
+//     Button(Rectangle rect);
+// };
 
 // Refused to compile due to ambiguous something warn.
 // Will have to lookup into that later. TODO
