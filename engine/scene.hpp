@@ -1,110 +1,130 @@
 #pragma once
 
-#include "raylib.h"
+#include "node.hpp"
 #include <string>
 #include <unordered_map>
+#include <map>
 #include <vector>
+#include "tasks.hpp"
 
 // Various scene management shenanigans
-
-// Node is an abstract thing that can be attached to Scene or SceneManager
-class Node {
-protected:
-    std::vector<Node*> children;
-    Node* parent = nullptr;
-
-    Vector2 pos = {0.0f, 0.0f};
-
-    void update_recursive(float dt);
-    void draw_recursive();
-
-public:
-    virtual ~Node();
-
-    // Get node's parent. If does not exist - returns nullptr.
-    // TODO: maybe remove it, coz it messes with Scene
-    Node* get_parent();
-
-    // Attach existing node as a child to this node
-    void add_child(Node* node);
-
-    // Create node of specified type and return pointer to it.
-    // T must convert to Node*, else there will be dragons.
-    template <typename T, typename... Args>
-    T* create_child(Args&&... args) {
-        children.push_back(new T(std::forward(args)...));
-        return static_cast<T*>(children.back());
-    }
-
-    // Detach provided child from node.
-    // If has not been attached - does nothing (for now)
-    void remove_child(Node* node);
-
-    // Attach this node to specific parent. If it has already been attached to
-    // some, then detach it and move to new one, with all its ancestors
-    void set_parent(Node* node);
-
-    virtual void set_pos(Vector2 pos);
-
-    // Get current node position in relevance to its parent
-    virtual Vector2 get_pos();
-    // Get absolute node position in the world.
-    Vector2 get_abs_pos();
-
-    // These arent pure-virtual, coz some children may not specify some of these.
-    // Say, audio node won't have a draw method.
-    virtual void update(float dt);
-
-    virtual void draw();
-};
 
 // Scene is a base for everything
 class Scene {
 private:
-    // RootNode is a scene-exclusive thing that should serve as an entry point
-    class RootNode: public Node {
-        public:
-            void update(float dt) override;
-            void draw() override;
-    };
+    // Root node that should serve as an entry point.
+    Node root;
+    Color bg_color = {0, 0, 0, 0};
 
-    RootNode root;
-    Color bg_color;
+    // Task manager for node tasks.
+    // Add, remove, etc
+    TaskManager node_mgr;
+
+    // Allow LayerStorage to access our private and protected things
+    friend class LayerStorage;
+
+    // Flat list of nodes to update this frame
+    std::vector<Node*> children_nodes;
+
+    std::string tag = "";
+
+protected:
+    void update_recursive(float dt);
+    void draw_recursive();
 
 public:
     Scene(Color bg_color);
     Scene();
 
-    virtual ~Scene() = default;
+    // virtual ~Scene() = default;
+    virtual ~Scene();
+
+    void add_tag(const std::string &txt);
+    std::string get_tag();
 
     void add_child(Node* node);
+
+    const std::vector<Node*>& get_children() {
+        return root.children;
+    }
 
     template <typename T, typename... Args>
     T* create_child(Args&&... args) {
         return root.create_child<T>(std::forward(args)...);
     }
 
-    void remove_child(Node* node);
+    void detach_child(Node* node);
 
     virtual void update(float dt);
     virtual void draw();
 };
 
+class LayerStorage {
+private:
+    Scene* current_scene = nullptr;
+    Scene* next_scene = nullptr;
+
+    friend class SceneManager;
+
+protected:
+    // Switch scene to the next scene, if next_scene != nullptr
+    // Implemented coz using set_current_scene() to perform actual switch
+    // mid update cycle caused segfaults
+    bool try_to_switch();
+
+public:
+    ~LayerStorage();
+
+    // Schedule provided scene to be set as current_scene at the beginning of
+    // the next update cycle. If ensure_unique is set - will also check if new
+    // scene is not the same as current scene. Default - false.
+    // TODO: consider a less deceiving name for this
+    void set_current(Scene* scene, bool ensure_unique);
+    void set_current(Scene* scene);
+
+    // Get current scene.
+    // Returns nullptr if there is none.
+    Scene* get_current();
+
+    Scene* get_future();
+
+    // Get current scene is there is one, future if its nullptr, else nullptr
+    Scene* get_current_or_future();
+
+    void update(float dt);
+    void draw();
+};
+
 class SceneManager {
 private:
-    // We are using pointer to Scene, to make it work with Scene's children.
-    // By default its set to nullptr, to verify if children has been configured.
-    Scene* current_scene = nullptr;
+    std::map<const std::string, LayerStorage> layers = {};
+
+    void try_to_switch_layers();
 
 public:
     // Node storage. TODO: remove it, just like with Scene
-    std::unordered_map<std::string, Node*> nodes;
+    // std::unordered_map<std::string, Node*> nodes;
 
-    SceneManager();
     ~SceneManager();
 
-    void set_current_scene(Scene* scene);
+    // I dont think we will need to remove layers, so there is no deleter
+    LayerStorage* configure_layer(const std::string& layer_name, Scene* scene) {
+        layers[layer_name].set_current(scene);
+
+        return &layers.at(layer_name);
+    }
+
+    LayerStorage* configure_layer(const std::string& layer_name) {
+        Scene* s = new Scene();
+        s->add_tag(layer_name);
+        return configure_layer(layer_name, s);
+    }
+
+    LayerStorage* get_layer(const std::string& layer_name) {
+        return &layers.at(layer_name);
+    }
+
     void update(float dt);
-    bool active;
+    bool active = true;
     bool is_active();
 };

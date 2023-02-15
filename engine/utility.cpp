@@ -1,4 +1,5 @@
 #include "utility.hpp"
+#include "text.hpp"
 #include "spdlog/spdlog.h"
 #include "raylib.h"
 
@@ -88,39 +89,36 @@ bool is_rect_inside_rect(Rectangle first, Rectangle second) {
         first.height >= second.height);
 }
 
-// FPS counter
-FrameCounter::FrameCounter(Vector2 _pos, const char* _format, int _size, Color _color, Font _font)
-    : fps_value(0)
-    , format(_format)
-    , size(_size)
-    , color(_color)
-    , font(_font) {
-    set_pos(_pos);
+int get_window_width() {
+    if (IsWindowFullscreen()) {
+        return GetMonitorWidth(GetCurrentMonitor());
+    }
+    else {
+        return GetScreenWidth();
+    }
 }
 
-FrameCounter::FrameCounter(Vector2 _pos, int _size)
-    : FrameCounter(_pos, "FPS: %02i", _size, BLACK, GetFontDefault()) {
+int get_window_height() {
+    if (IsWindowFullscreen()) {
+        return GetMonitorHeight(GetCurrentMonitor());
+    }
+    else {
+        return GetScreenHeight();
+    }
 }
 
-FrameCounter::FrameCounter(Vector2 _pos)
-    : FrameCounter(_pos, 20) {
+Vector2 get_window_size() {
+    return {
+        static_cast<float>(get_window_width()),
+        static_cast<float>(get_window_height())
+    };
 }
 
-
-FrameCounter::FrameCounter()
-    : FrameCounter({0, 0}) {
-}
-
-void FrameCounter::update(float) {
-    fps_value = GetFPS();
-}
-
-void FrameCounter::draw() {
-    DrawTextEx(
-        font,
-        TextFormat(format, fps_value),
-        get_abs_pos(),
-        size,
-        size / 10,
-        color);
+Rectangle get_window_rect() {
+    return {
+        0.0f,
+        0.0f,
+        static_cast<float>(get_window_width()),
+        static_cast<float>(get_window_height())
+    };
 }

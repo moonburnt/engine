@@ -8,8 +8,8 @@
 #include "core.hpp"
 #include <algorithm>
 
-static constexpr uint32_t DEFAULT_TEXT_SIZE = 20u;
-static constexpr Color DEFAULT_TEXT_COLOR = BLACK;
+// static constexpr uint32_t DEFAULT_TEXT_SIZE = 20u;
+// static constexpr Color DEFAULT_TEXT_COLOR = BLACK;
 
 void handle_assert(const char* file, int line, const char* fun, const char* expr);
 
@@ -115,25 +115,8 @@ bool has_mouse_moved();
 // is outside of borders.
 bool is_rect_inside_rect(Rectangle first, Rectangle second);
 
-// TODO: customizable font
-class FrameCounter : public Node {
-private:
-    int fps_value;
-
-protected:
-    const char* format;
-    // According to raylib's sources, smallest size allowed by default is 10
-    // Probably there is a reason for that?
-    int size;
-    Color color;
-    Font font;
-
-public:
-    FrameCounter(Vector2 pos, const char* format, int size, Color color, Font font);
-    FrameCounter(Vector2 pos, int size);
-    FrameCounter(Vector2 pos);
-    FrameCounter();
-
-    void update(float) override;
-    void draw() override;
-};
+// Get current window's size, regardless if its fullscreen or not
+int get_window_width();
+int get_window_height();
+Vector2 get_window_size();
+Rectangle get_window_rect();

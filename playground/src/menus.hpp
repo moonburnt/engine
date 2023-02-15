@@ -3,44 +3,61 @@
 #include "engine/core.hpp"
 #include "engine/ui.hpp"
 #include "engine/utility.hpp"
-#include "raylib.h"
 
 class App;
 
-class TitleScreen : public Scene {
-private:
-    SceneManager* parent;
-    Timer timer;
-    Label greeter;
+class PlaygroundScene : public Scene {
+protected:
+    LayerStorage* parent;
     App* app;
-
 public:
-    TitleScreen(App* app, SceneManager* p);
-
-    void update(float dt) override;
-    void draw() override;
+    PlaygroundScene(App* app, LayerStorage* p, const std::string& _tag);
 };
 
-class MainMenu : public Scene {
+class TitleScreen : public PlaygroundScene {
 private:
-    enum MM_BUTTONS {
+    Timer timer;
+
+public:
+    TitleScreen(App* app, LayerStorage* p);
+
+    void update(float dt) override;
+};
+
+class MainMenu : public PlaygroundScene {
+private:
+    enum class MM_BUTTONS{
         MM_NEWGAME,
         MM_SETTINGS,
         MM_EXIT,
         MM_CONTINUE
     };
 
-    SceneManager* parent;
-    VerticalContainer buttons;
-    App* app;
-
-    void call_exit();
-    void new_game();
-    void open_settings();
-
+    std::unordered_map<MM_BUTTONS, Node*> buttons;
 public:
-    MainMenu(App* app, SceneManager* p);
-
-    void update(float) override;
-    void draw() override;
+    MainMenu(App* app, LayerStorage* p);
 };
+
+// class MainMenu : public Scene {
+// private:
+//     enum MM_BUTTONS {
+//         MM_NEWGAME,
+//         MM_SETTINGS,
+//         MM_EXIT,
+//         MM_CONTINUE
+//     };
+
+//     SceneManager* parent;
+//     VerticalContainer buttons;
+//     App* app;
+
+//     void call_exit();
+//     void new_game();
+//     void open_settings();
+
+// public:
+//     MainMenu(App* app, SceneManager* p);
+
+//     void update(float) override;
+//     void draw() override;
+// };

@@ -4,8 +4,6 @@
 
 #include <engine/utility.hpp>
 
-#include <raylib.h>
-
 #include <fmt/format.h>
 
 App::App() {
@@ -45,10 +43,14 @@ App::App() {
 }
 
 void App::run() {
+    LayerStorage* scenes = window.sc_mgr.configure_layer("scenes");
+    LayerStorage* overlay = window.sc_mgr.configure_layer("overlay");
+
     if (config->settings["show_fps"].value_or(false)) {
-        window.sc_mgr.nodes["fps_counter"] = new FrameCounter({4.0f, 4.0f});
+        overlay->get_current_or_future()->add_child(new FrameCounter());
     };
 
-    window.sc_mgr.set_current_scene(new TitleScreen(this, &window.sc_mgr));
+    scenes->set_current(new TitleScreen(this, scenes));
+
     window.run();
 }

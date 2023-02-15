@@ -2,66 +2,42 @@
 #include "raylib.h"
 #include <string>
 
-void SpriteStorage::load(const std::string &path, const std::string &extension) {
-    int amount;
 
-    char** dir_files = GetDirectoryFiles(path.c_str(), &amount);
+Texture2D SpriteStorage::load_data(const std::string &path) {
+    return LoadTexture(path.c_str());
+}
 
-    for (auto current = 0; current < amount; current++) {
-        if (IsFileExtension(dir_files[current], extension.c_str())) {
-            std::string name_key(GetFileNameWithoutExt(dir_files[current]));
-            items[name_key] = LoadTexture((path + dir_files[current]).c_str());
-        }
-    }
-
-    ClearDirectoryFiles();
+void SpriteStorage::unload_data(Texture2D data) {
+    UnloadTexture(data);
 }
 
 SpriteStorage::~SpriteStorage() {
-    for (const auto &kv: items) {
-        UnloadTexture(kv.second);
-    }
+    clear();
 }
 
-void SoundStorage::load(const std::string &path, const std::string &extension) {
-    int amount;
 
-    char** dir_files = GetDirectoryFiles(path.c_str(), &amount);
+Sound SoundStorage::load_data(const std::string &path) {
+    return LoadSound(path.c_str());
+}
 
-    for (auto current = 0; current < amount; current++) {
-        if (IsFileExtension(dir_files[current], extension.c_str())) {
-            std::string name_key(GetFileNameWithoutExt(dir_files[current]));
-            items[name_key] = LoadSound((path + dir_files[current]).c_str());
-        }
-    }
-
-    ClearDirectoryFiles();
+void SoundStorage::unload_data(Sound data) {
+    UnloadSound(data);
 }
 
 SoundStorage::~SoundStorage() {
-    for (const auto &kv: items) {
-        UnloadSound(kv.second);
-    }
+    clear();
 }
 
-// Idk if its good idea to keep all streams in memory. But will do for now. #TODO
-void MusicStorage::load(const std::string &path, const std::string &extension) {
-    int amount;
 
-    char** dir_files = GetDirectoryFiles(path.c_str(), &amount);
+// Idk if its good idea to keep all streams in memory. But will do for now. TODO
+Music MusicStorage::load_data(const std::string &path) {
+    return LoadMusicStream(path.c_str());
+}
 
-    for (auto current = 0; current < amount; current++) {
-        if (IsFileExtension(dir_files[current], extension.c_str())) {
-            std::string name_key(GetFileNameWithoutExt(dir_files[current]));
-            items[name_key] = LoadMusicStream((path + dir_files[current]).c_str());
-        }
-    }
-
-    ClearDirectoryFiles();
+void MusicStorage::unload_data(Music data) {
+    UnloadMusicStream(data);
 }
 
 MusicStorage::~MusicStorage() {
-    for (auto& kv : items) {
-        UnloadMusicStream(kv.second);
-    }
+    clear();
 }

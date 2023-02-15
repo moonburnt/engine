@@ -3,6 +3,11 @@
 #include "toml++/toml.h"
 #include <string>
 
+// TODO:
+// - Add default engine's settings, initialized with SettingsManager.
+// Such settings will contain things iike debug output, hitboxes showcase, etc.
+// - Store a SettingsManager instance in GameWindow
+// - Make engine use these settings where possible.
 class SettingsManager {
 private:
     std::string settings_path;

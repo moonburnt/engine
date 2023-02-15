@@ -27,8 +27,8 @@ add_executable(Game)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     file(GLOB RESOURCES
-        "src/Assets/SFX/*.ogg"
-        "src/Assets/Sprites/*.png")
+        "Assets/SFX/*.ogg"
+        "Assets/Sprites/*.png")
 
     target_sources(Game PRIVATE
         src/macos/platform_macos.mm
@@ -41,7 +41,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
     set_target_properties(Game PROPERTIES
         MACOSX_BUNDLE TRUE
-        MACOSX_BUNDLE_INFO_PLIST "src/macos/Info.plist.in"
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/src/macos/Info.plist.in"
         XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER com.moonburnt.engine-playground
         XCODE_ATTRIBUTE_COMBINE_HIDPI_IMAGES YES
         XCODE_ATTRIBUTE_CURRENT_PROJECT_VERSION 0.0.1
@@ -73,8 +73,8 @@ endif()
 target_sources(Game PRIVATE
     src/app.cpp
     src/app.hpp
-    src/common.cpp
-    src/common.hpp
+#    src/common.cpp
+#    src/common.hpp
     src/menus.cpp
     src/menus.hpp
     src/main.cpp
@@ -83,9 +83,15 @@ target_sources(Game PRIVATE
 )
 
 target_compile_options(Game PRIVATE
-    $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-Wall -Wextra -Wpedantic -Werror -Wextra-semi -Wsuggest-override -Wno-missing-field-initializers>
+    $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-Wall -Wextra -Wpedantic -Werror -Wextra-semi -Wsuggest-override -Wno-missing-field-initializers -Wno-unused-parameter -Wno-unused-private-field>
     $<$<CXX_COMPILER_ID:MSVC>:/Wall /w34263 /w34266>
 )
+
+# If building with debug - enable sanitizer for hard-to-debug moments
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_options(-fsanitize=address,undefined)
+    add_link_options(-fsanitize=address,undefined)
+endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
     # Custom command to be used after Game is built

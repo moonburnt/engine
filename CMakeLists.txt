@@ -2,9 +2,15 @@ cmake_minimum_required(VERSION 3.21)
 
 if(PROJECT_IS_TOP_LEVEL)
     message("Engine is a main project - some additional flags will be available")
+
+    # force Debug build type if nothing else has been provided
+    if(NOT CMAKE_BUILD_TYPE)
+        set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE)
+    endif()
 endif()
 
 option(COMPILE_PLAYGROUND "Compile engine's playground" OFF)
+option(DRAW_DEBUG "Draw debug info, such as hitboxes" OFF)
 
 # set project name and version
 project(engine
@@ -22,6 +28,8 @@ set(OpenGL_GL_PREFERENCE GLVND)
 add_library(engine STATIC
     engine/raybuff.cpp
     engine/raybuff.hpp
+    engine/node.cpp
+    engine/node.hpp
     engine/scene.cpp
     engine/scene.hpp
     engine/core.cpp
@@ -33,12 +41,15 @@ add_library(engine STATIC
     engine/sound.hpp
     engine/sprite.cpp
     engine/sprite.hpp
+    engine/text.cpp
+    engine/text.hpp
     engine/ui.cpp
     engine/ui.hpp
     engine/utility.cpp
     engine/utility.hpp
     engine/storage.cpp
     engine/storage.hpp
+    engine/tasks.hpp
 )
 
 target_include_directories(engine PUBLIC
@@ -53,6 +64,14 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR MINGW)
     )
 endif()
 
+# Draw debug info if specific flag has been received
+# I hope this won't eat previous target_compile_definitions statement.
+if(DRAW_DEBUG)
+    target_compile_definitions(engine PRIVATE
+        "DRAW_DEBUG"
+    )
+endif()
+
 if(PROJECT_IS_TOP_LEVEL)
     target_compile_options(engine PRIVATE
         $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-Wall -Wextra -Wpedantic -Werror -Wextra-semi -Wsuggest-override -Wno-missing-field-initializers>
@@ -60,6 +79,12 @@ if(PROJECT_IS_TOP_LEVEL)
     )
 
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+endif()
+
+# If building with debug - enable sanitizer for hard-to-debug moments
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_options(-fsanitize=address,undefined)
+    add_link_options(-fsanitize=address,undefined)
 endif()
 
 # Setup raylib
