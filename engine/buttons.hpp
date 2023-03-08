@@ -1,7 +1,6 @@
 #pragma once
 
 #include "raylib.h"
-
 #include <functional>
 #include <optional>
 #include <string>
@@ -12,8 +11,24 @@
 #include "text.hpp"
 #include "scene.hpp"
 
+
+// Lets break this down a bit.
+// If we are going mvc, things should look this way:
+// Button should only hold current state, future state and list of callbacks
+// Controller works in update cycle.
+//
+
+// Model: data, specific to EXACT UI ITEM (states, etc)
+// Controller: runs in update cycle, determines how to change the data
+// View: has both updater and draw - runs after controller, determines the
+// changes necessary to apply for the thing to work.
+
+
+// In this case, view is essentially tied with Node, and everything else attached to it
+
+
 // Controller updates general node state.
-template <T> class ControllerBase {
+template <typename T> class ControllerBase {
 protected:
     T host;
 public:
@@ -89,7 +104,7 @@ public:
 
         // return state;
     }
-}
+};
 
 enum class ButtonState {
     Idle,
@@ -101,14 +116,6 @@ enum class ButtonState {
 
 class ButtonBase {
 public:
-    enum class ButtonState {
-        Idle,
-        Hover,
-        Pressed,
-        Clicked,
-        Disabled
-    };
-
     // bool set_state(ButtonState state) {
     //     if (current_state == state) {
     //         return false;
