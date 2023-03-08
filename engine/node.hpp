@@ -199,4 +199,10 @@ public:
 
     Rectangle get_collision_rect(RectangleNode other);
     Rectangle get_collision_rect(Rectangle _rect);
+
+    // TEMPORARY. THIS SHOULD NOT BE EDITABLE.
+    // TODO: DELET THIS, FIND SOME OTHER WORKAROUND
+    void set_size(Vector2 s) {
+        size = s;
+    }
 };

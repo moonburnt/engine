@@ -3,8 +3,9 @@
 #include "app.hpp"
 #include "spdlog/spdlog.h"
 
-#include <engine/ui.hpp>
-#include <engine/settings.hpp>
+// #include <engine/ui.hpp>
+#include "engine/ui/ui.hpp"
+#include "engine/settings.hpp"
 
 #include <functional>
 
@@ -25,7 +26,8 @@ TitleScreen::TitleScreen(App* app, LayerStorage* p)
     Node* ui_container = new Node();
     ui_container->set_align(Align::Center);
 
-    BasicTextNode* text = new BasicTextNode("This game has been made with raylib");
+    // BasicTextNode* text = new BasicTextNode("This game has been made with raylib");
+    UiText* text = new UiText("This game has been made with raylib");
     text->set_pos(
         {
             get_window_width() / 2.0f,
@@ -53,7 +55,8 @@ MainMenu::MainMenu(App* app, LayerStorage* p)
     Node* ui_container = new Node();
     ui_container->set_align(Align::Center);
 
-    BasicTextNode* text = new BasicTextNode("Main Menu");
+    // BasicTextNode* text = new BasicTextNode("Main Menu");
+    UiText* text = new UiText("Main Menu");
     text->set_pos(
         {
             get_window_width() / 2.0f,
