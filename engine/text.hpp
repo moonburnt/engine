@@ -20,6 +20,10 @@ public:
 
     void set_text(const std::string& _txt);
 
+    std::string to_string() {
+        return txt;
+    }
+
     // Get text size
     Vector2 get_size(Font font, int size, int spacing);
     Vector2 get_size();
