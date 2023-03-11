@@ -45,6 +45,9 @@ public:
     // TODO: test if changing these after init works correctly
     void set_text(Text txt) {
         text = txt;
+        // For now, won't change parent's size coz it clashes with other
+        // components. Maybe I will figure out the better solution for that l8r
+        // TODO
         parent->set_size(text.get_size(font, size, spacing));
     }
 
@@ -83,3 +86,113 @@ public:
     }
 };
 
+// Buttons
+enum class ButtonState {
+    Idle,
+    Hover,
+    Pressed,
+    Clicked,
+    Disabled
+};
+
+class ButtonStateObserver {
+public:
+    virtual void update(float) = 0;
+    virtual ~ButtonStateObserver() = default;
+};
+
+class ButtonStateSubject {
+private:
+    std::vector<std::shared_ptr<ButtonStateObserver>> observers = {};
+
+public:
+    void register_observer(ButtonStateObserver* o) {
+        observers.push_back(std::shared_ptr<ButtonStateObserver>(o));
+    }
+
+    void remove_observer(ButtonStateObserver* o) {
+        std::vector<std::shared_ptr<ButtonStateObserver>>::iterator it;
+
+        it = find_if(
+            observers.begin(),
+            observers.end(),
+            [](std::shared_ptr<ButtonStateObserver> i) { return i.get() == 0; }
+        );
+
+        if (it != observers.end()) {
+            observers.at(std::distance(observers.begin(), it)) = nullptr;
+        }
+    }
+
+    void notify_observers(float dt) {
+        for (auto i: observers) {
+            if (i != nullptr) {
+                i->update(dt);
+            }
+        }
+
+        observers.erase(
+            std::remove_if(
+                observers.begin(),
+                observers.end(),
+                [](std::shared_ptr<ButtonStateObserver> i){ return i.get() == nullptr; }
+            ),
+            observers.end()
+        );
+
+        // if (to_remove.size() > 0) {
+        //     for (auto i = 0ul; i < to_remove.size(); i++) {
+        //         std::vector<ButtonStateObserver*>::iterator it;
+
+        //         it = find(observers.begin(), observers.end(), to_remove.at(i));
+
+        //         if (it != observers.end()) {
+        //             observers.erase(it);
+        //         }
+
+        //         ButtonStateObserver* n = observers.at(i);
+        //         spdlog::info("rm observer");
+        //         to_remove.at(i) = nullptr;
+        //         delete n;
+        //     }
+        //     to_remove.clear();
+        // }
+    }
+};
+
+class ButtonComponent: public UiComponent {
+private:
+    ButtonState current_state = ButtonState::Idle;
+    std::optional<ButtonState> future_state = std::nullopt;
+    // std::unordered_map<ButtonState, std::function<void()>> callbacks;
+    std::unordered_map<ButtonState, ButtonStateSubject> bs_handlers = {};
+
+public:
+    // This node should not necessary depend on Rectangle node type
+    // #TODO
+    ButtonComponent(RectangleNode* p) : UiComponent(p) {}
+
+    const ButtonStateSubject& get_handler(ButtonState state) {
+        // default-initialize in case it did not exist
+        return bs_handlers[state];
+    }
+
+    // Schedule new state to be applied on next update() call
+    void schedule_state_change(ButtonState state) {
+        future_state = state;
+    }
+
+    void update(float dt) override {
+        if (future_state == std::nullopt) {
+            return;
+        }
+
+        if (future_state != current_state) {
+            current_state = future_state.value();
+            if (bs_handlers.find(current_state) != bs_handlers.end()) {
+                bs_handlers.at(current_state).notify_observers(dt);
+            }
+        }
+        future_state = std::nullopt;
+    }
+};
