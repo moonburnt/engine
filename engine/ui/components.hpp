@@ -11,6 +11,7 @@
 #include "engine/utility.hpp"
 #include "engine/text.hpp"
 #include "engine/scene.hpp"
+#include "engine/observer.hpp"
 
 // Ui components / interfaces
 
@@ -28,6 +29,7 @@ public:
     virtual void update(float) {}
     virtual void draw() {}
 };
+
 
 class TextComponent : public UiComponent {
 protected:
@@ -86,6 +88,13 @@ public:
     }
 };
 
+// Ui Overlay thingy
+// class RenderTextObserver {
+// public:
+//     virtual void update(float) = 0;
+//     virtual ~ButtonStateObserver() = default;
+// };
+
 // Buttons
 enum class ButtonState {
     Idle,
@@ -95,76 +104,13 @@ enum class ButtonState {
     Disabled
 };
 
-class ButtonStateObserver {
-public:
-    virtual void update(float) = 0;
-    virtual ~ButtonStateObserver() = default;
-};
-
-class ButtonStateSubject {
-private:
-    std::vector<std::shared_ptr<ButtonStateObserver>> observers = {};
-
-public:
-    void register_observer(ButtonStateObserver* o) {
-        observers.push_back(std::shared_ptr<ButtonStateObserver>(o));
-    }
-
-    void remove_observer(ButtonStateObserver* o) {
-        std::vector<std::shared_ptr<ButtonStateObserver>>::iterator it;
-
-        it = find_if(
-            observers.begin(),
-            observers.end(),
-            [](std::shared_ptr<ButtonStateObserver> i) { return i.get() == 0; }
-        );
-
-        if (it != observers.end()) {
-            observers.at(std::distance(observers.begin(), it)) = nullptr;
-        }
-    }
-
-    void notify_observers(float dt) {
-        for (auto i: observers) {
-            if (i != nullptr) {
-                i->update(dt);
-            }
-        }
-
-        observers.erase(
-            std::remove_if(
-                observers.begin(),
-                observers.end(),
-                [](std::shared_ptr<ButtonStateObserver> i){ return i.get() == nullptr; }
-            ),
-            observers.end()
-        );
-
-        // if (to_remove.size() > 0) {
-        //     for (auto i = 0ul; i < to_remove.size(); i++) {
-        //         std::vector<ButtonStateObserver*>::iterator it;
-
-        //         it = find(observers.begin(), observers.end(), to_remove.at(i));
-
-        //         if (it != observers.end()) {
-        //             observers.erase(it);
-        //         }
-
-        //         ButtonStateObserver* n = observers.at(i);
-        //         spdlog::info("rm observer");
-        //         to_remove.at(i) = nullptr;
-        //         delete n;
-        //     }
-        //     to_remove.clear();
-        // }
-    }
-};
+class ButtonStateObserver : public Observer<float> {};
+class ButtonStateSubject: public Subject<float> {};
 
 class ButtonComponent: public UiComponent {
 private:
     ButtonState current_state = ButtonState::Idle;
     std::optional<ButtonState> future_state = std::nullopt;
-    // std::unordered_map<ButtonState, std::function<void()>> callbacks;
     std::unordered_map<ButtonState, ButtonStateSubject> bs_handlers = {};
 
 public:
@@ -188,8 +134,10 @@ public:
         }
 
         if (future_state != current_state) {
+
             current_state = future_state.value();
             if (bs_handlers.find(current_state) != bs_handlers.end()) {
+                bs_handlers.at(current_state).set_changed();
                 bs_handlers.at(current_state).notify_observers(dt);
             }
         }
