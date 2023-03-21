@@ -9,6 +9,11 @@ bool operator==(const Color& c1, const Color& c2);
 bool operator==(const Vector2& v1, const Vector2& v2);
 bool operator==(const Rectangle& r1, const Rectangle& r2);
 
+// Inequality operator.
+bool operator!=(const Color& c1, const Color& c2);
+bool operator!=(const Vector2& v1, const Vector2& v2);
+bool operator!=(const Rectangle& r1, const Rectangle& r2);
+
 // Addition operator. Iirc these should always return new objects.
 Color operator+(const Color& c1, const Color& c2);
 Vector2 operator+(const Vector2& v1, const Vector2& v2);

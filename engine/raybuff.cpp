@@ -15,6 +15,19 @@ bool operator==(const Rectangle& r1, const Rectangle& r2) {
     return r1.x == r2.x && r1.y == r2.y && r1.width == r2.width && r1.height == r2.height;
 }
 
+// Inequality operator
+bool operator!=(const Color& c1, const Color& c2) {
+    return !(c1 == c2);
+}
+
+bool operator!=(const Vector2& v1, const Vector2& v2) {
+    return !(v1 == v2);
+}
+
+bool operator!=(const Rectangle& r1, const Rectangle& r2) {
+    return !(r1 == r2);
+}
+
 // Addition operator.
 Color operator+(const Color& c1, const Color& c2) {
     return {

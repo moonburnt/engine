@@ -11,6 +11,7 @@
 #include "engine/utility.hpp"
 #include "engine/text.hpp"
 #include "engine/scene.hpp"
+#include "engine/raybuff.hpp"
 #include "components.hpp"
 
 // Temporary, everything is implemented in header, for the sake of simplicity.
@@ -76,3 +77,35 @@ public:
     }
 };
 
+// MWP. TODO: split into components
+class DebugOverlay: public RectangleNode {
+private:
+    Vector2 mouse_pos = {0.0f, 0.0f};
+
+protected:
+    TextComponent text_comp = TextComponent(this);
+    const char* format = "Cursor: (%02i, %02i)";
+
+public:
+    DebugOverlay() : RectangleNode({0.0f, 30.0f, 0.0f, 0.0f}) {
+        add_tag("Debug Overlay");
+    }
+
+    void update(float) override {
+        Vector2 new_pos = GetMousePosition();
+        if (new_pos != mouse_pos) {
+            mouse_pos = new_pos;
+            text_comp.set_text(
+                TextFormat(
+                    format,
+                    static_cast<int>(mouse_pos.x),
+                    static_cast<int>(mouse_pos.y)
+                )
+            );
+        }
+    }
+
+    void draw() override {
+        text_comp.draw();
+    }
+};
