@@ -51,6 +51,10 @@ void App::run() {
         overlay->get_current_or_future()->add_child(new FrameCounter());
     };
 
+    // TODO: add ability to show/hide and stop/play nodes;
+    // Then make this toggle on/off by, say , F9
+    overlay->get_current_or_future()->add_child(new DebugOverlay());
+
     scenes->set_current(new TitleScreen(this, scenes));
 
     window.run();
