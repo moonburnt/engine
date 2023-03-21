@@ -43,6 +43,7 @@ add_library(engine STATIC
     engine/sprite.hpp
     engine/text.cpp
     engine/text.hpp
+    engine/observer.hpp
     engine/ui/components.hpp
     engine/ui/ui.hpp
     engine/utility.cpp
