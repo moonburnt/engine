@@ -58,7 +58,7 @@ private:
         std::vector<Node*> &to_remove
     );
 
-    std::string tag = "";
+    std::string tag = "Node";
 
     // Befriend with scene to allow it to set pointer to itself on root node's
     // init.

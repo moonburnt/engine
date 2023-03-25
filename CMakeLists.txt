@@ -28,6 +28,7 @@ set(OpenGL_GL_PREFERENCE GLVND)
 add_library(engine STATIC
     engine/raybuff.cpp
     engine/raybuff.hpp
+    engine/formatters.hpp
     engine/node.cpp
     engine/node.hpp
     engine/scene.cpp

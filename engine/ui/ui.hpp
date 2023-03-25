@@ -152,7 +152,7 @@ public:
                 desc = "Highlighting: \n";
 
                 for (auto i: collides) {
-                    desc += (i->get_tag() + "\n");
+                    desc += (fmt::format("{}: {}\n", i->get_tag(), i->get_world_pos()));
                 }
             }
         }
