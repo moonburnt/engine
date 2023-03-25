@@ -29,6 +29,11 @@ private:
     std::string tag = "";
 
 protected:
+    // For now, lets assume all scenes are 2D. This will give us headache
+    // if we will later decide to introduce 3D scenes, but for now lets not
+    // bother about it. Camera is required for node inspector to work.
+    Camera2D camera;
+
     void update_recursive(float dt);
     void draw_recursive();
 
@@ -39,13 +44,18 @@ public:
     // virtual ~Scene() = default;
     virtual ~Scene();
 
+    Camera2D get_camera() {
+        return camera;
+    }
+
     void add_tag(const std::string &txt);
     std::string get_tag();
 
     void add_child(Node* node);
 
     const std::vector<Node*>& get_children() {
-        return root.children;
+        // return root.children;
+        return children_nodes;
     }
 
     template <typename T, typename... Args>

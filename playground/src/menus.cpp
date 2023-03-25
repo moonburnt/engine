@@ -62,6 +62,7 @@ MainMenu::MainMenu(App* app, LayerStorage* p)
             100.0f,
         }
     );
+    text->add_tag("MM");
     ui_container->add_child(text);
 
     add_child(ui_container);

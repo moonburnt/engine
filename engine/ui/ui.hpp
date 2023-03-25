@@ -48,7 +48,7 @@ public:
 };
 
 
-// FrameCounter from utility. Reworked.
+// TODO: group these into a single debug overlay with configurable verbosity lvls
 class FrameCounter : public RectangleNode {
 private:
     int fps_value = 0;
@@ -78,7 +78,7 @@ public:
 };
 
 // MWP. TODO: split into components
-class DebugOverlay: public RectangleNode {
+class MousePosReporter: public RectangleNode {
 private:
     Vector2 mouse_pos = {0.0f, 0.0f};
 
@@ -87,8 +87,8 @@ protected:
     const char* format = "Cursor: (%02i, %02i)";
 
 public:
-    DebugOverlay() : RectangleNode({0.0f, 30.0f, 0.0f, 0.0f}) {
-        add_tag("Debug Overlay");
+    MousePosReporter() : RectangleNode({0.0f, 30.0f, 0.0f, 0.0f}) {
+        add_tag("MousePosReporter");
     }
 
     void update(float) override {
@@ -103,6 +103,61 @@ public:
                 )
             );
         }
+    }
+
+    void draw() override {
+        text_comp.draw();
+    }
+};
+
+
+class LayerStorage;
+
+// This compiles, but I'm yet to see a successfull collision
+class NodeInspector: public RectangleNode {
+private:
+    // Tree to report items from
+    LayerStorage* report_from;
+
+protected:
+    TextComponent text_comp = TextComponent(this);
+
+public:
+    NodeInspector(LayerStorage* r)
+    : RectangleNode({0.0f, 90.0f, 0.0f, 0.0f})
+    , report_from(r) {
+        add_tag("Node Inspector");
+    }
+
+    void update(float) override {
+        // TODO: there should be a way to optimize this, won't bother for now.
+
+        std::string desc = "";
+
+        Scene* sc = report_from->get_current_or_future();
+
+        // I'm not sure this works correctly since we don't transform any pos to
+        // to camera, but will do for now. TODO
+        Vector2 mouse_pos = GetMousePosition();
+
+        if (sc != nullptr) {
+            std::vector<Node*> collides = {};
+            for (auto i: sc->get_children()) {
+               if (i->collides_with(mouse_pos)) {
+                    collides.push_back(i);
+                }
+            }
+
+            if (!collides.empty()) {
+                desc = "Highlighting: \n";
+
+                for (auto i: collides) {
+                    desc += (i->get_tag() + "\n");
+                }
+            }
+        }
+
+        text_comp.set_text(desc);
     }
 
     void draw() override {
