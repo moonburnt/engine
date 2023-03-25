@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "raybuff.hpp"
 #include "spdlog/spdlog.h"
 
 // #if defined(DRAW_DEBUG)
@@ -164,6 +165,15 @@ public:
     virtual void update(float dt);
 
     virtual void draw();
+
+    // TODO: move this to be a templated in a delegated class
+    virtual bool collides_with(Vector2 vec) {
+        return (vec == get_world_pos());
+    }
+
+    virtual bool collides_with(Rectangle rec) {
+        return CheckCollisionPointRec(get_world_pos(), rec);
+    }
 };
 
 // Node with rectangle attached to it.
@@ -204,5 +214,13 @@ public:
     // TODO: DELET THIS, FIND SOME OTHER WORKAROUND
     void set_size(Vector2 s) {
         size = s;
+    }
+
+    bool collides_with(Vector2 vec) override {
+        return CheckCollisionPointRec(vec, get_rect());
+    }
+
+    bool collides_with(Rectangle rec) override {
+        return CheckCollisionPointRec(get_world_pos(), rec);
     }
 };

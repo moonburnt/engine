@@ -53,7 +53,8 @@ void App::run() {
 
     // TODO: add ability to show/hide and stop/play nodes;
     // Then make this toggle on/off by, say , F9
-    overlay->get_current_or_future()->add_child(new DebugOverlay());
+    overlay->get_current_or_future()->add_child(new MousePosReporter());
+    overlay->get_current_or_future()->add_child(new NodeInspector(scenes));
 
     scenes->set_current(new TitleScreen(this, scenes));
 
