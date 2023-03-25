@@ -3,6 +3,8 @@
 #include "raylib.h"
 #include "sound.hpp"
 #include "scene.hpp"
+#include "formatters.hpp"
+#include "raybuff.hpp"
 
 // TODO: think about moving MusicManager out of GameWindow, moving App from
 // playground to mainline engine and leaving GameWindow with only
