@@ -38,7 +38,7 @@ public:
         return text_component;
     }
 
-    std::string to_string() {
+    std::string get_string() {
         return text_component.to_string();
     }
 
@@ -51,7 +51,9 @@ class Button : public RectangleNode {
 protected:
     ButtonComponent button_comp = ButtonComponent(this);
 public:
-    Button(Rectangle r) : RectangleNode(r) {}
+    Button(Rectangle r) : RectangleNode(r) {
+        add_tag("Button");
+    }
 
     void set_subject(ButtonState state, ButtonStateSubject* sub) {
         button_comp.set_subject(state, sub);
@@ -85,6 +87,15 @@ public:
 
         button_comp.schedule_state_change(state);
         button_comp.update(dt);
+    }
+
+    std::string to_string() override {
+        return fmt::format(
+            "{} at {}: {}",
+            get_tag(),
+            get_world_pos(),
+            button_comp.get_current_state()
+        );
     }
 };
 
@@ -213,7 +224,7 @@ public:
                 desc = "Highlighting: \n";
 
                 for (auto i: collides) {
-                    desc += (fmt::format("{}: {}\n", i->get_tag(), i->get_world_pos()));
+                    desc += (i->to_string() + "\n");
                 }
             }
         }

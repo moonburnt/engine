@@ -88,13 +88,6 @@ public:
     }
 };
 
-// Ui Overlay thingy
-// class RenderTextObserver {
-// public:
-//     virtual void update(float) = 0;
-//     virtual ~ButtonStateObserver() = default;
-// };
-
 // Buttons
 enum class ButtonState {
     Idle,
@@ -103,6 +96,41 @@ enum class ButtonState {
     Clicked,
     Disabled
 };
+
+// TODO: move this somewhere else
+template <> struct fmt::formatter<ButtonState> : formatter<string_view> {
+  template <typename FormatContext>
+  auto format(ButtonState& state, FormatContext& ctx) const -> decltype(ctx.out()) {
+    std::string s;
+    switch (state) {
+    case ButtonState::Idle: {
+        s = "Idle";
+        break;
+    }
+    case ButtonState::Hover: {
+        s = "Hover";
+        break;
+    }
+    case ButtonState::Pressed: {
+        s = "Pressed";
+        break;
+    }
+    case ButtonState::Clicked: {
+        s = "Clicked";
+        break;
+    }
+    case ButtonState::Disabled: {
+        s = "Disabled";
+        break;
+    }
+    }
+
+    return formatter<string_view>::format(s, ctx);
+  }
+};
+
+
+
 
 class ButtonStateObserver : public Observer<float> {};
 class ButtonStateSubject: public Subject<float> {};
