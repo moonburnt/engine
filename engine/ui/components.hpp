@@ -111,21 +111,33 @@ class ButtonComponent: public UiComponent {
 private:
     ButtonState current_state = ButtonState::Idle;
     std::optional<ButtonState> future_state = std::nullopt;
-    std::unordered_map<ButtonState, ButtonStateSubject> bs_handlers = {};
+    std::unordered_map<ButtonState, ButtonStateSubject*> bs_subjects = {};
 
 public:
     // This node should not necessary depend on Rectangle node type
     // #TODO
     ButtonComponent(RectangleNode* p) : UiComponent(p) {}
 
-    const ButtonStateSubject& get_handler(ButtonState state) {
-        // default-initialize in case it did not exist
-        return bs_handlers[state];
+    void set_subject(ButtonState state, ButtonStateSubject* sub) {
+        bs_subjects[state] = sub;
+    }
+
+    ButtonStateSubject* get_subject(ButtonState state) {
+        // default-initialize in case it does not exist
+        if (bs_subjects.find(state) == bs_subjects.end()) {
+            bs_subjects[state] = new ButtonStateSubject();
+        }
+
+        return bs_subjects.at(state);
     }
 
     // Schedule new state to be applied on next update() call
     void schedule_state_change(ButtonState state) {
         future_state = state;
+    }
+
+    ButtonState get_current_state() {
+        return current_state;
     }
 
     void update(float dt) override {
@@ -134,11 +146,11 @@ public:
         }
 
         if (future_state != current_state) {
-
+            // spdlog::info("Changing button state");
             current_state = future_state.value();
-            if (bs_handlers.find(current_state) != bs_handlers.end()) {
-                bs_handlers.at(current_state).set_changed();
-                bs_handlers.at(current_state).notify_observers(dt);
+            if (bs_subjects.find(current_state) != bs_subjects.end()) {
+                bs_subjects.at(current_state)->set_changed();
+                bs_subjects.at(current_state)->notify_observers(dt);
             }
         }
         future_state = std::nullopt;
