@@ -1,6 +1,7 @@
 #include "menus.hpp"
 
 #include "app.hpp"
+#include "button_logic.hpp"
 #include "spdlog/spdlog.h"
 
 // #include <engine/ui.hpp>
@@ -65,6 +66,18 @@ MainMenu::MainMenu(App* app, LayerStorage* p)
     );
     text->add_tag("MM");
     ui_container->add_child(text);
+
+    TextButton* b = new TextButton("Start");
+    b->set_pos(
+        {
+            get_window_width() / 2.0f,
+            200.0f,
+        }
+    );
+    b->add_tag("Start Button");
+    ShutdownObserver* sh = new ShutdownObserver(app);
+    b->get_subject(ButtonState::Clicked)->register_observer(sh);
+    ui_container->add_child(b);
 
     add_child(ui_container);
 }

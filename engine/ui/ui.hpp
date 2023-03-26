@@ -47,6 +47,67 @@ public:
     }
 };
 
+class Button : public RectangleNode {
+protected:
+    ButtonComponent button_comp = ButtonComponent(this);
+public:
+    Button(Rectangle r) : RectangleNode(r) {}
+
+    void set_subject(ButtonState state, ButtonStateSubject* sub) {
+        button_comp.set_subject(state, sub);
+    }
+
+    ButtonStateSubject* get_subject(ButtonState state) {
+        return button_comp.get_subject(state);
+    }
+
+    // TODO: move state handling to component
+    void update(float dt) override {
+        ButtonState state = ButtonState::Idle;
+
+        if (CheckCollisionPointRec(GetMousePosition(), get_rect())) {
+            if (button_comp.get_current_state() == ButtonState::Pressed) {
+                if (IsMouseButtonUp(MOUSE_BUTTON_LEFT)) {
+                    state = ButtonState::Clicked;
+                }
+            }
+            else if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                state = ButtonState::Pressed;
+            }
+
+            else {
+                state = ButtonState::Hover;
+            }
+        }
+        // else {
+        //     state = ButtonState::Idle;
+        // }
+
+        button_comp.schedule_state_change(state);
+        button_comp.update(dt);
+    }
+};
+
+// TODO: consider inheriting some things from UiText
+class TextButton : public Button {
+protected:
+    TextComponent text_component = TextComponent(this);
+
+public:
+    TextButton(Text txt)
+        : Button({0.0f, 0.0f, 0.0f, 0.0f}) {
+            text_component.set_text(txt);
+        }
+    TextButton(const std::string& txt)
+        : Button({0.0f, 0.0f, 0.0f, 0.0f}) {
+            text_component.set_text(txt);
+        }
+
+    void draw() override {
+        text_component.draw();
+    }
+};
+
 
 // TODO: group these into a single debug overlay with configurable verbosity lvls
 class FrameCounter : public RectangleNode {
