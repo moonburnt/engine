@@ -18,12 +18,17 @@ public:
     }
 };
 
-// class SoundObserver: public ButtonStateObserver {
-// public:
-//     ShutdownHandler(App* _app): app(_app) {}
+class SoundObserver: public ButtonStateObserver {
+private:
+    const Sound* sound = nullptr;
+public:
+    void set_sound(const Sound* s) {
+        sound = s;
+    }
 
-//     void update(float dt) override {
-//         spdlog::info("Playing the sound");
-//         app->window.quit();
-//     }
-// };
+    void update(float dt) override {
+        if (sound != nullptr) {
+            PlaySound(*sound);
+        }
+    }
+};
