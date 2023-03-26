@@ -74,8 +74,18 @@ MainMenu::MainMenu(App* app, LayerStorage* p)
         }
     );
     b->add_tag("Start Button");
-    ShutdownObserver* sh = new ShutdownObserver(app);
-    b->get_subject(ButtonState::Clicked)->register_observer(sh);
+    ButtonStateSubject* clicked_subject = b->get_subject(ButtonState::Clicked);
+    // clicked_subject->register_observer(new ShutdownObserver(app));
+    SoundObserver* clicked_sound = new SoundObserver();
+    clicked_sound->set_sound(app->assets.sounds["button_clicked"]);
+    clicked_subject->register_observer(clicked_sound);
+
+    // Seems like sometimes the wrong sound is playing.
+    // TODO: figure out what s going on with button states changing
+    ButtonStateSubject* hover_subject = b->get_subject(ButtonState::Hover);
+    SoundObserver* hover_sound = new SoundObserver();
+    hover_sound->set_sound(app->assets.sounds["button_hover"]);
+    hover_subject->register_observer(hover_sound);
     ui_container->add_child(b);
 
     add_child(ui_container);
