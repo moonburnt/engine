@@ -6,6 +6,7 @@
 #include <vector>
 #include "raybuff.hpp"
 #include "spdlog/spdlog.h"
+#include "formatters.hpp"
 
 // #if defined(DRAW_DEBUG)
 static constexpr Color DEBUG_DRAW_COLOR_FG = RED;
@@ -103,6 +104,11 @@ public:
     void add_tag(const std::string &txt);
 
     std::string get_tag();
+
+    // Get textual representation of a node. This may include whatever you want
+    virtual std::string to_string() {
+        return fmt::format("{}: {}", get_tag(), get_world_pos());
+    }
 
     bool is_deleted();
     void mark_to_delete();
