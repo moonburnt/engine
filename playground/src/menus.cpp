@@ -85,6 +85,20 @@ MainMenu::MainMenu(App* app, LayerStorage* p)
     SoundObserver* hover_sound = new SoundObserver();
     hover_sound->set_sound(app->assets.sounds["button_hover"]);
     hover_subject->register_observer(hover_sound);
+
+    TextObserver* text_idle_observer = new TextObserver(b);
+    text_idle_observer->set_text("Idle");
+    TextObserver* text_hover_observer = new TextObserver(b);
+    text_hover_observer->set_text("Hover");
+    TextObserver* text_pressed_observer = new TextObserver(b);
+    text_pressed_observer->set_text("Pressed");
+    TextObserver* text_clicked_observer = new TextObserver(b);
+    text_clicked_observer->set_text("Clicked");
+    b->get_subject(ButtonState::Hover)->register_observer(text_hover_observer);
+    b->get_subject(ButtonState::Idle)->register_observer(text_idle_observer);
+    b->get_subject(ButtonState::Pressed)->register_observer(text_pressed_observer);
+    b->get_subject(ButtonState::Clicked)->register_observer(text_clicked_observer);
+
     ui_container->add_child(b);
 
     add_child(ui_container);
