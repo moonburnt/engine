@@ -65,12 +65,16 @@ public:
 
     // TODO: move state handling to component
     void update(float dt) override {
-        ButtonState state = ButtonState::Idle;
+        // ButtonState state = ButtonState::Idle;
+        ButtonState state;
 
         if (CheckCollisionPointRec(GetMousePosition(), get_rect())) {
             if (button_comp.get_current_state() == ButtonState::Pressed) {
                 if (IsMouseButtonUp(MOUSE_BUTTON_LEFT)) {
                     state = ButtonState::Clicked;
+                }
+                else {
+                    state = ButtonState::Pressed;
                 }
             }
             else if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
@@ -81,9 +85,9 @@ public:
                 state = ButtonState::Hover;
             }
         }
-        // else {
-        //     state = ButtonState::Idle;
-        // }
+        else {
+            state = ButtonState::Idle;
+        }
 
         button_comp.schedule_state_change(state);
         button_comp.update(dt);
@@ -221,10 +225,10 @@ public:
             }
 
             if (!collides.empty()) {
-                desc = "Highlighting: \n";
+                desc = "Highlighting:";
 
                 for (auto i: collides) {
-                    desc += (i->to_string() + "\n");
+                    desc += ("\n"+ i->to_string());
                 }
             }
         }

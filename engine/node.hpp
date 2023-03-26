@@ -107,7 +107,7 @@ public:
 
     // Get textual representation of a node. This may include whatever you want
     virtual std::string to_string() {
-        return fmt::format("{}: {}", get_tag(), get_world_pos());
+        return fmt::format("{} at {}", get_tag(), get_world_pos());
     }
 
     bool is_deleted();

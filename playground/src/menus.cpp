@@ -80,8 +80,6 @@ MainMenu::MainMenu(App* app, LayerStorage* p)
     clicked_sound->set_sound(app->assets.sounds["button_clicked"]);
     clicked_subject->register_observer(clicked_sound);
 
-    // Seems like sometimes the wrong sound is playing.
-    // TODO: figure out what s going on with button states changing
     ButtonStateSubject* hover_subject = b->get_subject(ButtonState::Hover);
     SoundObserver* hover_sound = new SoundObserver();
     hover_sound->set_sound(app->assets.sounds["button_hover"]);
