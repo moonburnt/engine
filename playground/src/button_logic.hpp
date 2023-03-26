@@ -2,6 +2,7 @@
 
 #include "engine/core.hpp"
 #include "engine/ui/components.hpp"
+#include "engine/ui/ui.hpp"
 
 // Common button state change handlers
 
@@ -10,7 +11,7 @@ private:
     App* app = nullptr;
 
 public:
-    ShutdownObserver(App* _app): app(_app) {}
+    ShutdownObserver(App* a): app(a) {}
 
     void update(float dt) override {
         spdlog::info("Calling game's shutdown");
@@ -29,6 +30,25 @@ public:
     void update(float dt) override {
         if (sound != nullptr) {
             PlaySound(*sound);
+        }
+    }
+};
+
+class TextObserver: public ButtonStateObserver {
+private:
+    TextButton* button = nullptr;
+    std::string txt = "";
+
+public:
+    TextObserver(TextButton* b) : button(b) {}
+
+    void set_text(const std::string& _txt) {
+        txt = _txt;
+    }
+
+    void update(float dt) override {
+        if (button) {
+            button->set_text(txt);
         }
     }
 };

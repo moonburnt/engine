@@ -118,6 +118,10 @@ public:
             text_component.set_text(txt);
         }
 
+    void set_text(const std::string& _txt) {
+        text_component.set_text(_txt);
+    }
+
     void draw() override {
         text_component.draw();
     }
