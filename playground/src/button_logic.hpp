@@ -52,3 +52,25 @@ public:
         }
     }
 };
+
+
+class TextureObserver: public ButtonStateObserver {
+private:
+    const Texture* texture = nullptr;
+    Button* button = nullptr;
+
+public:
+    void attach_to_button(Button* b) {
+        button = b;
+    }
+
+    void set_texture(const Texture* t) {
+        texture = t;
+    }
+
+    void update(float dt) override {
+        if ((texture != nullptr) && (button != nullptr)) {
+            button->set_texture(texture);
+        }
+    }
+};
