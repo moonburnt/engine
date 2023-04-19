@@ -141,10 +141,36 @@ private:
     std::optional<ButtonState> future_state = std::nullopt;
     std::unordered_map<ButtonState, ButtonStateSubject*> bs_subjects = {};
 
+    void change_state(float dt, bool force) {
+        if (future_state == std::nullopt) {
+            return;
+        }
+
+        if (force || (future_state != current_state)) {
+            current_state = future_state.value();
+            if (bs_subjects.find(current_state) != bs_subjects.end()) {
+                bs_subjects.at(current_state)->set_changed();
+                bs_subjects.at(current_state)->notify_observers(dt);
+            }
+        }
+        future_state = std::nullopt;
+    }
+
+    void change_state(float dt) {
+        change_state(dt, false);
+    }
+
 public:
-    // This node should not necessary depend on Rectangle node type
-    // #TODO
-    ButtonComponent(RectangleNode* p) : UiComponent(p) {}
+    // This node should not necessary depend on Rectangle node type. TODO
+    ButtonComponent(RectangleNode* p) : UiComponent(p) {
+    }
+
+    // Apply state changes and force-inform already connected observers about
+    // them
+    void configure() {
+        schedule_state_change(current_state);
+        change_state(0.0f, true);
+    }
 
     void set_subject(ButtonState state, ButtonStateSubject* sub) {
         bs_subjects[state] = sub;
@@ -169,18 +195,6 @@ public:
     }
 
     void update(float dt) override {
-        if (future_state == std::nullopt) {
-            return;
-        }
-
-        if (future_state != current_state) {
-            // spdlog::info("Changing button state");
-            current_state = future_state.value();
-            if (bs_subjects.find(current_state) != bs_subjects.end()) {
-                bs_subjects.at(current_state)->set_changed();
-                bs_subjects.at(current_state)->notify_observers(dt);
-            }
-        }
-        future_state = std::nullopt;
+        change_state(dt);
     }
 };

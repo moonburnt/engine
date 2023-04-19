@@ -123,6 +123,8 @@ MainMenu::MainMenu(App* app, LayerStorage* p)
     pressed_texture_observer->attach_to_button(texture_button);
     texture_button->get_subject(ButtonState::Pressed)->register_observer(pressed_texture_observer);
 
+    texture_button->configure();
+
     ui_container->add_child(texture_button);
 
     add_child(ui_container);
