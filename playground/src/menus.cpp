@@ -100,6 +100,30 @@ MainMenu::MainMenu(App* app, LayerStorage* p)
 
     ui_container->add_child(b);
 
+    Button* texture_button = new Button({0.0f, 0.0f, 256.0f, 64.0f});
+    texture_button->set_pos(
+        {
+            get_window_width() / 2.0f,
+            300.0f,
+        }
+    );
+    TextureObserver* default_texture_observer = new TextureObserver();
+    default_texture_observer->set_texture(app->assets.sprites["button_default"]);
+    default_texture_observer->attach_to_button(texture_button);
+    texture_button->get_subject(ButtonState::Idle)->register_observer(default_texture_observer);
+
+    TextureObserver* hover_texture_observer = new TextureObserver();
+    hover_texture_observer->set_texture(app->assets.sprites["button_hover"]);
+    hover_texture_observer->attach_to_button(texture_button);
+    texture_button->get_subject(ButtonState::Hover)->register_observer(hover_texture_observer);
+
+    TextureObserver* pressed_texture_observer = new TextureObserver();
+    pressed_texture_observer->set_texture(app->assets.sprites["button_pressed"]);
+    pressed_texture_observer->attach_to_button(texture_button);
+    texture_button->get_subject(ButtonState::Pressed)->register_observer(pressed_texture_observer);
+
+    ui_container->add_child(texture_button);
+
     add_child(ui_container);
 }
 

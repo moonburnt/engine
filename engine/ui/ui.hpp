@@ -13,6 +13,7 @@
 #include "engine/scene.hpp"
 #include "engine/raybuff.hpp"
 #include "components.hpp"
+#include <type_traits>
 
 // Temporary, everything is implemented in header, for the sake of simplicity.
 // TODO: move things out to .cpp once its done
@@ -49,10 +50,18 @@ public:
 
 class Button : public RectangleNode {
 protected:
+    // TODO: move texture and text handling to the component's observer
     ButtonComponent button_comp = ButtonComponent(this);
+    const Texture2D* texture = nullptr;
+
 public:
     Button(Rectangle r) : RectangleNode(r) {
         add_tag("Button");
+    }
+
+    void set_texture(const Texture2D* t) {
+        spdlog::info("changin");
+        texture = t;
     }
 
     void set_subject(ButtonState state, ButtonStateSubject* sub) {
@@ -100,6 +109,13 @@ public:
             get_world_pos(),
             button_comp.get_current_state()
         );
+    }
+
+    void draw() override {
+        if (texture != nullptr) {
+            spdlog::info("{}", get_world_pos());
+            DrawTextureV(*texture, get_world_pos(), WHITE);
+        }
     }
 };
 
