@@ -60,7 +60,6 @@ public:
     }
 
     void set_texture(const Texture2D* t) {
-        spdlog::info("changin");
         texture = t;
     }
 
@@ -70,6 +69,10 @@ public:
 
     ButtonStateSubject* get_subject(ButtonState state) {
         return button_comp.get_subject(state);
+    }
+
+    void configure() {
+        button_comp.configure();
     }
 
     // TODO: move state handling to component
@@ -113,7 +116,7 @@ public:
 
     void draw() override {
         if (texture != nullptr) {
-            spdlog::info("{}", get_world_pos());
+            // spdlog::info("{}", get_world_pos());
             DrawTextureV(*texture, get_world_pos(), WHITE);
         }
     }

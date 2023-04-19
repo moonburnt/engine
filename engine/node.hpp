@@ -9,9 +9,9 @@
 #include "formatters.hpp"
 
 // #if defined(DRAW_DEBUG)
-static constexpr Color DEBUG_DRAW_COLOR_FG = RED;
-static constexpr Color DEBUG_DRAW_COLOR_BG = PINK;
-static constexpr Color DEBUG_DRAW_COLOR = RED;
+static constexpr Color DEBUG_DRAW_COLOR_FG = { 230, 41, 55, 155 };
+static constexpr Color DEBUG_DRAW_COLOR_BG = { 255, 109, 194, 155 };
+static constexpr Color DEBUG_DRAW_COLOR = { 230, 41, 55, 155 } ;
 // #endif
 
 // Node stuff.
