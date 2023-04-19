@@ -10,3 +10,9 @@
 [submodule "dependencies/tomlplusplus"]
 	path = dependencies/tomlplusplus
 	url = https://github.com/marzer/tomlplusplus.git
+[submodule "dependencies/imgui"]
+	path = dependencies/imgui
+	url = https://github.com/moonburnt/imgui
+[submodule "dependencies/rlimgui"]
+	path = dependencies/rlimgui
+	url = https://github.com/moonburnt/rlimgui

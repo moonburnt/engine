@@ -11,6 +11,7 @@ endif()
 
 option(COMPILE_PLAYGROUND "Compile engine's playground" OFF)
 option(DRAW_DEBUG "Draw debug info, such as hitboxes" OFF)
+option(WITH_IMGUI "Compile engine with imgui support" OFF)
 
 # set project name and version
 project(engine
@@ -54,6 +55,13 @@ add_library(engine STATIC
     engine/tasks.hpp
 )
 
+if(WITH_IMGUI)
+    target_sources(engine PUBLIC
+        # engine/imgui.cpp
+        engine/imgui.hpp
+    )
+endif()
+
 target_include_directories(engine PUBLIC
     "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
     "$<INSTALL_INTERFACE:${PROJECT_SOURCE_DIR}/engine>"
@@ -93,6 +101,17 @@ endif()
 add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/raylib")
 target_link_libraries(engine raylib)
 target_include_directories(engine PUBLIC ${raylib_INCLUDE_DIRS})
+
+# Setup imgui, if enabled
+if(WITH_IMGUI)
+    add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/imgui")
+    target_link_libraries(engine imgui)
+    target_include_directories(engine PUBLIC ${imgui_INCLUDE_DIRS})
+
+    add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/rlimgui")
+    target_link_libraries(engine rlimgui)
+    target_include_directories(engine PUBLIC ${rlimgui_INCLUDE_DIRS})
+endif()
 
 # Setup fmt
 add_subdirectory("${PROJECT_SOURCE_DIR}/dependencies/fmt")
