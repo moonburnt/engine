@@ -2,6 +2,7 @@
 
 #include "raylib.h"
 
+#include <algorithm>
 #include <functional>
 #include <optional>
 #include <string>
@@ -88,6 +89,122 @@ public:
     }
 };
 
+// Progress thingy
+template <typename T> class GaugeObserver: public Observer<T> {};
+template <typename T> class GaugeSubject: public Subject<T> {};
+
+enum class GaugeEventType {
+    // Maybe separate increate/decrease events?
+    ValueChange,
+    IsEmpty,
+    IsFull
+};
+
+template <typename T> class GaugeComponent: public UiComponent {
+private:
+    bool is_empty = false;
+    bool is_full = false;
+    T min_val = T();
+    T max_val;
+    T current_val;
+    bool allow_overflow = false;
+    bool allow_underflow = false;
+
+    T change_by = T();
+
+    std::unordered_map<GaugeEventType, GaugeSubject<T>*> subjects = {};
+
+public:
+    GaugeComponent(
+        T current,
+        T min,
+        T max,
+        bool _allow_overflow,
+        bool _allow_underflow,
+        RectangleNode* p
+    )
+        : UiComponent(p)
+        , min_val(min)
+        , max_val(max)
+        , current_val(current)
+        , allow_overflow(_allow_overflow)
+        , allow_underflow(_allow_underflow) {
+        static_assert(min_val < max_val);
+    }
+
+    void set_subject(GaugeEventType event, GaugeSubject<T>* sub) {
+        subjects[event] = sub;
+    }
+
+    GaugeSubject<T>* get_subject(GaugeEventType event) {
+        // default-initialize in case it does not exist
+        if (subjects.find(event) == subjects.end()) {
+            subjects[event] = new GaugeSubject<T>();
+        }
+
+        return subjects.at(event);
+    }
+
+    void schedule_change_by(T amount, bool replace) {
+        if (replace) {
+            change_by = amount;
+        }
+        else {
+            change_by += amount;
+        }
+    }
+
+    void schedule_change_by(T amount) {
+        schedule_change_by(amount, false);
+    }
+
+    T get_current_value() {
+        return current_val;
+    }
+
+    void update(float dt) override {
+        // Maybe replace change_by with std::optional, to avoid default-initializing
+        // T each cycle? TODO
+
+        if (change_by == T()) {
+            return;
+        }
+
+        T scheduled_val = current_val + change_by;
+
+        if (!allow_underflow) {
+            scheduled_val = std::max(scheduled_val, min_val);
+        }
+        if (!allow_overflow) {
+            scheduled_val = std::min(scheduled_val, max_val);
+        }
+
+        if (scheduled_val == current_val) {
+            return;
+        }
+        else {
+            current_val = scheduled_val;
+
+            // Maybe I should notify them with new value instead?
+            GaugeSubject<T>* val_subj = get_subject(GaugeEventType::ValueChange);
+            val_subj->set_changed();
+            val_subj->notify_observers(dt);
+
+            if (current_val == min_val) {
+                GaugeSubject<T>* emp_subj = get_subject(GaugeEventType::IsEmpty);
+                emp_subj->set_changed();
+                emp_subj->notify_observers(dt);
+            }
+            else if (current_val == max_val) {
+                GaugeSubject<T>* full_subj = get_subject(GaugeEventType::IsFull);
+                full_subj->set_changed();
+                full_subj->notify_observers(dt);
+            }
+        }
+    }
+};
+
+
 // Buttons
 enum class ButtonState {
     Idle,
@@ -130,9 +247,7 @@ template <> struct fmt::formatter<ButtonState> : formatter<string_view> {
 };
 
 
-
-
-class ButtonStateObserver : public Observer<float> {};
+class ButtonStateObserver: public Observer<float> {};
 class ButtonStateSubject: public Subject<float> {};
 
 class ButtonComponent: public UiComponent {
@@ -149,6 +264,7 @@ private:
         if (force || (future_state != current_state)) {
             current_state = future_state.value();
             if (bs_subjects.find(current_state) != bs_subjects.end()) {
+                // Maybe use get_subject() instead of at()?
                 bs_subjects.at(current_state)->set_changed();
                 bs_subjects.at(current_state)->notify_observers(dt);
             }
