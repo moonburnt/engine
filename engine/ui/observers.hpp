@@ -1,10 +1,21 @@
 #pragma once
 
-#include "engine/core.hpp"
-#include "engine/ui/components.hpp"
+#include "raylib.h"
+
+#include <algorithm>
+#include <functional>
+#include <optional>
+#include <string>
+#include <tuple>
+#include <unordered_map>
+#include <vector>
+#include "engine/utility.hpp"
+#include "engine/text.hpp"
+#include "engine/scene.hpp"
+#include "engine/observer.hpp"
 #include "engine/ui/ui.hpp"
 
-// Common button state change handlers
+// Common button state change observers
 
 class ShutdownObserver: public ButtonStateObserver {
 private:

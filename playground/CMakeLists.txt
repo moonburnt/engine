@@ -73,9 +73,6 @@ endif()
 target_sources(Game PRIVATE
     src/app.cpp
     src/app.hpp
-#    src/common.cpp
-#    src/common.hpp
-    src/button_logic.hpp
     src/menus.cpp
     src/menus.hpp
     src/main.cpp
