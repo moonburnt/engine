@@ -1,11 +1,8 @@
 #include "menus.hpp"
-
 #include "app.hpp"
-#include "button_logic.hpp"
 #include "spdlog/spdlog.h"
-
-// #include <engine/ui.hpp>
 #include "engine/ui/ui.hpp"
+#include "engine/ui/observers.hpp"
 #include "engine/settings.hpp"
 
 #include <functional>
