@@ -4,6 +4,10 @@
 // For vsprintf
 #include <cstdio>
 
+#if defined(WITH_IMGUI)
+    #include "imgui.hpp"
+#endif
+
 void TraceLog(int logLevel, const char* text, va_list args) {
     static char log_text[2048] = {0}; // I think 2048 would be enough?
     // Doing this via std, coz fmt's function went bananas on some types.
@@ -65,6 +69,10 @@ void GameWindow::init(int x, int y, const std::string &title, int fps) {
     // Initialize audio device. This needs to be done before loading sounds.
     InitAudioDevice();
 
+    #if defined(WITH_IMGUI)
+        rlImGuiSetup(true);
+    #endif
+
     initialized = true;
 }
 
@@ -105,6 +113,11 @@ void GameWindow::run() {
     }
 
     spdlog::info("Attempting to shutdown the game.");
+
+    #if defined(WITH_IMGUI)
+        rlImGuiShutdown();
+    #endif
+
     CloseWindow();
 }
 
