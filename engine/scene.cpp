@@ -3,6 +3,11 @@
 #include "raybuff.hpp"
 #include "spdlog/spdlog.h"
 
+#if defined(WITH_IMGUI)
+    #include "imgui.hpp"
+#endif
+
+
 // Scene
 Scene::Scene() {
     root.attach_to_scene(this);
@@ -179,9 +184,19 @@ void SceneManager::update(float dt) {
     }
 
     BeginDrawing();
+
+    #if defined(WITH_IMGUI)
+        rlImGuiBegin();
+    #endif
+
     for (auto& [_, i]: layers) {
         i.draw();
     }
+
+    #if defined(WITH_IMGUI)
+        rlImGuiEnd();
+    #endif
+
 
     EndDrawing();
 }
