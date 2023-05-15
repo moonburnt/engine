@@ -101,6 +101,12 @@ public:
     Node() = default;
     Node(Align _align);
 
+    // get offset coordinates of the specific side of the parent. Idk about naming
+    // TODO: cache it for rectangle node, together with offset+world pos
+    virtual Vector2 get_offset(Align) {
+        return {0.0f, 0.0f};
+    }
+
     void add_tag(const std::string &txt);
 
     std::string get_tag();
@@ -203,6 +209,51 @@ public:
     // May optimize later if these will become an issue
     // RectangleNode(const Rectangle& rect);
     RectangleNode(Rectangle rect);
+
+    Vector2 get_offset(Align side) override {
+        Vector2 offset_value;
+
+        switch (side) {
+        case Align::TopLeft: {
+            offset_value = {0.0f, 0.0f};
+            break;
+        }
+        case Align::Top: {
+            offset_value = {size.x / 2.0f, 0.0f};
+            break;
+        }
+        case Align::TopRight: {
+            offset_value = {size.x, 0.0f};
+            break;
+        }
+        case Align::Left: {
+            offset_value = {0.0f, size.y / 2.0f};
+            break;
+        }
+        case Align::Center: {
+            offset_value = {size.x / 2.0f, size.y / 2.0f};
+            break;
+        }
+        case Align::Right: {
+            offset_value = {size.x, size.y / 2.0f};
+            break;
+        }
+        case Align::BottomLeft: {
+            offset_value = {0.0f, size.y};
+            break;
+        }
+        case Align::Bottom: {
+            offset_value = {size.x / 2.0f, size.y};
+            break;
+        }
+        case Align::BottomRight: {
+            offset_value = {size.x, size.y};
+            break;
+        }
+        }
+
+        return offset_value;
+    }
 
     Rectangle get_rect();
 

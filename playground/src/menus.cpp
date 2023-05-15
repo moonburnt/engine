@@ -22,7 +22,7 @@ TitleScreen::TitleScreen(App* app, LayerStorage* p)
     : PlaygroundScene(app, p, "Title Screen")
     , timer(Timer(2.0f)) {
     Node* ui_container = new Node();
-    ui_container->set_align(Align::Center);
+    // ui_container->set_align(Align::Center);
 
     // BasicTextNode* text = new BasicTextNode("This game has been made with raylib");
     UiText* text = new UiText("This game has been made with raylib");
@@ -32,6 +32,7 @@ TitleScreen::TitleScreen(App* app, LayerStorage* p)
             get_window_height() / 2.0f
         }
     );
+    text->set_align(Align::Center);
     ui_container->add_child(text);
     add_child(ui_container);
 
@@ -51,7 +52,7 @@ void TitleScreen::update(float dt) {
 MainMenu::MainMenu(App* app, LayerStorage* p)
     : PlaygroundScene(app, p, "Main Menu") {
     Node* ui_container = new Node();
-    ui_container->set_align(Align::Center);
+    // ui_container->set_align(Align::Center);
 
     // BasicTextNode* text = new BasicTextNode("Main Menu");
     UiText* text = new UiText("Main Menu");
@@ -62,6 +63,7 @@ MainMenu::MainMenu(App* app, LayerStorage* p)
         }
     );
     text->add_tag("MM");
+    text->set_align(Align::Center);
     ui_container->add_child(text);
 
     TextButton* b = new TextButton("Start");
@@ -96,6 +98,7 @@ MainMenu::MainMenu(App* app, LayerStorage* p)
     b->get_subject(ButtonState::Pressed)->register_observer(text_pressed_observer);
     b->get_subject(ButtonState::Clicked)->register_observer(text_clicked_observer);
 
+    b->set_align(Align::Center);
     ui_container->add_child(b);
 
     Button* texture_button = new Button({0.0f, 0.0f, 256.0f, 64.0f});
@@ -105,6 +108,7 @@ MainMenu::MainMenu(App* app, LayerStorage* p)
             300.0f,
         }
     );
+    UiText* text_node = new UiText("Sampletext");
     TextureObserver* default_texture_observer = new TextureObserver();
     default_texture_observer->set_texture(app->assets.sprites["button_default"]);
     default_texture_observer->attach_to_button(texture_button);
@@ -121,7 +125,11 @@ MainMenu::MainMenu(App* app, LayerStorage* p)
     texture_button->get_subject(ButtonState::Pressed)->register_observer(pressed_texture_observer);
 
     texture_button->configure();
+    texture_button->set_align(Align::Center);
+    text_node->set_align(Align::Center);
+    texture_button->add_child(text_node);
 
+    texture_button->set_align(Align::Center);
     ui_container->add_child(texture_button);
 
     add_child(ui_container);

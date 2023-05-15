@@ -231,14 +231,14 @@ RectangleNode::RectangleNode(Rectangle rect)
 
 void RectangleNode::calculate_world_pos() {
     if (parent != nullptr) {
-        Vector2 origin_pos = parent->get_world_pos();
-        // I think, alignment-related logic goes there?
-        switch (parent->get_align()) {
+        // Vector2 origin_pos = parent->get_world_pos();
+        Vector2 origin_pos = parent->get_world_pos()+parent->get_offset(align);
+        // switch (parent->get_align()) {
+        switch (align) {
         case Align::TopLeft: {
             // Do nothing since its the default align
             break;
         }
-        // I think these are about right?
         case Align::Top: {
             origin_pos = {origin_pos.x - size.x / 2.0f, origin_pos.y};
             break;
