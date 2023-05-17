@@ -17,32 +17,25 @@
 
 // Common button state change observers
 
+class GameWindow;
+
 class ShutdownObserver: public ButtonStateObserver {
 private:
-    App* app = nullptr;
+    GameWindow* window;
 
 public:
-    ShutdownObserver(App* a): app(a) {}
+    ShutdownObserver(GameWindow* w);
 
-    void update(float dt) override {
-        spdlog::info("Calling game's shutdown");
-        app->window.quit();
-    }
+    void update(float) override;
 };
 
 class SoundObserver: public ButtonStateObserver {
 private:
     const Sound* sound = nullptr;
 public:
-    void set_sound(const Sound* s) {
-        sound = s;
-    }
+    void set_sound(const Sound* s);
 
-    void update(float dt) override {
-        if (sound != nullptr) {
-            PlaySound(*sound);
-        }
-    }
+    void update(float) override;
 };
 
 class TextObserver: public ButtonStateObserver {
@@ -51,17 +44,10 @@ private:
     std::string txt = "";
 
 public:
-    TextObserver(TextButton* b) : button(b) {}
+    TextObserver(TextButton* b);
 
-    void set_text(const std::string& _txt) {
-        txt = _txt;
-    }
-
-    void update(float dt) override {
-        if (button) {
-            button->set_text(txt);
-        }
-    }
+    void set_text(const std::string& _txt);
+    void update(float) override;
 };
 
 
@@ -71,17 +57,8 @@ private:
     Button* button = nullptr;
 
 public:
-    void attach_to_button(Button* b) {
-        button = b;
-    }
+    void attach_to_button(Button* b);
+    void set_texture(const Texture* t);
 
-    void set_texture(const Texture* t) {
-        texture = t;
-    }
-
-    void update(float dt) override {
-        if ((texture != nullptr) && (button != nullptr)) {
-            button->set_texture(texture);
-        }
-    }
+    void update(float) override;
 };

@@ -46,8 +46,11 @@ add_library(engine STATIC
     engine/text.cpp
     engine/text.hpp
     engine/observer.hpp
+    engine/ui/components.cpp
     engine/ui/components.hpp
+    engine/ui/ui.cpp
     engine/ui/ui.hpp
+    engine/ui/observers.cpp
     engine/ui/observers.hpp
     engine/utility.cpp
     engine/utility.hpp
