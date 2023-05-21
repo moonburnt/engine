@@ -2,6 +2,7 @@
 
 #include "raylib.h"
 #include <string>
+#include <cstdint>
 
 static constexpr uint32_t DEFAULT_TEXT_SIZE = 20u;
 static constexpr Color DEFAULT_TEXT_COLOR = BLACK;
